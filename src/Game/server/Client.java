@@ -28,17 +28,24 @@ public class Client {
     public Client(int port){
         this.port = port;
     }
-
+    public Client(){}
     /**
      * Creates all sockets and begins listening on its port
      */
     public void start(){
         try {
-            socket = new DatagramSocket(port);
+            if(port != 0){
+                socket = new DatagramSocket(port);
+            }else{
+                socket = new DatagramSocket();
+            }
+
         } catch (SocketException e) {
             e.printStackTrace();
         }
+
         listeningThread = new Thread(this::listen);
+        listeningThread.setDaemon(true);
         listeningThread.start();
         logger.log(Level.INFO, "Client started on port "+ port);
     }
