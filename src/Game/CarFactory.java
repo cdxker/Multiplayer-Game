@@ -1,6 +1,7 @@
 package Game;
 
 import Game.Components.KeyPressComponent;
+import Game.Components.ServerControlComponent;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.extra.entity.components.KeepOnScreenComponent;
@@ -23,6 +24,22 @@ public class CarFactory implements EntityFactory {
                 .with(new CollidableComponent(true))
                 .with(new KeyPressComponent())
                 .with(new KeepOnScreenComponent(true, true))
+                .build();
+    }
+
+    @Spawns("Enemy")
+    public Entity newEnemy(SpawnData data){
+        PhysicsComponent physics = new PhysicsComponent();
+        physics.setBodyType(BodyType.DYNAMIC);
+
+        return Entities.builder()
+                .type(EntityType.ENEMY)
+                .from(data)
+                .viewFromNode(new Rectangle(30, 30))
+                .with(new CollidableComponent(true))
+                .with(new ServerControlComponent(3000))
+                .with(new KeepOnScreenComponent(true, true))
+                .with(new KeyPressComponent())
                 .build();
     }
 }

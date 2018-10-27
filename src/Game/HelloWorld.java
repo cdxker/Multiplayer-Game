@@ -5,6 +5,7 @@ package Game;/*
  */
 
 
+import Game.server.Client;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.settings.GameSettings;
@@ -72,6 +73,24 @@ public class HelloWorld extends GameApplication {
             });
 
         });
+
+        onKey(KeyCode.SPACE , "Send", new SendData());
+    }
+
+    public class SendData implements Runnable{
+        public double x, y;
+        public SendData(){
+            x = y = 3;
+        }
+
+        @Override
+        public void run() {
+            Client client = new Client();
+            client.start();
+            client.send(String.format("pos:%f,%f", x, y).getBytes(), 3000);
+            x+= 0.5;
+            y+= 0.5;
+        }
     }
 
     @Override
@@ -79,6 +98,7 @@ public class HelloWorld extends GameApplication {
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntity(Entities.makeScreenBounds(40));
         spawn("CAR", 30, 30);
+        spawn("Enemy", 20, 20);
     }
 
     public static void main(String[] args){
