@@ -1,7 +1,7 @@
 package Game;
 
-import Game.Components.KeyPressComponent;
-import Game.Components.ServerControlComponent;
+import Game.components.KeyPressComponent;
+import Game.components.ServerControlComponent;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.extra.entity.components.KeepOnScreenComponent;
