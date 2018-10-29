@@ -10,7 +10,7 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
-import Game.Components.KeyPressComponent;
+import Game.components.KeyPressComponent;
 
 import static com.almasb.fxgl.app.DSLKt.onKey;
 import static com.almasb.fxgl.app.DSLKt.spawn;

@@ -1,4 +1,4 @@
-package Game.Components;
+package Game.components;
 
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.PositionComponent;
