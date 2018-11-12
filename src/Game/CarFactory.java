@@ -1,14 +1,12 @@
 package Game;
 
-import Game.components.KeyPressComponent;
-import Game.components.ServerControlComponent;
+import Game.components.MovementComponent;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.extra.entity.components.KeepOnScreenComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import javafx.scene.shape.Rectangle;
-
 
 public class CarFactory implements EntityFactory {
 
@@ -20,9 +18,9 @@ public class CarFactory implements EntityFactory {
         return Entities.builder()
                 .type(EntityType.CAR)
                 .from(data)
-                .viewFromNode(new Rectangle(30, 30))
+                .viewFromNodeWithBBox(new Rectangle(40, 40))
                 .with(new CollidableComponent(true))
-                .with(new KeyPressComponent())
+                .with(new MovementComponent())
                 .with(new KeepOnScreenComponent(true, true))
                 .build();
     }
@@ -37,9 +35,7 @@ public class CarFactory implements EntityFactory {
                 .from(data)
                 .viewFromNode(new Rectangle(30, 30))
                 .with(new CollidableComponent(true))
-                .with(new ServerControlComponent(3000))
                 .with(new KeepOnScreenComponent(true, true))
-                .with(new KeyPressComponent())
                 .build();
     }
 }

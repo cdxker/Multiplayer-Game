@@ -5,12 +5,11 @@ package Game;/*
  */
 
 
-import Game.server.Client;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
-import Game.components.KeyPressComponent;
+import Game.components.MovementComponent;
 
 import static com.almasb.fxgl.app.DSLKt.onKey;
 import static com.almasb.fxgl.app.DSLKt.spawn;
@@ -21,7 +20,7 @@ import static com.almasb.fxgl.app.DSLKt.spawn;
  *
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  */
-public class HelloWorld extends GameApplication {
+public class Game extends GameApplication {
 
     // 1. define types of entities in the game using Enum
 
@@ -31,8 +30,8 @@ public class HelloWorld extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
-        settings.setHeight(600);
+        settings.setWidth(1920);
+        settings.setHeight(1080);
         System.out.println("hi");
         settings.setTitle("InitSample");
         settings.setVersion("0.1");
@@ -42,55 +41,36 @@ public class HelloWorld extends GameApplication {
     protected void initInput() {
         // TODO: extract this to a method
         onKey(KeyCode.A, "Left", ()->{
-            getGameWorld().getEntitiesByComponent(KeyPressComponent.class).forEach((entity)->{
-                KeyPressComponent component =  entity.getComponent(KeyPressComponent.class);
+            getGameWorld().getEntitiesByComponent(MovementComponent.class).forEach((entity)->{
+                MovementComponent component =  entity.getComponent(MovementComponent.class);
                 component.left();
-                System.out.println("h");
             });
 
         });
         System.out.println("h");
         onKey(KeyCode.D, "Right", ()->{
-            getGameWorld().getEntitiesByComponent(KeyPressComponent.class).forEach((entity)->{
-                KeyPressComponent component =  entity.getComponent(KeyPressComponent.class);
+            getGameWorld().getEntitiesByComponent(MovementComponent.class).forEach((entity)->{
+                MovementComponent component =  entity.getComponent(MovementComponent.class);
                 component.right();
             });
 
         });
 
-        onKey(KeyCode.W, "UP", ()->{
-            getGameWorld().getEntitiesByComponent(KeyPressComponent.class).forEach((entity)->{
-                KeyPressComponent component =  entity.getComponent(KeyPressComponent.class);
-                component.up();
+        onKey(KeyCode.W, "Speed up", ()->{
+            getGameWorld().getEntitiesByComponent(MovementComponent.class).forEach((entity)->{
+                MovementComponent component =  entity.getComponent(MovementComponent.class);
+                component.speedUp();
             });
 
         });
 
         onKey(KeyCode.S, "Down", ()->{
-            getGameWorld().getEntitiesByComponent(KeyPressComponent.class).forEach((entity)->{
-                KeyPressComponent component =  entity.getComponent(KeyPressComponent.class);
-                component.down();
+            getGameWorld().getEntitiesByComponent(MovementComponent.class).forEach((entity)->{
+                MovementComponent component =  entity.getComponent(MovementComponent.class);
+                component.slowDown();
             });
 
         });
-
-        onKey(KeyCode.SPACE , "Send", new SendData());
-    }
-
-    public class SendData implements Runnable{
-        public double x, y;
-        public SendData(){
-            x = y = 3;
-        }
-
-        @Override
-        public void run() {
-            Client client = new Client();
-            client.start();
-            client.send(String.format("pos:%f,%f", x, y).getBytes(), 3000);
-            x+= 0.5;
-            y+= 0.5;
-        }
     }
 
     @Override
@@ -98,7 +78,6 @@ public class HelloWorld extends GameApplication {
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntity(Entities.makeScreenBounds(40));
         spawn("CAR", 30, 30);
-        spawn("Enemy", 20, 20);
     }
 
     public static void main(String[] args){
