@@ -1,32 +1,17 @@
-package Game;/*
- * FXGL - JavaFX Game Library. The MIT License (MIT).
- * Copyright (c) AlmasB (almaslvl@gmail.com).
- * See LICENSE for details.
- */
+package Game;
 
-
+import Game.UI.SceneCreator;
+import Game.components.MovementComponent;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
-import Game.components.MovementComponent;
 
 import static com.almasb.fxgl.app.DSLKt.onKey;
 import static com.almasb.fxgl.app.DSLKt.spawn;
 
-/**
- * Shows how to init a basic game object and attach it to the world
- * using fluent API.
- *
- * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
- */
+
 public class Game extends GameApplication {
-
-    // 1. define types of entities in the game using Enum
-
-
-    // make the field instance level
-    // but do NOT init here for properly functioning save-load system
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -35,6 +20,9 @@ public class Game extends GameApplication {
         System.out.println("hi");
         settings.setTitle("InitSample");
         settings.setVersion("0.1");
+
+        settings.setMenuEnabled(true);
+        settings.setSceneFactory(new SceneCreator());
     }
 
     @Override
