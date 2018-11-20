@@ -21,7 +21,6 @@ public class CarFactory implements EntityFactory {
                 .type(EntityType.Car)
                 .from(data)
                 .viewFromNodeWithBBox(texture("arrow.png", 40, 20))
-                .with(physics)
                 .with(new CollidableComponent(true))
                 .with(new MovementComponent())
                 .with(new KeepOnScreenComponent(true, true))
