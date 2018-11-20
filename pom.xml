@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>Game</groupId>
-    <artifactId>Bullet Hail</artifactId>
+    <artifactId>Game</artifactId>
     <version>0.1</version>
 
     <properties>
@@ -27,11 +27,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>javaFX</artifactId>
-            <version>2.2</version>
-            <scope>system</scope>
-            <systemPath>C:\Program Files\Java\jre-10.0.1\lib\javafx-swt</systemPath>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>11</version>
         </dependency>
     </dependencies>
 

@@ -81,7 +81,7 @@ public class GameApp extends GameApplication {
     protected void initGame() {
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntity(Entities.makeScreenBounds(40));
-        spawn("CAR", 30, 30);
+        spawn("Car", 30, 30);
         getAudioPlayer().playMusic("car_hype_music.mp3");
     }
 
