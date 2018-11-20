@@ -20,6 +20,7 @@
 
 out/
 system/fxgl.bundle
+target/
 
 # inteliJ settings
 .idea/*
