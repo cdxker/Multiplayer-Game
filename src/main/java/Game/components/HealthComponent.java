@@ -46,7 +46,7 @@ public class HealthComponent extends Component {
      *
      * @param amount The amount to increase the health by
      */
-    public void incrment(double amount) {
+    public void increment(double amount) {
         health += amount;
         health %= maxHealth;
     }

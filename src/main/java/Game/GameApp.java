@@ -72,9 +72,10 @@ public class GameApp extends GameApplication {
                 HealthComponent carHealth = car.getComponent(HealthComponent.class);
                 DamageComponent damage = bullet.getComponent(DamageComponent.class);
 
-                carHealth.incrment(-damage.getDamage());
+                carHealth.increment(-damage.getDamage());
             }
         });
+        getPhysicsWorld().setGravity(0, 0);
     }
 
     @Override

@@ -16,6 +16,7 @@ public class CarFactory implements EntityFactory {
     public Entity newCar(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
+        physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(0, 5));
 
         return Entities.builder()
                 .type(EntityType.Car)
