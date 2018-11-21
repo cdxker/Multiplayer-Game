@@ -93,7 +93,10 @@ public class GameApp extends GameApplication {
     }
 
     public void gameOver() {
-        getDisplay().showMessageBox("Wow You Suck", this::exit);
+        getDisplay().showConfirmationBox("Play again?", (yes) -> {
+            if (yes) startNewGame();
+            else exit();
+        });
     }
 
     public static void main(String[] args) {
