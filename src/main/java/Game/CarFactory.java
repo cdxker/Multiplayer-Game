@@ -16,6 +16,7 @@ public class CarFactory implements EntityFactory {
     public Entity newCar(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
+        physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(0, 0));
 
         return Entities.builder()
                 .type(EntityType.Car)
@@ -23,6 +24,7 @@ public class CarFactory implements EntityFactory {
                 .viewFromNodeWithBBox(texture("arrow.png", 40, 20))
                 .with(new CollidableComponent(true))
                 .with(new MovementComponent())
+                .with(physics)
                 .with(new KeepOnScreenComponent(true, true))
                 .build();
     }

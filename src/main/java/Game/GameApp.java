@@ -24,9 +24,10 @@ public class GameApp extends GameApplication {
         settings.setTitle("Bullet Hail");
         settings.setVersion("0.1");
 
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
         settings.setSceneFactory(new SceneCreator());
+        settings.setIntroEnabled(false);
+        settings.setMenuEnabled(true);
+
     }
 
     @Override

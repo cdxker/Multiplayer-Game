@@ -23,7 +23,7 @@ public class SceneCreator extends SceneFactory {
     @Override
     public FXGLMenu newMainMenu(GameApplication app) {
         // TODO Create your own
-        return new FXGLDefaultMenu(app, MenuType.MAIN_MENU);
+        return new MenuController(app, MenuType.MAIN_MENU);
     }
 
     @NotNull
