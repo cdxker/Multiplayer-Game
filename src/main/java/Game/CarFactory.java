@@ -23,7 +23,7 @@ public class CarFactory implements EntityFactory {
                 .from(data)
                 .viewFromNodeWithBBox(texture("arrow.png", 40, 20))
                 .with(new CollidableComponent(true))
-                .with(new MovementComponent())
+                .with(new MovementComponent(0,0,2))
                 .with(new KeepOnScreenComponent(true, true))
                 .build();
     }

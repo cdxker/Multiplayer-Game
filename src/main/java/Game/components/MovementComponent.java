@@ -8,49 +8,66 @@ import javafx.geometry.Point2D;
 import static java.lang.Math.*;
 public class MovementComponent extends Component {
 
-    private final double MAX_SPEED;
+    private double refreshRate = 0;
     private RotationComponent rotation;
     private PositionComponent position;
-    private double speed = 5;
-    private double angle = 0;
-    private double refreshRate = 0;
+    private double direction = 0;
 
-    public MovementComponent() {
-        this(50);
-    }
+    private Point2D velocity = new Point2D(0,0);
+    private double enginePower = 0.1;
+    private double linearDrag = 0.93;
+    private double acceleration = 0;
 
-    public MovementComponent(double max_speed) {
-        MAX_SPEED = max_speed;
+    private double angularVelocity = 0;
+    private double steering = 1;
+    private double angularDrag = 0.5;
+
+
+
+    public MovementComponent(double positionX, double positionY, double engineStrength){
+
     }
 
     @Override
     public void onUpdate(double tpf) {
         refreshRate = tpf * 60;
-        System.out.println(speed);
-        position.translate(new Point2D(speed * refreshRate * cos(toRadians(angle)), speed * refreshRate * sin(toRadians(angle))));
+
+        position.translate(velocity);
+        setVelocity(getVelocity().add(Math.cos(direction/180*PI) * acceleration,
+                Math.sin(direction/180*PI) * acceleration));
+        setVelocity(getVelocity().multiply(linearDrag));
+        acceleration *= linearDrag;
+        direction += angularVelocity;
+        rotation.setValue(direction);
+        angularVelocity *= angularDrag;
     }
 
-    public void speedUp() {
-        speed += 1;
-        if (speed > MAX_SPEED) {
-            speed = MAX_SPEED;
+    public void speedUp(){
+        acceleration += enginePower;
+    }
+
+    public void slowDown(){
+        if(velocity.magnitude() > 0.1){
+            velocity.multiply(0.8);
+        } else {
+            velocity.subtract(velocity);
         }
+
     }
 
-    public void slowDown() {
-        speed -= 1;
-        if (speed < -MAX_SPEED / 2) {
-            speed = -MAX_SPEED / 2;
-        }
+    public void steerRight(){
+        angularVelocity += steering;
     }
 
-    public void left() {
-        angle -= 5;
-        rotation.rotateBy(-5);
+    public void steerLeft(){
+        angularVelocity -= steering;
     }
 
-    public void right() {
-        angle += 5;
-        rotation.rotateBy(5);
+    public Point2D getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(Point2D velocity) {
+        this.velocity = velocity;
     }
 }

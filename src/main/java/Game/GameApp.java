@@ -19,8 +19,8 @@ public class GameApp extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1920);
-        settings.setHeight(1080);
+        settings.setWidth(1000);
+        settings.setHeight(600);
         settings.setTitle("Bullet Hail");
         settings.setVersion("0.1");
 
@@ -35,14 +35,14 @@ public class GameApp extends GameApplication {
         onKey(KeyCode.A, "Left", () -> {
             getGameWorld().getEntitiesByComponent(MovementComponent.class).forEach((entity) -> {
                 MovementComponent component = entity.getComponent(MovementComponent.class);
-                component.left();
+                component.steerLeft();
             });
 
         });
         onKey(KeyCode.D, "Right", () -> {
             getGameWorld().getEntitiesByComponent(MovementComponent.class).forEach((entity) -> {
                 MovementComponent component = entity.getComponent(MovementComponent.class);
-                component.right();
+                component.steerRight();
             });
 
         });
@@ -83,7 +83,7 @@ public class GameApp extends GameApplication {
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntity(Entities.makeScreenBounds(40));
         spawn("Car", 30, 30);
-        getAudioPlayer().playMusic("car_hype_music.mp3");
+//        getAudioPlayer().playMusic("car_hype_music.mp3");
     }
 
     public static void main(String[] args) {
