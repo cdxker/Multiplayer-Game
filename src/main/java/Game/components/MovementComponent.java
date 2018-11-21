@@ -1,11 +1,12 @@
 package Game.components;
 
+import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.entity.components.PositionComponent;
 import com.almasb.fxgl.entity.components.RotationComponent;
+import com.almasb.fxgl.physics.PhysicsComponent;
 import javafx.geometry.Point2D;
 
-import static java.lang.Math.*;
+import static java.lang.Math.PI;
 
 public class MovementComponent extends Component {
 
@@ -15,11 +16,10 @@ public class MovementComponent extends Component {
      * The 3 fields below describe the vehicle's non-moving states
      */
 
+    private PhysicsComponent physicsComponent;
+
     // The angle at which the vehicle is facing
     private RotationComponent orientation;
-
-    // The location of the vehicle on the screen
-    private PositionComponent position;
 
     /*
      * The 5 fields below describe the vehicle's linear motion
@@ -78,8 +78,6 @@ public class MovementComponent extends Component {
      */
 
     public MovementComponent(double enginePower, double velocityDrag, double accelerationDrag, double steering, double angularDrag){
-        position = new PositionComponent(0,0);
-        orientation = new RotationComponent(0);
         velocity = new Point2D(0,0);
         this.enginePower = enginePower;
         this.velocityDrag = velocityDrag;
@@ -97,9 +95,6 @@ public class MovementComponent extends Component {
     public void onUpdate(double tpf) {
         refreshRate = tpf * 60;
 
-        // Changes position by velocity
-        position.translate(velocity);
-
         /* Changes velocity by acceleration
          * Since velocity is a vector, and acceleration is represented by
          * a one-dimensional double value, each component is calculated using trigonometry
@@ -109,18 +104,22 @@ public class MovementComponent extends Component {
          * This has the effect of drifting/skidding when the vehicle turns at a sharp angle
          * or at high speed
          */
+
+        physicsComponent.setBodyLinearVelocity(new Vec2(getVelocity().getX(),
+                -getVelocity().getY()));
+
+
         setVelocity(getVelocity().add(Math.cos(orientation.getValue() / 180 * PI) * acceleration,
-                                    Math.sin(orientation.getValue() / 180 * PI) * acceleration));
+                Math.sin(orientation.getValue() / 180 * PI) * acceleration));
 
         // Dampening of the vehicle's linear motion due to drag
         setVelocity(getVelocity().multiply(velocityDrag));
         acceleration *= accelerationDrag;
 
-        // Rotates the vehicle
-        orientation.rotateBy(angularVelocity);
-
         // Dampening of the vehicle's rotation due to drag
         angularVelocity *= angularDrag;
+
+        physicsComponent.setAngularVelocity(angularVelocity);
     }
 
     /*

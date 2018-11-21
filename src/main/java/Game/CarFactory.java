@@ -16,13 +16,14 @@ public class CarFactory implements EntityFactory {
     public Entity newCar(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
-        physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(0, 5));
+        physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(0, 0));
 
         return Entities.builder()
                 .type(EntityType.Car)
                 .from(data)
                 .viewFromNodeWithBBox(texture("arrow.png", 40, 20))
                 .with(new CollidableComponent(true))
+                .with(physics)
                 .with(new MovementComponent(0.05,0.95,0.90,1,0.5))
                 .with(new KeepOnScreenComponent(true, true))
                 .build();
