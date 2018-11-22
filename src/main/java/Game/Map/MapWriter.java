@@ -4,15 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-
+import static Game.FileUtilties.FileUtilities.writeText;
 import static Game.Map.MapReader.getNameFromJson;
+import static Game.Map.MapUtilities.getCustomMapsDir;
 
 /*
  * This class is used for taking maps and turning them into files that can be stored.
@@ -45,25 +39,46 @@ import static Game.Map.MapReader.getNameFromJson;
 }
  */
 public class MapWriter {
+    /*
+     * Returns a string that is a serialized (disk representation) Map object.
+     * @param map The Map object to be serialized.
+     * @return A string that is the disk representation of map.
+     */
     public static String serializeMap(Map map) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(map);
     }
 
-    public static void writeToDisk(Map map) {
-        writeToDisk(serializeMap(map));
+    /*
+     * Overloaded writeToDisk(String json) method that turns a memory
+     * representation of a map into a disk representation of a map and writes
+     * it to a file in {customMapsDir}\{name of map}.json
+     * @return The string path of the written file.
+     */
+    public static String writeToDisk(Map map) {
+        return writeToDisk(serializeMap(map));
     }
 
-    public static void writeToDisk(String json) {
+    /*
+     * Takes a disk representation of a map as a string and writes it to a file
+     * in {customMapsDir}\{name of map}.json
+     * @return The string path of the written file.
+     */
+    public static String writeToDisk(String json) {
         JsonObject rootJson = MapReader.getJsonObject(json);
         String mapName = getNameFromJson(rootJson);
-        String fileName = mapName + ".json";
-        List<String> lines = Arrays.asList(json.split("\n"));
-        Path file = Paths.get(fileName);
-        try {
-            Files.write(file, lines, Charset.forName("UTF-8"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return writeToDisk(json, mapName);
+    }
+
+    /*
+     * Takes a disk representation of a map as a string and writes it to a file
+     * in {customMapsDir}\{fileName}.json
+     * @return The string path of the written file.
+     */
+    public static String writeToDisk(String json, String fileName) {
+        String fullPath = getCustomMapsDir() + fileName + ".json";
+        String finalPath = writeText(fullPath, json);
+        System.out.println("Wrote \"" + fileName + ",\" a map, to " + finalPath);
+        return finalPath;
     }
 }
