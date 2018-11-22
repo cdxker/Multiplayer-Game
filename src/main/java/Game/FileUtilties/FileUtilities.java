@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FileUtilities {
-    /*
+    /**
      * Helpful method to avoid repeating boilerplate code for writing text to a file.
      * @param stringPath Path to file location.
      * @param content String containing the content to be put in the file.
@@ -28,7 +28,7 @@ public class FileUtilities {
         return path.toString();
     }
 
-    /*
+    /**
      * Helpful overloaded method of writeText(String, String, Charset). This
      * method uses the UTF-8 charset by default.
      * @param stringPath Path to file location.
@@ -39,7 +39,7 @@ public class FileUtilities {
         return writeText(stringPath, content, Charset.forName("UTF-8"));
     }
 
-    /*
+    /**
      * Helpful method that takes a string path, turns it into a File object,
      * and then returns whatever .toString() gives when called on the File
      * object but the string has also has concatenated a \ at the end. This is

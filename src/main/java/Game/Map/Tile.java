@@ -3,7 +3,7 @@ package Game.Map;
 import javafx.geometry.Point2D;
 
 
-/*
+/**
  * Representation of a game tile
  */
 public class Tile {
@@ -11,7 +11,7 @@ public class Tile {
     private String type;
     private Point2D pos;
 
-    /*
+    /**
      * Creates a Tile object with a uniqueId, type, and position.
      */
     public Tile(String uniqueId, String type, Point2D pos) {
@@ -20,7 +20,7 @@ public class Tile {
         this.pos = pos;
     }
 
-    /*
+    /**
      * Creates a Tile object using the object's HashCode as the uniqueId.
      * Helpful if you want something else to come up with a HashCode rather than yourself.
      */
@@ -30,7 +30,7 @@ public class Tile {
         this.uniqueId = Integer.toString(this.getHashCode());
     }
 
-    /*
+    /**
      * Useful constructor for removing a certain tile out of a Set.
      */
     public Tile(String uniqueId) {
@@ -63,7 +63,7 @@ public class Tile {
         this.pos = pos;
     }
 
-    /*
+    /**
      * Two Tile objects are equal if they have matching uniqueId's.
      */
     @Override
@@ -74,7 +74,7 @@ public class Tile {
         return this.getUniqueId().equals(other.getUniqueId());
     }
 
-    /*
+    /**
      * This hashcode method is overridden in order to force the use of the overridden equals method.
      * Use getHashCode() instead if you need the Tile object's hashcode.
      */

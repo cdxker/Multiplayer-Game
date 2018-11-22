@@ -8,7 +8,7 @@ import javafx.geometry.Point2D;
 import java.util.HashSet;
 import java.util.Iterator;
 
-/*
+/**
  * This class is used for de-serializing an object from a file which means
  * taking a file that has information of an object's state and turning
  * that back into an actual object in memory.
@@ -55,6 +55,7 @@ public class MapReader {
     }
 
     public static String getNameFromJson(JsonObject rootJson) {
+        /* The replaceAll call removes " from the beginning and ending of the string. */
         return rootJson.get("name").toString().replaceAll("(?:^\")|(?:\"$)", "");
     }
 }

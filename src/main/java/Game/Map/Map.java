@@ -41,14 +41,14 @@ public class Map {
         this.tiles = tiles;
     }
 
-    /*
+    /**
      * Adds a tile to the set of tiles if tile's uniqueId does belong to any other tile in the set of tiles.
      */
     public boolean addTile(Tile tile) {
         return tiles.add(tile);
     }
 
-    /*
+    /**
      * Removes a tile from the set of tiles using tile's uniqueId
      */
     public boolean removeTile(Tile tile) {

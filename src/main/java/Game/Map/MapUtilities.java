@@ -9,7 +9,7 @@ import java.util.Set;
 import static Game.FileUtilties.FileUtilities.getDirectoryWithSlash;
 import static Game.FileUtilties.FileUtilities.writeText;
 
-/*
+/**
  * Useful methods that do not naturally belong to the other classes in the Map package.
  */
 public class MapUtilities {
@@ -46,7 +46,7 @@ public class MapUtilities {
     }
 
 
-    /*
+    /**
      *  This method is useful because it will always give a directory with a slash at the end.
      */
     public static String getCustomMapsDir() {

@@ -8,7 +8,7 @@ import static Game.FileUtilties.FileUtilities.writeText;
 import static Game.Map.MapReader.getNameFromJson;
 import static Game.Map.MapUtilities.getCustomMapsDir;
 
-/*
+/**
  * This class is used for taking maps and turning them into files that can be stored.
  * This is done by serializing the map objects into JSON files which basically means
  * taking an object's instance variables and storing that into a string. This class
@@ -39,7 +39,7 @@ import static Game.Map.MapUtilities.getCustomMapsDir;
 }
  */
 public class MapWriter {
-    /*
+    /**
      * Returns a string that is a serialized (disk representation) Map object.
      * @param map The Map object to be serialized.
      * @return A string that is the disk representation of map.
@@ -49,7 +49,7 @@ public class MapWriter {
         return gson.toJson(map);
     }
 
-    /*
+    /**
      * Overloaded writeToDisk(String json) method that turns a memory
      * representation of a map into a disk representation of a map and writes
      * it to a file in {customMapsDir}\{name of map}.json
@@ -59,7 +59,7 @@ public class MapWriter {
         return writeToDisk(serializeMap(map));
     }
 
-    /*
+    /**
      * Takes a disk representation of a map as a string and writes it to a file
      * in {customMapsDir}\{name of map}.json
      * @return The string path of the written file.
@@ -70,7 +70,7 @@ public class MapWriter {
         return writeToDisk(json, mapName);
     }
 
-    /*
+    /**
      * Takes a disk representation of a map as a string and writes it to a file
      * in {customMapsDir}\{fileName}.json
      * @return The string path of the written file.
