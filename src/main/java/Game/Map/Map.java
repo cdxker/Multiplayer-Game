@@ -1,5 +1,7 @@
 package Game.Map;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 public class Map {
@@ -9,6 +11,18 @@ public class Map {
     public Map(Set<Tile> tiles, String name) {
         this.tiles = tiles;
         this.name = name;
+    }
+
+    /**
+     * Constructs a Map
+     * Uses:
+     * new Map(name, tile1, tile2, tile3)
+     *
+     * @param name  The name of the map
+     * @param tiles an unspecified amount of tiles
+     */
+    public Map(String name, Tile... tiles) {
+        this(new HashSet<Tile>(Arrays.asList(tiles)), name);
     }
 
     public String getName() {
