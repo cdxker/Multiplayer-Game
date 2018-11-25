@@ -16,12 +16,17 @@ public class FileUtilities {
      * @param content String containing the content to be put in the file.
      * @param cs The character set to be used for the file.
      * @return the path of the written file as a string.
+     * TODO: This method needs better error handling
      */
     public static String writeText(String stringPath, String content, Charset cs) {
         List<String> lines = Arrays.asList(content.split("\n"));
         Path path = Paths.get(stringPath);
         try {
-            Files.write(path, lines, cs);
+            if (ensureFileExists(stringPath)) {
+                Files.write(path, lines, cs);
+            } else {
+                System.out.println(stringPath + " was not successfully written to.");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -50,5 +55,20 @@ public class FileUtilities {
      */
     public static String getDirectoryWithSlash(String path) {
         return new File(path).toString() + "\\";
+    }
+
+    /**
+     * This method can be used to ensure that directories a path points through are created, if necessary, along with
+     * the file the path points to.
+     *
+     * @param stringPath The string path which points to a file. Can be relative or absolute.
+     * @return Returns a boolean indicating whether the directories and the file exist.
+     */
+    public static boolean ensureFileExists(String stringPath) throws IOException {
+        File file = new File(stringPath);
+        File parentFile = file.getParentFile();
+        parentFile.mkdirs();
+        file.createNewFile();
+        return parentFile.exists() && file.exists();
     }
 }

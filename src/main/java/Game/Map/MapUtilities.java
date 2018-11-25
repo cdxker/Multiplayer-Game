@@ -32,7 +32,6 @@ public class MapUtilities {
     }
 
     public static void createCustomMapsDir() {
-        new File(customMapsDir).mkdirs(); // Make required directories for customMapsDir if needed
         createExampleMap(); // Place an example map into the customMapsDir
         createReadMeFile();
     }
