@@ -1,5 +1,7 @@
 package Game;
 
+import Game.Map.MapBuilder;
+import Game.Map.MapReader;
 import Game.Map.MapUtilities;
 import Game.UI.SceneCreator;
 import Game.components.DamageComponent;
@@ -13,7 +15,6 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 
 import static com.almasb.fxgl.app.DSLKt.onKey;
-import static com.almasb.fxgl.app.DSLKt.spawn;
 
 
 public class GameApp extends GameApplication {
@@ -81,14 +82,18 @@ public class GameApp extends GameApplication {
 
     public static void main(String[] args) {
         MapUtilities.createCustomMapsDir();
-        // launch(args);
+        launch(args);
     }
 
     @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new CarFactory());
+        getGameWorld().addEntityFactory(new TileFactory());
         getGameWorld().addEntity(Entities.makeScreenBounds(40));
-        spawn("Car", 30, 30);
+
+        // Map is created in initGame
+        MapBuilder.createMap(MapReader.readMapFromDisk("ExampleMap.json"));
+
         //getAudioPlayer().playMusic("car_hype_music.mp3");
     }
 }
