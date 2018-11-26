@@ -19,7 +19,7 @@ public class MapUtilities {
         System.out.println("Map name:" + map.getName());
         Set<Tile> t = map.getTiles();
         for (Object tile : t.toArray()) {
-            Tile ti = (Tile) tile;
+            Tile ti = (Tile) tile; // gtx 1080 ti
             System.out.println("UID:" + ti.getUniqueId());
             System.out.println("xPos:" + ti.getPos().getX());
             System.out.println("yPos:" + ti.getPos().getY());
@@ -45,6 +45,7 @@ public class MapUtilities {
     }
 
 
+
     /**
      *  This method is useful because it will always give a directory with a slash at the end.
      */
@@ -55,7 +56,7 @@ public class MapUtilities {
     public static void createExampleMap() {
         HashSet<Tile> tiles = new HashSet<>();
         tiles.add(new Tile("wood", new Point2D(0, 0)));
-        tiles.add(new Tile("Ice", new Point2D(0, 10)));
+        tiles.add(new Tile("ice", new Point2D(0, 10)));
         Map map = new Map(tiles, "ExampleMap");
         MapWriter.writeToDisk(map);
     }
