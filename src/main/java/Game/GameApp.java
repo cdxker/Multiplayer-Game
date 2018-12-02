@@ -1,6 +1,8 @@
 package Game;
 
+import Game.Map.Map;
 import Game.Map.MapBuilder;
+import Game.Map.MapNotFoundException;
 import Game.Map.MapReader;
 import Game.Map.MapUtilities;
 import Game.UI.SceneCreator;
@@ -15,6 +17,12 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 
 import static com.almasb.fxgl.app.DSLKt.*;
+
+import java.io.File;
+import java.io.IOException;
+
+import static Game.Map.MapReader.getCustomMap;
+import static com.almasb.fxgl.app.DSLKt.onKey;
 
 
 public class GameApp extends GameApplication {
@@ -81,7 +89,22 @@ public class GameApp extends GameApplication {
     }
 
     public static void main(String[] args) {
-        MapUtilities.createCustomMapsDir();
+        try {
+            MapUtilities.createCustomMapsDir();
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        try {
+            Map exampleMap = getCustomMap("ExampleMap");
+            System.out.println(exampleMap);
+        } catch (MapNotFoundException e) {
+            System.out.println("Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        System.out.println("Done!");
         launch(args);
     }
 
@@ -91,9 +114,12 @@ public class GameApp extends GameApplication {
         getGameWorld().addEntityFactory(new TileFactory());
         getGameWorld().addEntity(Entities.makeScreenBounds(40));
         spawn("Car", 30, 30);
-        //getAudioPlayer().playMusic("car_hype_music.mp3");
         // Map is created in initGame
-        MapBuilder.createMap(MapReader.readMapFromDisk("ExampleMap.json"));
+        try {
+            MapBuilder.createMap(MapReader.createMapFromFile(new File("ExampleMap.json"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         //getAudioPlayer().playMusic("car_hype_music.mp3");
     }

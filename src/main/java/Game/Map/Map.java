@@ -54,4 +54,41 @@ public class Map {
     public boolean removeTile(Tile tile) {
         return tiles.remove(tile);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder retStr = new StringBuilder("Map name:" + getName() + "\n");
+        for (Object ti : getTiles().toArray()) {
+            Tile tiles = (Tile) ti;
+            retStr.append("UID:").append(tiles.getUniqueId()).append("\n");
+            retStr.append("xPos:").append(tiles.getPos().getX()).append("\n");
+            retStr.append("yPos:").append(tiles.getPos().getY()).append("\n");
+            retStr.append("type:").append(tiles.getType()).append("\n");
+        }
+        return retStr.toString();
+    }
+
+    /**
+     * Two Tile objects are equal if they have matching uniqueId's.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Map))
+            return false;
+        Map other = (Map) o;
+        return this.getName().equals(other.getName());
+    }
+
+    /**
+     * This hashcode method is overridden in order to force the use of the overridden equals method.
+     * Use getHashCode() instead if you need the Tile object's hashcode.
+     */
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    public int getHashCode() {
+        return super.hashCode();
+    }
 }
