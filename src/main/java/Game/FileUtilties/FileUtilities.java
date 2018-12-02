@@ -15,33 +15,27 @@ public class FileUtilities {
      * @param stringPath Path to file location.
      * @param content String containing the content to be put in the file.
      * @param cs The character set to be used for the file.
-     * @return the path of the written file as a string.
-     * TODO: This method needs better error handling
+     * @return the path of the written file as a Path.
+     * @throws IOException if an I/O error occurs writing to or creating the
+     *                     file, or the text cannot be encoded using the specified charset
      */
-    public static String writeText(String stringPath, String content, Charset cs) {
-        List<String> lines = Arrays.asList(content.split("\n"));
+    public static Path writeString(String stringPath, String content, Charset cs) throws IOException {
         Path path = Paths.get(stringPath);
-        try {
-            if (ensureFileExists(stringPath)) {
-                Files.write(path, lines, cs);
-            } else {
-                System.out.println(stringPath + " was not successfully written to.");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return path.toString();
+        ensureFileExists(stringPath);
+        return Files.writeString(path, content, cs);
     }
 
     /**
-     * Helpful overloaded method of writeText(String, String, Charset). This
-     * method uses the UTF-8 charset by default.
+     * Helpful overloaded method of writeText(String, String, Charset) that
+     * uses the UTF-8 charset by default.
      * @param stringPath Path to file location.
      * @param content String containing the content to be put in the file.
-     * @return the path of the written file as a string.
+     * @return the path of the written file as a Path.
+     * @throws IOException if an I/O error occurs writing to or creating the
+     *                     file, or the text cannot be encoded using the specified charset
      */
-    public static String writeText(String stringPath, String content) {
-        return writeText(stringPath, content, Charset.forName("UTF-8"));
+    public static Path writeString(String stringPath, String content) throws IOException {
+        return writeString(stringPath, content, Charset.forName("UTF-8"));
     }
 
     /**
