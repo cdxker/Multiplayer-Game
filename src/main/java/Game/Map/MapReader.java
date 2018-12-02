@@ -6,11 +6,15 @@ import com.google.gson.JsonParser;
 import javafx.geometry.Point2D;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Scanner;
+import java.util.List;
 import java.util.logging.Logger;
+
+import static Game.FileUtilties.FileUtilities.getFilesFromDir;
+import static Game.Map.MapUtilities.getCustomMapsDir;
 
 /**
  * This class is used for de-serializing an object from a file which means
@@ -27,25 +31,49 @@ public class MapReader {
         return new Map(tiles, name);
     }
 
-    /**
-     * Reads the file in the CustomMap directory and returns a map
-     *
-     * @param filename The name of the map file (including the '.json')
-     * @return A map to be used
-     */
-    public static Map readMapFromDisk(String filename) {
-        Scanner scanner = null;
-        try {
-            scanner = new Scanner(new File(MapUtilities.getCustomMapsDir() + filename));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+    public static Map getCustomMap(String mapName) throws MapNotFoundException {
+        HashSet<Map> maps = getCustomMaps();
+        for (Map map : maps) {
+            if (map.getName().equals(mapName)) {
+                return map;
+            }
         }
-        logger.info(String.format("Parsing the map %s", MapUtilities.getCustomMapsDir() + filename));
-        String text = scanner.useDelimiter("\\A").next(); // Uses magic to parse to the end of file
+        throw new MapNotFoundException("Requested map not found.");
+    }
 
-        logger.info(String.format("Text Parsed is %s", text));
-        scanner.close();
-        return createMapFromJson(text);
+    public static HashSet<Map> getCustomMaps() {
+        List<File> files = getFilesFromDir(getCustomMapsDir(), ".json");
+        return MapReader.getSerializedMaps(files);
+    }
+
+    public static Map createMapFromFile(File file) throws IOException {
+        return createMapFromJson(Files.readString(file.toPath()));
+    }
+
+    public static HashSet<Map> getSerializedMaps(File... files) {
+        HashSet<Map> maps = new HashSet<>();
+        for (File file : files) {
+            try {
+                maps.add(createMapFromFile(file));
+            } catch (IOException e) {
+                // Ignore map if problem occurs attempting to create it.
+            }
+        }
+        return maps;
+    }
+
+    /**
+     * This method allows for the use of a list of File objects to be serialized instead of using an array of File objects.
+     *
+     * @param files List of File objects to be serialized into Map objects.
+     * @return An array of serialized Map objects from the files parameter.
+     */
+    public static HashSet<Map> getSerializedMaps(List<File> files) {
+        HashSet<Map> maps = new HashSet<>();
+        for (File file : files) {
+            maps.addAll(getSerializedMaps(file));
+        }
+        return maps;
     }
 
     public static JsonObject getJsonObject(String jsonData) {
