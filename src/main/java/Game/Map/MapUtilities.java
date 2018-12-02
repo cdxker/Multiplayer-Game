@@ -4,9 +4,7 @@ import javafx.geometry.Point2D;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 import static Game.FileUtilties.FileUtilities.getDirectoryWithSlash;
 import static Game.FileUtilties.FileUtilities.writeString;
@@ -16,18 +14,6 @@ import static Game.FileUtilties.FileUtilities.writeString;
  */
 public class MapUtilities {
     private static String customMapsDir = "CustomMap\\";
-
-    public static void printMapInfo(Map map) {
-        System.out.println("Map name:" + map.getName());
-        Set<Tile> t = map.getTiles();
-        for (Object tile : t.toArray()) {
-            Tile ti = (Tile) tile; // gtx 1080 ti
-            System.out.println("UID:" + ti.getUniqueId());
-            System.out.println("xPos:" + ti.getPos().getX());
-            System.out.println("yPos:" + ti.getPos().getY());
-            System.out.println("type:" + ti.getType());
-        }
-    }
 
     public static boolean doesCustomMapsDirExist() {
         return new File(customMapsDir).isDirectory();
