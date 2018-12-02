@@ -4,7 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import static Game.FileUtilties.FileUtilities.writeText;
+import java.io.IOException;
+import java.nio.file.Path;
+
+import static Game.FileUtilties.FileUtilities.writeString;
 import static Game.Map.MapReader.getNameFromJson;
 import static Game.Map.MapUtilities.getCustomMapsDir;
 
@@ -50,35 +53,33 @@ public class MapWriter {
     }
 
     /**
-     * Overloaded writeToDisk(String json) method that turns a memory
+     * Overloaded writeMapToDisk(String json) method that turns a memory
      * representation of a map into a disk representation of a map and writes
      * it to a file in {customMapsDir}\{name of map}.json
-     * @return The string path of the written file.
+     * @return A Path object of the written file.
      */
-    public static String writeToDisk(Map map) {
-        return writeToDisk(serializeMap(map));
+    public static Path writeMapToDisk(Map map) throws IOException {
+        return writeMapToDisk(serializeMap(map));
     }
 
     /**
      * Takes a disk representation of a map as a string and writes it to a file
      * in {customMapsDir}\{name of map}.json
-     * @return The string path of the written file.
+     * @return A Path object of the written file.
      */
-    public static String writeToDisk(String json) {
+    public static Path writeMapToDisk(String json) throws IOException {
         JsonObject rootJson = MapReader.getJsonObject(json);
         String mapName = getNameFromJson(rootJson);
-        return writeToDisk(json, mapName);
+        return writeMapToDisk(json, mapName);
     }
 
     /**
      * Takes a disk representation of a map as a string and writes it to a file
      * in {customMapsDir}\{fileName}.json
-     * @return The string path of the written file.
+     * @return A Path object of the written file.
      */
-    public static String writeToDisk(String json, String fileName) {
+    public static Path writeMapToDisk(String json, String fileName) throws IOException {
         String fullPath = getCustomMapsDir() + fileName + ".json";
-        String finalPath = writeText(fullPath, json);
-        System.out.println("Wrote \"" + fileName + ",\" a map, to " + finalPath);
-        return finalPath;
+        return writeString(fullPath, json);
     }
 }
