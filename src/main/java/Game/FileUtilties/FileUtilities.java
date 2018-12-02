@@ -6,7 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtilities {
@@ -60,15 +60,51 @@ public class FileUtilities {
     /**
      * This method can be used to ensure that directories a path points through are created, if necessary, along with
      * the file the path points to.
-     *
      * @param stringPath The string path which points to a file. Can be relative or absolute.
-     * @return Returns a boolean indicating whether the directories and the file exist.
+     * @return Returns a File object of the stringPath
      */
-    public static boolean ensureFileExists(String stringPath) throws IOException {
-        File file = new File(stringPath);
-        File parentFile = file.getParentFile();
-        parentFile.mkdirs();
+    public static File ensureFileExists(String stringPath) throws IOException {
+        return ensureFileExists(new File(stringPath));
+    }
+
+    /**
+     * This method can be used to ensure that directories a path points through are created, if necessary, along with
+     * the file the path points to.
+     *
+     * @param file the File object that points to a file.
+     * @return Returns the file parameter
+     */
+    public static File ensureFileExists(File file) throws IOException {
+        ensureDirExist(file);
         file.createNewFile();
-        return parentFile.exists() && file.exists();
+        return file;
+    }
+
+    public static File ensureDirExist(String stringPath) {
+        return ensureDirExist(new File(stringPath));
+    }
+
+    public static File ensureDirExist(File dir) {
+        dir = dir.getAbsoluteFile();
+        if (!dir.isDirectory()) {
+            dir = dir.getParentFile();
+        }
+        dir.mkdirs();
+        return dir;
+    }
+
+    public static List<File> getFilesFromDir(String stringPath, String extension) {
+        File dir = ensureDirExist(stringPath);
+        List<File> files = new ArrayList<>();
+        for (File file : dir.listFiles()) {
+            if (hasExtension(file, extension)) {
+                files.add(file);
+            }
+        }
+        return files;
+    }
+
+    public static boolean hasExtension(File file, String extension) {
+        return file.getName().endsWith(extension);
     }
 }
