@@ -1,6 +1,8 @@
 package Game.components;
 
 
+import Game.GameApp;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 
@@ -30,11 +32,11 @@ public class HealthComponent extends Component {
         this.health = startingHealth;
     }
 
-    @Override
-    public void onAdded() {
-        super.onAdded();
+    private void killEntity() {
         Entity entity = getEntity();
-
+        entity.removeFromWorld();
+        // TODO : add dying animation
+        FXGL.<GameApp>getAppCast().gameOver();
     }
 
     public double getHealth() {
@@ -49,5 +51,9 @@ public class HealthComponent extends Component {
     public void increment(double amount) {
         health += amount;
         health %= maxHealth;
+        if (health <= 0) {
+            health = 0;
+            killEntity();
+        }
     }
 }

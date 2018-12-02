@@ -12,8 +12,10 @@ import Game.components.MovementComponent;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 
 import static com.almasb.fxgl.app.DSLKt.*;
@@ -22,7 +24,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static Game.Map.MapReader.getCustomMap;
-import static com.almasb.fxgl.app.DSLKt.onKey;
+
 
 
 public class GameApp extends GameApplication {
@@ -81,7 +83,7 @@ public class GameApp extends GameApplication {
             protected void onCollision(Entity car, Entity bullet) {
                 HealthComponent carHealth = car.getComponent(HealthComponent.class);
                 DamageComponent damage = bullet.getComponent(DamageComponent.class);
-
+                System.out.println("ouch");
                 carHealth.increment(-damage.getDamage());
             }
         });
@@ -121,6 +123,16 @@ public class GameApp extends GameApplication {
             e.printStackTrace();
         }
 
-        //getAudioPlayer().playMusic("car_hype_music.mp3");
+        Point2D velocity = new Point2D(-5, 8);
+        spawn("Bouncy Bullet", new SpawnData(30, 30).put("velocity", velocity));
     }
+
+    public void gameOver() {
+        getDisplay().showConfirmationBox("Play again?", (yes) -> {
+            if (yes) startNewGame();
+            else exit();
+        });
+    }
+
+
 }
