@@ -9,6 +9,7 @@ import javafx.beans.binding.StringBinding;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -20,12 +21,18 @@ public class MenuController extends FXGLMenu {
 
     public MenuController(GameApplication app, MenuType type) {
         super(app, type);
+        Node menu;
         switch (type) {
             case MAIN_MENU:
-            case GAME_MENU:
-
+                menu = new MainMenu();
                 break;
+            case GAME_MENU:
+                menu = new MainMenu(); // temp
+                break;
+            default:
+                menu = new MainMenu();
         }
+        menuRoot.getChildren().add(menu);
 
     }
 
@@ -33,7 +40,7 @@ public class MenuController extends FXGLMenu {
     /**
      * Provides a transition between multiple menus
      *
-     * @param menu
+     * @param menu the menu to swap to
      */
     @Override
     protected void switchMenuTo(Node menu) {
@@ -72,6 +79,7 @@ public class MenuController extends FXGLMenu {
             getAudioPlayer().playSound("menu_click.wav");
             command.run();
         });
+
         return button;
     }
 
@@ -87,10 +95,17 @@ public class MenuController extends FXGLMenu {
         return createActionButton(name.getValue(), command);
     }
 
+    /**
+     * Creates the background
+     *
+     * @param width  the width of the screen
+     * @param height the height of the screen
+     * @return A new background Node
+     */
     @Override
     protected Node createBackground(double width, double height) {
         Rectangle bg = new Rectangle(width, height);
-
+        bg.setFill(Color.BLACK);
         return bg;
     }
 
@@ -118,22 +133,20 @@ public class MenuController extends FXGLMenu {
     public class MainMenu extends VBox {
 
         public MainMenu() {
-            Button startButton = createActionButton("New Game", () -> fireNewGame());
-            Button optionsButton = createActionButton("Options", () -> {
-                switchMenuTo(new OptionsMenu());
-            });
+            super(20);
+            Button startButton = createActionButton("New Game", () -> fireNewGame()); // mabye change this to game types
+            Button optionsButton = createActionButton("Options", () -> switchMenuTo(new OptionsMenu(this)));
             Button exitButton = createActionButton("Exit", () -> fireExit());
-            VBox menu = new VBox(20, startButton, optionsButton, exitButton);
-            menu.setTranslateY(app.getHeight() / 2);
-            menu.setTranslateX(app.getWidth() / 2);
-            menuRoot.getChildren().add(menu);
-
+            getChildren().addAll(startButton, optionsButton, exitButton);
+            setTranslateY(app.getHeight() / 2.0);
+            setTranslateX(app.getWidth() / 16.0);
         }
     }
 
     public class OptionsMenu extends VBox {
-        public OptionsMenu() {
-
+        public OptionsMenu(Node previousMenu) {
+            super(20);
+            Button backButton = createActionButton("Back", () -> switchMenuTo(previousMenu));
         }
     }
 
