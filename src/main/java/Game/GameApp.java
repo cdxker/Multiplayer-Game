@@ -1,6 +1,9 @@
 package Game;
 
-import Game.Map.*;
+import Game.Map.Map;
+import Game.Map.MapBuilder;
+import Game.Map.MapNotFoundException;
+import Game.Map.MapUtilities;
 import Game.UI.SceneCreator;
 import Game.components.DamageComponent;
 import Game.components.HealthComponent;
@@ -14,7 +17,6 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 
-import java.io.File;
 import java.io.IOException;
 
 import static Game.Map.MapReader.getCustomMap;
@@ -114,8 +116,8 @@ public class GameApp extends GameApplication {
         spawn("Car", 30, 30);
         // Map is created in initGame
         try {
-            MapBuilder.createMap(MapReader.createMapFromFile(new File("ExampleMap.json")));
-        } catch (IOException e) {
+            MapBuilder.createMap(getCustomMap("ExampleMap"));
+        } catch (MapNotFoundException e) {
             e.printStackTrace();
         }
 
