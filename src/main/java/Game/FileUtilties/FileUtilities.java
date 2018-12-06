@@ -87,10 +87,14 @@ public class FileUtilities {
         return dir;
     }
 
-    public static List<File> getFilesFromDir(String stringPath, String extension) {
+    public static List<File> getFilesFromDir(String stringPath, String extension) throws IOException {
         File dir = ensureDirExist(stringPath);
         List<File> files = new ArrayList<>();
-        for (File file : dir.listFiles()) {
+        File[] dirFiles = dir.listFiles();
+        if (dirFiles == null) {
+            throw new IOException("Cannot read files from " + stringPath);
+        }
+        for (File file : dirFiles) {
             if (hasExtension(file, extension)) {
                 files.add(file);
             }
