@@ -41,9 +41,19 @@ public class MapReader {
         throw new MapNotFoundException("Requested map not found.");
     }
 
+    /**
+     * This method is used for returning a HashSet of all maps in the custom maps directory.
+     *
+     * @return HashSet of Map objects that are serialized from files in CustomMaps directory.
+     * If files could not be read from customMapsDir, an empty HashSet is returned.
+     */
     public static HashSet<Map> getCustomMaps() {
-        List<File> files = getFilesFromDir(getCustomMapsDir(), ".json");
-        return MapReader.getSerializedMaps(files);
+        try {
+            List<File> files = getFilesFromDir(getCustomMapsDir(), ".json");
+            return MapReader.getSerializedMaps(files);
+        } catch (IOException e) {
+            return new HashSet<>();
+        }
     }
 
     public static Map createMapFromFile(File file) throws IOException {
