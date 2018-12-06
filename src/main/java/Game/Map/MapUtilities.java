@@ -2,7 +2,6 @@ package Game.Map;
 
 import javafx.geometry.Point2D;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 
@@ -14,10 +13,6 @@ import static Game.FileUtilties.FileUtilities.writeString;
  */
 public class MapUtilities {
     private static String customMapsDir = "CustomMap\\";
-
-    public static boolean doesCustomMapsDirExist() {
-        return new File(customMapsDir).isDirectory();
-    }
 
     public static void createCustomMapsDir() throws IOException {
         createExampleMap();
