@@ -5,6 +5,7 @@ import Game.UI.SceneCreator;
 import Game.components.DamageComponent;
 import Game.components.HealthComponent;
 import Game.components.MovementComponent;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
@@ -114,11 +115,11 @@ public class GameApp extends GameApplication {
         spawn("Car", 30, 30);
         // Map is created in initGame
         try {
-            MapBuilder.createMap(MapReader.createMapFromFile(new File("ExampleMap.json")));
+            MapBuilder.createMap(MapReader.createMapFromFile(new File("CustomMap/ExampleMap.json")));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        FXGL.getAudioPlayer().playMusic("car_hype_music.mp3");
         Point2D velocity = new Point2D(-5, 8);
         spawn("Bouncy Bullet", new SpawnData(30, 30).put("velocity", velocity));
     }
