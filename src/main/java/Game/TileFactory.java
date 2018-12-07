@@ -19,7 +19,7 @@ public class TileFactory implements EntityFactory {
     public Entity newWoodTile(SpawnData data) {
 
         return genericTile(data)
-                .with(new FrictionComponent(-0.5)) //
+                .with(new FrictionComponent(-0.5)) // slows the car
                 .viewFromNodeWithBBox(new Rectangle(50, 50, Color.BROWN))
                 .build();
     }
@@ -28,8 +28,16 @@ public class TileFactory implements EntityFactory {
     public Entity newIceTile(SpawnData data) {
 
         return genericTile(data)
-                .with(new FrictionComponent(0))
+                .with(new FrictionComponent(0)) // restores the cars drag to normal
                 .viewFromNodeWithBBox(new Rectangle(50, 50, Color.BLUE))
+                .build();
+    }
+
+    @Spawns("boost")
+    public Entity newBoostTile(SpawnData data) {
+        return genericTile(data)
+                .with(new FrictionComponent(0.1)) // speeds up the car
+                .viewFromNodeWithBBox(new Rectangle(50, 50, Color.GREEN))
                 .build();
     }
 }
