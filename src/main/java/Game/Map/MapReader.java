@@ -8,6 +8,7 @@ import javafx.geometry.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -51,15 +52,7 @@ public class MapReader {
     }
 
     public static HashSet<Map> getSerializedMaps(File... files) {
-        HashSet<Map> maps = new HashSet<>();
-        for (File file : files) {
-            try {
-                maps.add(createMapFromFile(file));
-            } catch (IOException e) {
-                // Ignore map if problem occurs attempting to create it.
-            }
-        }
-        return maps;
+        return getSerializedMaps(Arrays.asList(files));
     }
 
     /**
@@ -71,7 +64,11 @@ public class MapReader {
     public static HashSet<Map> getSerializedMaps(List<File> files) {
         HashSet<Map> maps = new HashSet<>();
         for (File file : files) {
-            maps.addAll(getSerializedMaps(file));
+            try {
+                maps.add(createMapFromFile(file));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return maps;
     }
