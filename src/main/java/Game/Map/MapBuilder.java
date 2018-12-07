@@ -1,7 +1,7 @@
 package Game.Map;
 
 
-import Game.components.TileComponent;
+import Game.EntityType;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -16,7 +16,7 @@ public class MapBuilder {
      * Clears the map of all tiles that are currently placed
      */
     public static void clearMap() {
-        getGameWorld().getEntitiesByComponent(TileComponent.class).forEach(entity -> entity.removeFromWorld());
+        getGameWorld().getEntitiesByType(EntityType.Tile).forEach(entity -> entity.removeFromWorld());
     }
 
     /**
@@ -36,7 +36,7 @@ public class MapBuilder {
      */
     public static void spawnTiles(Set<Tile> tiles) {
         for (Tile tile : tiles) {
-            spawn(tile.getType(), tile.getPos().multiply(10)); // TODO: Dont forget im mulitplying position by 10 refactor?
+            spawn(tile.getType(), tile.getPos()); // TODO: Possibly scale the values based of a grid system?
         }
     }
 

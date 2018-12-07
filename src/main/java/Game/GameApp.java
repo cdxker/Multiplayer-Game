@@ -6,8 +6,10 @@ import Game.Map.MapNotFoundException;
 import Game.Map.MapUtilities;
 import Game.UI.SceneCreator;
 import Game.components.DamageComponent;
+import Game.components.FrictionComponent;
 import Game.components.HealthComponent;
 import Game.components.MovementComponent;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
@@ -16,6 +18,9 @@ import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 import java.io.IOException;
 
@@ -85,6 +90,15 @@ public class GameApp extends GameApplication {
                 carHealth.increment(-damage.getDamage());
             }
         });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Car, EntityType.Tile) {
+            @Override
+            protected void onCollision(Entity car, Entity tile) {
+                MovementComponent carMovement = car.getComponent(MovementComponent.class);
+                FrictionComponent friction = tile.getComponent(FrictionComponent.class);
+                carMovement.setAccelerationDrag(friction.getDrag());
+            }
+        });
         getPhysicsWorld().setGravity(0, 0);
     }
 
@@ -113,16 +127,24 @@ public class GameApp extends GameApplication {
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntityFactory(new TileFactory());
         getGameWorld().addEntity(Entities.makeScreenBounds(40));
-        spawn("Car", 30, 30);
-        // Map is created in initGame
         try {
             MapBuilder.createMap(getCustomMap("ExampleMap"));
         } catch (MapNotFoundException e) {
             e.printStackTrace();
         }
+        spawn("Car", 100, 100);
+        FXGL.getAudioPlayer().playMusic("car_hype_music.mp3");
+        Point2D velocity = new Point2D(10, 10);
+        spawn("Ball", new SpawnData(30, 30).put("velocity", velocity));
 
-        Point2D velocity = new Point2D(-5, 8);
-        spawn("Bouncy Bullet", new SpawnData(30, 30).put("velocity", velocity));
+        System.out.println(getHeight());
+
+        Text text = new Text("Enjoy the ball");
+        text.setTranslateY(50);
+        text.setTranslateX((getWidth() / 2.0) - 2);
+        text.setTextAlignment(TextAlignment.CENTER);
+        text.setFont(new Font(50));
+        getGameScene().addUINode(text);
     }
 
     public void gameOver() {

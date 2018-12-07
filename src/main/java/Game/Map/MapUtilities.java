@@ -36,8 +36,9 @@ public class MapUtilities {
 
     public static void createExampleMap() throws IOException {
         HashSet<Tile> tiles = new HashSet<>();
-        tiles.add(new Tile("wood", new Point2D(0, 0)));
-        tiles.add(new Tile("ice", new Point2D(0, 10)));
+        tiles.add(new Tile("wood", new Point2D(750, 300)));
+        tiles.add(new Tile("ice", new Point2D(250, 300)));
+        tiles.add(new Tile("boost", new Point2D(500, 300)));
         Map map = new Map(tiles, "ExampleMap");
         MapWriter.writeMapToDisk(map);
     }
