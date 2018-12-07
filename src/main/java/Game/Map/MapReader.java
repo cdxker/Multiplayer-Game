@@ -29,7 +29,7 @@ public class MapReader {
         JsonObject rootJson = getJsonObject(jsonStr);
         String name = getNameFromJson(rootJson);
         HashSet<Tile> tiles = getTilesFromJson(rootJson);
-        return new Map(tiles, name);
+        return new Map(name, tiles);
     }
 
     public static Map getCustomMap(String mapName) throws MapNotFoundException {
