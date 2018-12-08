@@ -43,19 +43,6 @@ public class FileUtilities {
     }
 
     /**
-     * Helpful method that takes a string path, turns it into a File object,
-     * and then returns whatever .toString() gives when called on the File
-     * object but the string has also has concatenated a \ at the end. This is
-     * helpful because it lets File take care of the issue of whether there is
-     * a \ at the end. File gives a string without that slash at the end.
-     * @param path The path to be returned with one slash at the end.
-     * @return The parameter, path, with a slash at the end.
-     */
-    public static String getDirectoryWithSlash(String path) {
-        return new File(path).toString() + "\\";
-    }
-
-    /**
      * This method can be used to ensure that directories a path points through are created, if necessary, along with
      * the file the path points to.
      * @param stringPath The string path which points to a file. Can be relative or absolute.

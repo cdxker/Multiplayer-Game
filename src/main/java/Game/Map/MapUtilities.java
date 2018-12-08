@@ -27,13 +27,6 @@ public class MapUtilities {
         writeString(path, text);
     }
 
-    /**
-     *  This method is useful because it will always give a directory with a slash at the end.
-     */
-    public static String getCustomMapsDir() {
-        return getDirectoryWithSlash(customMapsDir);
-    }
-
     public static void createExampleMap() throws IOException {
         HashSet<Tile> tiles = new HashSet<>();
         tiles.add(new Tile("wood", new Point2D(750, 300)));
