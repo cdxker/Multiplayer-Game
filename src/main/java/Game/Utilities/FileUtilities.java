@@ -1,4 +1,4 @@
-package Game.FileUtilties;
+package Game.Utilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,6 +9,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class meant for storing useful methods for interacting with files on system
+ * that do not naturally belong to another class.
+ */
 public class FileUtilities {
     /**
      * Helpful method to avoid repeating boilerplate code for writing text to a file.
