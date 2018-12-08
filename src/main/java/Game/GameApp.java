@@ -9,7 +9,6 @@ import Game.components.DamageComponent;
 import Game.components.FrictionComponent;
 import Game.components.HealthComponent;
 import Game.components.MovementComponent;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
@@ -24,7 +23,8 @@ import javafx.scene.text.TextAlignment;
 
 import java.io.IOException;
 
-import static Game.Map.MapReader.getCustomMap;
+import static Game.Map.MapReader.getMap;
+import static Game.Map.MapReader.getMaps;
 import static com.almasb.fxgl.app.DSLKt.onKey;
 import static com.almasb.fxgl.app.DSLKt.spawn;
 
@@ -110,14 +110,6 @@ public class GameApp extends GameApplication {
             e.printStackTrace();
         }
 
-        try {
-            Map exampleMap = getCustomMap("ExampleMap");
-            System.out.println(exampleMap);
-        } catch (MapNotFoundException e) {
-            System.out.println("Error: " + e.getMessage());
-            e.printStackTrace();
-        }
-
         System.out.println("Done!");
         launch(args);
     }
@@ -127,13 +119,25 @@ public class GameApp extends GameApplication {
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntityFactory(new TileFactory());
         getGameWorld().addEntity(Entities.makeScreenBounds(40));
+
         try {
-            MapBuilder.createMap(getCustomMap("ExampleMap"));
+            System.out.println(getMap("LolImaMap"));
         } catch (MapNotFoundException e) {
             e.printStackTrace();
         }
+
+        for (Map map : getMaps()) {
+            System.out.println(map);
+        }
+
+        try {
+            MapBuilder.createMap(getMap("ExampleMap"));
+        } catch (MapNotFoundException e) {
+            e.printStackTrace();
+        }
+
         spawn("Car", 100, 100);
-        FXGL.getAudioPlayer().playMusic("car_hype_music.mp3");
+        //FXGL.getAudioPlayer().playMusic("car_hype_music.mp3");
         Point2D velocity = new Point2D(10, 10);
         spawn("Ball", new SpawnData(30, 30).put("velocity", velocity));
 
