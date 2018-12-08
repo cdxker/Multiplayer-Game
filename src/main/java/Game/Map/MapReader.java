@@ -1,5 +1,6 @@
 package Game.Map;
 
+import com.almasb.fxgl.app.FXGL;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -15,8 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static Game.FileUtilties.FileUtilities.getFilesFromDir;
-import static Game.Map.MapUtilities.getCustomMapsDir;
+import static Game.Map.MapUtilities.*;
+import static Game.Utilities.FileUtilities.getFilesFromDir;
 
 /**
  * This class is used for de-serializing an object from a file which means
@@ -34,6 +35,33 @@ public class MapReader {
         return new Map(name, tiles);
     }
 
+    public static HashSet<Map> getMaps() {
+        HashSet<Map> maps = new HashSet<>();
+        maps.addAll(getCustomMaps());
+        maps.addAll(getBuiltInMaps());
+        return maps;
+    }
+
+    /**
+     * Method for getting a certain map out of the custom maps and built-in
+     * maps directories. First, it searches in the custom maps directory for the
+     * map and returns any found maps. If no found map in custom maps directory,
+     * it continues searching in the built-in maps directory and returns any
+     * found maps. At this point, if map is not found, MapNotFoundException is
+     * thrown.
+     *
+     * @param mapName Name of map to be returned
+     * @return Map object of map with name mapName
+     * @throws MapNotFoundException thrown if map cannot be found.
+     */
+    public static Map getMap(String mapName) throws MapNotFoundException {
+        try {
+            return getCustomMap(mapName);
+        } catch (MapNotFoundException e) {
+            return getBuiltInMap(mapName);
+        }
+    }
+
     public static Map getCustomMap(String mapName) throws MapNotFoundException {
         HashSet<Map> maps = getCustomMaps();
         for (Map map : maps) {
@@ -42,6 +70,31 @@ public class MapReader {
             }
         }
         throw new MapNotFoundException("Requested map not found.");
+    }
+
+    public static Map getBuiltInMap(String mapName) throws MapNotFoundException, JsonSyntaxException {
+        String filename = mapName + ".json";
+        if (!FXGL.getAssetLoader().loadFileNames(getBuiltInMapsFullDir()).contains(filename)) {
+            throw new MapNotFoundException("Requested map not found");
+        }
+        String strPath = getBuiltInMapsDir() + filename;
+        List<String> lines = FXGL.getAssetLoader().loadJSON(strPath);
+        String content = String.join("\n", lines);
+        return createMapFromJson(content);
+    }
+
+    public static HashSet<Map> getBuiltInMaps() {
+        List<String> filenames = FXGL.getAssetLoader().loadFileNames(getBuiltInMapsFullDir());
+        HashSet<Map> maps = new HashSet<>();
+        for (String filename : filenames) {
+            try {
+                String mapName = filename.replaceAll("\\.[^\\.]+$", "");
+                maps.add(getBuiltInMap(mapName));
+            } catch (MapNotFoundException | JsonSyntaxException e) {
+                e.printStackTrace();
+            }
+        }
+        return maps;
     }
 
     /**
