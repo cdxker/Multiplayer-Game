@@ -3,6 +3,7 @@ package Game.Map;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import javafx.geometry.Point2D;
 
 import java.io.File;
@@ -25,7 +26,8 @@ import static Game.Map.MapUtilities.getCustomMapsDir;
 public class MapReader {
     public static final Logger logger = Logger.getLogger(MapReader.class.getName());
 
-    public static Map createMapFromJson(String jsonStr) {
+
+    public static Map createMapFromJson(String jsonStr) throws JsonSyntaxException {
         JsonObject rootJson = getJsonObject(jsonStr);
         String name = getNameFromJson(rootJson);
         HashSet<Tile> tiles = getTilesFromJson(rootJson);
@@ -53,11 +55,12 @@ public class MapReader {
             List<File> files = getFilesFromDir(getCustomMapsDir(), ".json");
             return MapReader.getSerializedMaps(files);
         } catch (IOException e) {
+            //TODO: Log some stuff...
             return new HashSet<>();
         }
     }
 
-    public static Map createMapFromFile(File file) throws IOException {
+    public static Map createMapFromFile(File file) throws IOException, JsonSyntaxException {
         return createMapFromJson(Files.readString(file.toPath()));
     }
 
@@ -66,24 +69,34 @@ public class MapReader {
     }
 
     /**
-     * This method allows for the use of a list of File objects to be serialized instead of using an array of File objects.
+     * This method allows for the use of a list of File objects to be
+     * serialized instead of using an array of File objects.
      *
      * @param files List of File objects to be serialized into Map objects.
      * @return An array of serialized Map objects from the files parameter.
+     *         This method ignores any files that cause a IOException or
+     *         JsonSyntaxException.
      */
     public static HashSet<Map> getSerializedMaps(List<File> files) {
         HashSet<Map> maps = new HashSet<>();
         for (File file : files) {
             try {
                 maps.add(createMapFromFile(file));
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException | JsonSyntaxException e) {
+                logger.warning(e.getStackTrace()[0].toString()); // TODO: Need to experiment with this...
             }
         }
         return maps;
     }
 
-    public static JsonObject getJsonObject(String jsonData) {
+    /**
+     * Method used for turning string JSON into a JsonObject
+     *
+     * @param jsonData A string containing JSON data to be turned into a JsonObject
+     * @return A JsonObject of the jsonData.
+     * @throws JsonSyntaxException Throws if jsonData is not syntactically JSON.
+     */
+    public static JsonObject getJsonObject(String jsonData) throws JsonSyntaxException {
         JsonParser parserJson = new JsonParser();
         return parserJson.parse(jsonData).getAsJsonObject();
     }
