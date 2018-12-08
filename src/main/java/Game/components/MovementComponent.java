@@ -39,7 +39,8 @@ public class MovementComponent extends Component {
 
     // How much slower the acceleration is each successive frame
     // Places an upper limit on the horizontal velocity of the vehicle
-    private double accelerationDrag = 0.90;
+    private final double startingAccelerationDrag; // the "base" acceleration of the car
+    private double accelerationDrag; // the drag the car is experiencing due to friction
 
     /*
      * The 3 fields below describe the vehicle's angular motion
@@ -81,7 +82,7 @@ public class MovementComponent extends Component {
         velocity = new Point2D(0,0);
         this.enginePower = enginePower;
         this.velocityDrag = velocityDrag;
-        this.accelerationDrag = accelerationDrag;
+        this.accelerationDrag = this.startingAccelerationDrag = accelerationDrag;
         this.steering = steering;
         this.angularDrag = angularDrag;
     }
@@ -107,7 +108,6 @@ public class MovementComponent extends Component {
 
         physicsComponent.setBodyLinearVelocity(new Vec2(getVelocity().getX(),
                 -getVelocity().getY()));
-
 
         setVelocity(getVelocity().add(Math.cos(orientation.getValue() / 180 * PI) * acceleration,
                 Math.sin(orientation.getValue() / 180 * PI) * acceleration));
@@ -176,6 +176,10 @@ public class MovementComponent extends Component {
     /*
      * Getter and Setters
      */
+
+    public void setAccelerationDrag(double drag) {
+        this.accelerationDrag = startingAccelerationDrag + drag;
+    }
 
     public Point2D getVelocity() {
         return velocity;

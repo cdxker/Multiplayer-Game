@@ -3,13 +3,15 @@ package Game.Map;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static Game.FileUtilties.FileUtilities.writeString;
+import static Game.Map.MapReader.getJsonObject;
 import static Game.Map.MapReader.getNameFromJson;
 import static Game.Map.MapUtilities.getCustomMapsDir;
+import static Game.Utilities.FileUtilities.writeString;
 
 /**
  * This class is used for taking maps and turning them into files that can be stored.
@@ -67,8 +69,8 @@ public class MapWriter {
      * in {customMapsDir}\{name of map}.json
      * @return A Path object of the written file.
      */
-    public static Path writeMapToDisk(String json) throws IOException {
-        JsonObject rootJson = MapReader.getJsonObject(json);
+    public static Path writeMapToDisk(String json) throws IOException, JsonSyntaxException {
+        JsonObject rootJson = getJsonObject(json);
         String mapName = getNameFromJson(rootJson);
         return writeMapToDisk(json, mapName);
     }

@@ -5,24 +5,30 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Map {
-    private Set<Tile> tiles;
     private String name;
+    private Set<Tile> tiles;
 
-    public Map(Set<Tile> tiles, String name) {
-        this.tiles = tiles;
+    /**
+     * The data structure for a map.
+     *
+     * @param name  The name of map
+     * @param tiles A set of Tile objects
+     */
+    public Map(String name, Set<Tile> tiles) {
         this.name = name;
+        this.tiles = tiles;
     }
 
     /**
-     * Constructs a Map
+     * The data structure for a map.
      * Uses:
      * new Map(name, tile1, tile2, tile3)
      *
-     * @param name  The name of the map
-     * @param tiles an unspecified amount of tiles
+     * @param name The name of the map
+     * @param tiles An unspecified amount of tiles
      */
     public Map(String name, Tile... tiles) {
-        this(new HashSet<Tile>(Arrays.asList(tiles)), name);
+        this(name, new HashSet<>(Arrays.asList(tiles)));
     }
 
     public String getName() {
@@ -42,7 +48,7 @@ public class Map {
     }
 
     /**
-     * Adds a tile to the set of tiles if tile's uniqueId does belong to any other tile in the set of tiles.
+     * Adds a tile to the set of tiles
      */
     public boolean addTile(Tile tile) {
         return tiles.add(tile);
@@ -59,11 +65,11 @@ public class Map {
     public String toString() {
         StringBuilder retStr = new StringBuilder("Map name:" + getName() + "\n");
         for (Object ti : getTiles().toArray()) {
-            Tile tiles = (Tile) ti;
-            retStr.append("UID:").append(tiles.getUniqueId()).append("\n");
-            retStr.append("xPos:").append(tiles.getPos().getX()).append("\n");
-            retStr.append("yPos:").append(tiles.getPos().getY()).append("\n");
-            retStr.append("type:").append(tiles.getType()).append("\n");
+            Tile tile = (Tile) ti;
+            retStr.append("UID:").append(tile.getUniqueId()).append("\n");
+            retStr.append("xPos:").append(tile.getPos().getX()).append("\n");
+            retStr.append("yPos:").append(tile.getPos().getY()).append("\n");
+            retStr.append("type:").append(tile.getType()).append("\n");
         }
         return retStr.toString();
     }

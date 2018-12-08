@@ -8,6 +8,7 @@ import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.extra.entity.components.KeepOnScreenComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
+import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Circle;
 
@@ -29,6 +30,23 @@ public class CarFactory implements EntityFactory {
                 .with(physics)
                 .with(new MovementComponent(0.05,0.95,0.90,1,0.5))
                 .with(new HealthComponent(100))
+                .with(new KeepOnScreenComponent(true, true))
+                .build();
+    }
+
+    @Spawns("Ball")
+    public Entity newBall(SpawnData data) {
+        PhysicsComponent physics = new PhysicsComponent();
+        physics.setBodyType(BodyType.DYNAMIC);
+        physics.setFixtureDef(new FixtureDef().restitution(1.0f)); // makes it bounce off stuff
+        Point2D velocity = data.get("velocity"); // gets the data injected from spawns() (look in game app implementation)
+        physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(velocity));
+
+        return Entities.builder()
+                .type(EntityType.Ball)
+                .from(data)
+                .viewFromNodeWithBBox(new Circle(20))
+                .with(physics)
                 .with(new KeepOnScreenComponent(true, true))
                 .build();
     }

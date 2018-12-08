@@ -64,6 +64,17 @@ public class Tile {
     }
 
     /**
+     * This method is used to determine if a Tile object is a valid object. A
+     * valid Tile object is defined as having none of its class fields as null.
+     *
+     * @return returns true if the uniqueId, type, and pos fields of the object
+     * are not null.
+     */
+    public boolean isValid() {
+        return this.uniqueId != null && this.type != null && this.pos != null;
+    }
+
+    /**
      * Two Tile objects are equal if they have matching uniqueId's.
      */
     @Override
