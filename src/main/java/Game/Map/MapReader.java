@@ -29,7 +29,8 @@ public class MapReader {
         JsonObject rootJson = getJsonObject(jsonStr);
         String name = getNameFromJson(rootJson);
         HashSet<Tile> tiles = getTilesFromJson(rootJson);
-        return new Map(tiles, name);
+        Point2D gridSize = getGridSize(rootJson);
+        return new Map(tiles, name, gridSize);
     }
 
     public static Map getCustomMap(String mapName) throws MapNotFoundException {
@@ -101,6 +102,13 @@ public class MapReader {
 
     public static Point2D getPosition(JsonObject tileJson) {
         JsonObject pos = tileJson.get("pos").getAsJsonObject();
+        double x = pos.get("x").getAsDouble();
+        double y = pos.get("y").getAsDouble();
+        return new Point2D(x, y);
+    }
+
+    public static Point2D getGridSize(JsonObject tileJson) {
+        JsonObject pos = tileJson.get("gridSize").getAsJsonObject();
         double x = pos.get("x").getAsDouble();
         double y = pos.get("y").getAsDouble();
         return new Point2D(x, y);

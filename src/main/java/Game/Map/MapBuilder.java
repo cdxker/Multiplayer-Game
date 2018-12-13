@@ -2,9 +2,10 @@ package Game.Map;
 
 
 import Game.EntityType;
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.entity.SpawnData;
+import javafx.geometry.Point2D;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import static com.almasb.fxgl.app.DSLKt.spawn;
@@ -25,29 +26,26 @@ public class MapBuilder {
      * @param map The map that contains the tiles
      */
     public static void createMap(Map map) {
-        spawnTiles(map.getTiles());
+        spawnTiles(map.getTiles(), map.getGridSize());
     }
 
     /**
      * Spawns each tile on map based on map data
      *
      * @param tiles The tiles that want to be spawned
-     *              TODO: make sure to check the tile is valid
      */
-    public static void spawnTiles(Set<Tile> tiles) {
+    public static void spawnTiles(Set<Tile> tiles, Point2D gridSize) {
+        System.out.println("width: " + FXGL.getAppHeight());
+        double tileWidth = FXGL.getAppWidth() / gridSize.getX();
+        double tileHeight = FXGL.getAppHeight() / gridSize.getY();
+
+        Point2D size = new Point2D(tileWidth, tileHeight);
+        System.out.println(size);
         for (Tile tile : tiles) {
-            spawn(tile.getType(), tile.getPos()); // TODO: Possibly scale the values based of a grid system?
+            System.out.println(tile);
+            Point2D tilePos = new Point2D(tile.getPos().getX() * tileWidth, tile.getPos().getY() * tileHeight);
+            spawn(tile.getType(), new SpawnData(tilePos).put("tileSize", size));
         }
-    }
-
-
-    /**
-     * Spawns each tile on map based on map data
-     *
-     * @param tiles The tiles that want to be spawned
-     */
-    public static void spawnTiles(Tile... tiles) {
-        spawnTiles(new HashSet<>(Arrays.asList(tiles)));
     }
 
 }

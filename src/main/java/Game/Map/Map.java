@@ -1,28 +1,18 @@
 package Game.Map;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import javafx.geometry.Point2D;
+
 import java.util.Set;
 
 public class Map {
     private Set<Tile> tiles;
     private String name;
+    private Point2D gridSize;
 
-    public Map(Set<Tile> tiles, String name) {
+    public Map(Set<Tile> tiles, String name, Point2D gridSize) {
         this.tiles = tiles;
         this.name = name;
-    }
-
-    /**
-     * Constructs a Map
-     * Uses:
-     * new Map(name, tile1, tile2, tile3)
-     *
-     * @param name  The name of the map
-     * @param tiles an unspecified amount of tiles
-     */
-    public Map(String name, Tile... tiles) {
-        this(new HashSet<Tile>(Arrays.asList(tiles)), name);
+        this.gridSize = gridSize;
     }
 
     public String getName() {
@@ -90,5 +80,13 @@ public class Map {
 
     public int getHashCode() {
         return super.hashCode();
+    }
+
+    public Point2D getGridSize() {
+        return gridSize;
+    }
+
+    public void setGridSize(Point2D gridSize) {
+        this.gridSize = gridSize;
     }
 }

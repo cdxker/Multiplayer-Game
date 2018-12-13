@@ -86,4 +86,9 @@ public class Tile {
     public int getHashCode() {
         return super.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s Tile x:%f, y:%f, id: %s", type, pos.getX(), pos.getY(), uniqueId);
+    }
 }
