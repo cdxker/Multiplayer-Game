@@ -15,8 +15,8 @@ public class TileFactory implements EntityFactory {
                 .with(new CollidableComponent(true));
     }
 
-    @Spawns("wood")
-    public Entity newWoodTile(SpawnData data) {
+    @Spawns("dirt")
+    public Entity newDirtTile(SpawnData data) {
 
         return genericTile(data)
                 .with(new FrictionComponent(-0.5)) // slows the car
@@ -24,8 +24,16 @@ public class TileFactory implements EntityFactory {
                 .build();
     }
 
-    @Spawns("ice")
-    public Entity newIceTile(SpawnData data) {
+    @Spawns("border")
+    public Entity newBorderTile(SpawnData data) {
+        return genericTile(data)
+                .with(new FrictionComponent(-.25))
+                .viewFromNodeWithBBox(new Rectangle(50, 50, Color.RED))
+                .build();
+    }
+
+    @Spawns("road")
+    public Entity newRoadTile(SpawnData data) {
 
         return genericTile(data)
                 .with(new FrictionComponent(0)) // restores the cars drag to normal
@@ -40,4 +48,6 @@ public class TileFactory implements EntityFactory {
                 .viewFromNodeWithBBox(new Rectangle(50, 50, Color.GREEN))
                 .build();
     }
+
+
 }

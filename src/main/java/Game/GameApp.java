@@ -121,17 +121,7 @@ public class GameApp extends GameApplication {
         getGameWorld().addEntity(Entities.makeScreenBounds(40));
 
         try {
-            System.out.println(getMap("LolImaMap"));
-        } catch (MapNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        for (Map map : getMaps()) {
-            System.out.println(map);
-        }
-
-        try {
-            MapBuilder.createMap(getMap("ExampleMap"));
+            MapBuilder.createMap(getMap("output"));
         } catch (MapNotFoundException e) {
             e.printStackTrace();
         }
