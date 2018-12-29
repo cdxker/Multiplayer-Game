@@ -1,9 +1,5 @@
 package Game;
 
-import Game.Map.Map;
-import Game.Map.MapBuilder;
-import Game.Map.MapNotFoundException;
-import Game.Map.MapUtilities;
 import Game.UI.SceneCreator;
 import Game.components.DamageComponent;
 import Game.components.FrictionComponent;
@@ -15,16 +11,15 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.settings.MenuItem;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-import java.io.IOException;
+import java.util.EnumSet;
 
-import static Game.Map.MapReader.getMap;
-import static Game.Map.MapReader.getMaps;
 import static com.almasb.fxgl.app.DSLKt.onKey;
 import static com.almasb.fxgl.app.DSLKt.spawn;
 
@@ -34,14 +29,16 @@ public class GameApp extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1000);
-        settings.setHeight(600);
+        settings.setWidth(1366);
+        settings.setHeight(768);
         settings.setTitle("Bullet Hail");
-        settings.setVersion("0.1");
-
+        settings.setVersion("v1.0.0");
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
+        settings.setEnabledMenuItems(EnumSet.allOf(MenuItem.class));
+        settings.setMenuEnabled(true);
+        settings.setAppIcon("AppIcon.png");
         settings.setSceneFactory(new SceneCreator());
+        settings.setFullScreenAllowed(false); // Forced Fullscreen if true/ Toggleable if false
     }
 
     @Override
@@ -52,7 +49,6 @@ public class GameApp extends GameApplication {
                 MovementComponent component = entity.getComponent(MovementComponent.class);
                 component.steerLeft();
             });
-
         });
         onKey(KeyCode.D, "Right", () -> {
             getGameWorld().getEntitiesByComponent(MovementComponent.class).forEach((entity) -> {
@@ -103,14 +99,6 @@ public class GameApp extends GameApplication {
     }
 
     public static void main(String[] args) {
-        try {
-            MapUtilities.createCustomMapsDir();
-        } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        System.out.println("Done!");
         launch(args);
     }
 
@@ -120,33 +108,15 @@ public class GameApp extends GameApplication {
         getGameWorld().addEntityFactory(new TileFactory());
         getGameWorld().addEntity(Entities.makeScreenBounds(40));
 
-        try {
-            System.out.println(getMap("LolImaMap"));
-        } catch (MapNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        for (Map map : getMaps()) {
-            System.out.println(map);
-        }
-
-        try {
-            MapBuilder.createMap(getMap("ExampleMap"));
-        } catch (MapNotFoundException e) {
-            e.printStackTrace();
-        }
-
         spawn("Car", 100, 100);
-        //FXGL.getAudioPlayer().playMusic("car_hype_music.mp3");
+        //getAudioPlayer().playMusic("car_hype_music.mp3");
         Point2D velocity = new Point2D(10, 10);
         spawn("Ball", new SpawnData(30, 30).put("velocity", velocity));
-
-        System.out.println(getHeight());
 
         Text text = new Text("Enjoy the ball");
         text.setTranslateY(50);
         text.setTranslateX((getWidth() / 2.0) - 2);
-        text.setTextAlignment(TextAlignment.CENTER);
+        text.setTextAlignment(TextAlignment.LEFT);
         text.setFont(new Font(50));
         getGameScene().addUINode(text);
     }
