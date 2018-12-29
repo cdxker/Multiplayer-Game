@@ -1,0 +1,194 @@
+{ "name": "output",
+  "tiles":[{
+"uniqueId": "1075700077",
+"type": "SlowPowerUp",
+"pos": {
+  "x": 0.000000,
+  "y": 0.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "2003565664",
+"type": "SpeedPowerUp",
+"pos": {
+  "x": 100.000000,
+  "y": 0.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "1897382784",
+"type": "HealthPowerUp",
+"pos": {
+  "x": 200.000000,
+  "y": 0.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "260800567",
+"type": "HealthPowerUp",
+"pos": {
+  "x": 300.000000,
+  "y": 0.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "540155426",
+"type": "SpeedPowerUp",
+"pos": {
+  "x": 400.000000,
+  "y": 0.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "135429816",
+"type": "SlowPowerUp",
+"pos": {
+  "x": 500.000000,
+  "y": 0.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "1196865529",
+"type": "SlowPowerUp",
+"pos": {
+  "x": 0.000000,
+  "y": 100.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "344919324",
+"type": "SpeedPowerUp",
+"pos": {
+  "x": 100.000000,
+  "y": 100.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "612156065",
+"type": "HealthPowerUp",
+"pos": {
+  "x": 200.000000,
+  "y": 100.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "1057005352",
+"type": "HealthPowerUp",
+"pos": {
+  "x": 300.000000,
+  "y": 100.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "1293622862",
+"type": "SpeedPowerUp",
+"pos": {
+  "x": 400.000000,
+  "y": 100.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "563092764",
+"type": "SlowPowerUp",
+"pos": {
+  "x": 500.000000,
+  "y": 100.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "1664858693",
+"type": "SlowPowerUp",
+"pos": {
+  "x": 0.000000,
+  "y": 200.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "1484357845",
+"type": "SpeedPowerUp",
+"pos": {
+  "x": 100.000000,
+  "y": 200.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "1292176634",
+"type": "HealthPowerUp",
+"pos": {
+  "x": 200.000000,
+  "y": 200.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "1826394299",
+"type": "HealthPowerUp",
+"pos": {
+  "x": 300.000000,
+  "y": 200.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "1376511735",
+"type": "SpeedPowerUp",
+"pos": {
+  "x": 400.000000,
+  "y": 200.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "1189133131",
+"type": "SlowPowerUp",
+"pos": {
+  "x": 500.000000,
+  "y": 200.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "593960369",
+"type": "SlowPowerUp",
+"pos": {
+  "x": 0.000000,
+  "y": 300.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "733349934",
+"type": "SpeedPowerUp",
+"pos": {
+  "x": 100.000000,
+  "y": 300.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "646414321",
+"type": "HealthPowerUp",
+"pos": {
+  "x": 200.000000,
+  "y": 300.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "1702802057",
+"type": "HealthPowerUp",
+"pos": {
+  "x": 300.000000,
+  "y": 300.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "2129633538",
+"type": "SpeedPowerUp",
+"pos": {
+  "x": 400.000000,
+  "y": 300.000000,
+  "hash": 0
+}},
+{
+"uniqueId": "1694704009",
+"type": "SlowPowerUp",
+"pos": {
+  "x": 500.000000,
+  "y": 300.000000,
+  "hash": 0
+}}
+], "gridSize": {"x": 6,"y": 4,"hash": 0 }}
