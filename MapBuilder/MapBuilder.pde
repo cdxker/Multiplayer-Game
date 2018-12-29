@@ -13,9 +13,9 @@ final color[] Types = {blankColor, dirtColor, roadColor, borderColor};
 int index = 0;
 
 HashMap<Integer, String> typeMap = new HashMap<Integer, String>();{
-  typeMap.put(dirtColor, "dirt");
-  typeMap.put(borderColor, "border");
-  typeMap.put(roadColor, "road");
+  typeMap.put(dirtColor, "SlowPowerUp");
+  typeMap.put(borderColor, "HealthPowerUp");
+  typeMap.put(roadColor, "SpeedPowerUp");
   typeMap.put(blankColor, "blank");
 }
 

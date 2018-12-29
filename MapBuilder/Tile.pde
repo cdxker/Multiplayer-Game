@@ -22,16 +22,6 @@ class Tile{
   
   private void setColor(color c){
     this.c = c;
-    if (c == dirtColor)
-      type = "dirt";
-    else if (c == borderColor)
-      type = "border";
-    else if (c == roadColor)
-      type = "road";
-    else if (c == blankColor)
-      type = "blank";
-    else
-      type = "blank";
   }
   
   public boolean mouseOver(){
