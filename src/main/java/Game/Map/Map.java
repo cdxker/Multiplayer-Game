@@ -5,10 +5,16 @@ import javafx.geometry.Point2D;
 import java.util.Set;
 
 public class Map {
-    private Set<Tile> tiles;
     private String name;
+    private Set<Tile> tiles;
     private Point2D gridSize;
 
+    /**
+     * The data structure for a map.
+     *
+     * @param name  The name of map
+     * @param tiles A set of Tile objects
+     */
     public Map(Set<Tile> tiles, String name, Point2D gridSize) {
         this.tiles = tiles;
         this.name = name;
@@ -32,7 +38,7 @@ public class Map {
     }
 
     /**
-     * Adds a tile to the set of tiles if tile's uniqueId does belong to any other tile in the set of tiles.
+     * Adds a tile to the set of tiles
      */
     public boolean addTile(Tile tile) {
         return tiles.add(tile);
@@ -49,11 +55,11 @@ public class Map {
     public String toString() {
         StringBuilder retStr = new StringBuilder("Map name:" + getName() + "\n");
         for (Object ti : getTiles().toArray()) {
-            Tile tiles = (Tile) ti;
-            retStr.append("UID:").append(tiles.getUniqueId()).append("\n");
-            retStr.append("xPos:").append(tiles.getPos().getX()).append("\n");
-            retStr.append("yPos:").append(tiles.getPos().getY()).append("\n");
-            retStr.append("type:").append(tiles.getType()).append("\n");
+            Tile tile = (Tile) ti;
+            retStr.append("UID:").append(tile.getUniqueId()).append("\n");
+            retStr.append("xPos:").append(tile.getPos().getX()).append("\n");
+            retStr.append("yPos:").append(tile.getPos().getY()).append("\n");
+            retStr.append("type:").append(tile.getType()).append("\n");
         }
         return retStr.toString();
     }

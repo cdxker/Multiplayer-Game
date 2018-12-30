@@ -35,7 +35,7 @@ public class MapBuilder {
      * @param tiles The tiles that want to be spawned
      */
     public static void spawnTiles(Set<Tile> tiles, Point2D gridSize) {
-        System.out.println("width: " + FXGL.getAppHeight());
+        System.out.println("width: " + FXGL.getAppWidth() + " Height: " + FXGL.getAppHeight());
         double tileWidth = FXGL.getAppWidth() / gridSize.getX();
         double tileHeight = FXGL.getAppHeight() / gridSize.getY();
 

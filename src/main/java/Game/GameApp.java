@@ -1,12 +1,14 @@
 package Game;
 
-import Game.Map.*;
+import Game.Map.Map;
+import Game.Map.MapBuilder;
+import Game.Map.MapNotFoundException;
+import Game.Map.MapUtilities;
 import Game.UI.SceneCreator;
 import Game.components.DamageComponent;
 import Game.components.FrictionComponent;
 import Game.components.HealthComponent;
 import Game.components.MovementComponent;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
@@ -19,10 +21,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-import java.io.File;
+import java.awt.*;
 import java.io.IOException;
 
-import static Game.Map.MapReader.getCustomMap;
+import static Game.Map.MapReader.getMap;
+import static Game.Map.MapReader.getMaps;
 import static com.almasb.fxgl.app.DSLKt.onKey;
 import static com.almasb.fxgl.app.DSLKt.spawn;
 
@@ -32,13 +35,13 @@ public class GameApp extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1000);
-        settings.setHeight(600);
+        settings.setWidth(1920);
+        settings.setHeight(1080);
         settings.setTitle("Bullet Hail");
         settings.setVersion("0.1");
 
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
+        settings.setMenuEnabled(true);
         settings.setSceneFactory(new SceneCreator());
     }
 
@@ -108,14 +111,6 @@ public class GameApp extends GameApplication {
             e.printStackTrace();
         }
 
-        try {
-            Map exampleMap = getCustomMap("ExampleMap");
-            System.out.println(exampleMap);
-        } catch (MapNotFoundException e) {
-            System.out.println("Error: " + e.getMessage());
-            e.printStackTrace();
-        }
-
         System.out.println("Done!");
         launch(args);
     }
@@ -125,13 +120,15 @@ public class GameApp extends GameApplication {
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntityFactory(new TileFactory());
         getGameWorld().addEntity(Entities.makeScreenBounds(40));
+
         try {
-            MapBuilder.createMap(MapReader.createMapFromFile(new File("CustomMap/ExampleMap.json")));
-        } catch (IOException e) {
+            MapBuilder.createMap(getMap("output"));
+        } catch (MapNotFoundException e) {
             e.printStackTrace();
         }
+
         spawn("Car", 100, 100);
-        FXGL.getAudioPlayer().playMusic("car_hype_music.mp3");
+        //FXGL.getAudioPlayer().playMusic("car_hype_music.mp3");
         Point2D velocity = new Point2D(10, 10);
         spawn("Ball", new SpawnData(30, 30).put("velocity", velocity));
 
@@ -143,6 +140,8 @@ public class GameApp extends GameApplication {
         text.setTextAlignment(TextAlignment.CENTER);
         text.setFont(new Font(50));
         getGameScene().addUINode(text);
+
+        spawn("SpeedPowerUp", new SpawnData(400, 300).put("tileSize", new Point2D(320, 270)));
     }
 
     public void gameOver() {

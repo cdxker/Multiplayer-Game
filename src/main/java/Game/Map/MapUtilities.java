@@ -2,22 +2,21 @@ package Game.Map;
 
 import javafx.geometry.Point2D;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 
-import static Game.FileUtilties.FileUtilities.getDirectoryWithSlash;
-import static Game.FileUtilties.FileUtilities.writeString;
+import static Game.Map.MapWriter.writeMapToDisk;
+import static Game.Utilities.FileUtilities.writeString;
+
 
 /**
  * Useful methods that do not naturally belong to the other classes in the Map package.
  */
 public class MapUtilities {
-    private static String customMapsDir = "CustomMap\\";
-
-    public static boolean doesCustomMapsDirExist() {
-        return new File(customMapsDir).isDirectory();
-    }
+    private static final String builtInMapsDir = "maps/"; // Path rooted in FXGL's resources's json folder.
+    // Must use forward slashes instead of backward slashes
+    // because of FXGL.
+    private static final String customMapsDir = "CustomMaps\\";
 
     public static void createCustomMapsDir() throws IOException {
         createExampleMap();
@@ -32,21 +31,25 @@ public class MapUtilities {
         writeString(path, text);
     }
 
-    /**
-     *  This method is useful because it will always give a directory with a slash at the end.
-     */
-    public static String getCustomMapsDir() {
-        return getDirectoryWithSlash(customMapsDir);
-    }
-
     public static void createExampleMap() throws IOException {
         double width, height;
         HashSet<Tile> tiles = new HashSet<>();
-        width = height = 10;
-        tiles.add(new Tile("wood", new Point2D(6, 5)));
-        tiles.add(new Tile("ice", new Point2D(5, 5)));
-        //tiles.add(new Tile("boost", new Point2D(width/2.0, height/2)));
-        Map map = new Map(tiles, "ExampleMap", new Point2D(width, height));
-        MapWriter.writeMapToDisk(map);
+        tiles.add(new Tile("wood", new Point2D(750, 300)));
+        tiles.add(new Tile("ice", new Point2D(250, 300)));
+        tiles.add(new Tile("boost", new Point2D(500, 300)));
+        Map map = new Map(tiles, "ExampleMap", new Point2D(50, 50));
+        writeMapToDisk(map);
+    }
+
+    public static String getCustomMapsDir() {
+        return customMapsDir + "\\";
+    }
+
+    public static String getBuiltInMapsDir() {
+        return builtInMapsDir + "/";
+    }
+
+    public static String getBuiltInMapsFullDir() {
+        return "/assets/json/" + getBuiltInMapsDir();
     }
 }

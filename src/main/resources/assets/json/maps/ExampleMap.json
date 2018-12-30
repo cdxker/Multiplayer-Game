@@ -1,0 +1,23 @@
+{
+  "tiles": [
+    {
+      "uniqueId": "1667689440",
+      "type": "wood",
+      "pos": {
+        "x": 0.0,
+        "y": 0.0,
+        "hash": 0
+      }
+    },
+    {
+      "uniqueId": "1157058691",
+      "type": "ice",
+      "pos": {
+        "x": 0.0,
+        "y": 10.0,
+        "hash": 0
+      }
+    }
+  ],
+  "name": "ExampleMap"
+}

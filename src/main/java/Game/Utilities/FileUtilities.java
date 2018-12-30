@@ -1,4 +1,4 @@
-package Game.FileUtilties;
+package Game.Utilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,6 +9,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class meant for storing useful methods for interacting with files on system
+ * that do not naturally belong to another class.
+ */
 public class FileUtilities {
     /**
      * Helpful method to avoid repeating boilerplate code for writing text to a file.
@@ -36,19 +40,6 @@ public class FileUtilities {
      */
     public static Path writeString(String stringPath, String content) throws IOException {
         return writeString(stringPath, content, Charset.forName("UTF-8"));
-    }
-
-    /**
-     * Helpful method that takes a string path, turns it into a File object,
-     * and then returns whatever .toString() gives when called on the File
-     * object but the string has also has concatenated a \ at the end. This is
-     * helpful because it lets File take care of the issue of whether there is
-     * a \ at the end. File gives a string without that slash at the end.
-     * @param path The path to be returned with one slash at the end.
-     * @return The parameter, path, with a slash at the end.
-     */
-    public static String getDirectoryWithSlash(String path) {
-        return new File(path).toString() + "\\";
     }
 
     /**
@@ -87,10 +78,14 @@ public class FileUtilities {
         return dir;
     }
 
-    public static List<File> getFilesFromDir(String stringPath, String extension) {
+    public static List<File> getFilesFromDir(String stringPath, String extension) throws IOException {
         File dir = ensureDirExist(stringPath);
         List<File> files = new ArrayList<>();
-        for (File file : dir.listFiles()) {
+        File[] dirFiles = dir.listFiles();
+        if (dirFiles == null) {
+            throw new IOException("Cannot read files from " + stringPath);
+        }
+        for (File file : dirFiles) {
             if (hasExtension(file, extension)) {
                 files.add(file);
             }
