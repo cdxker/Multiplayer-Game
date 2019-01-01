@@ -36,14 +36,10 @@ public class MapBuilder {
      */
     public static void spawnTiles(Set<Tile> tiles, Point2D gridSize) {
         System.out.println("width: " + FXGL.getAppWidth() + " Height: " + FXGL.getAppHeight());
-        double tileWidth = FXGL.getAppWidth() / gridSize.getX();
-        double tileHeight = FXGL.getAppHeight() / gridSize.getY();
-
-        Point2D size = new Point2D(tileWidth, tileHeight);
-        System.out.println(size);
+        Point2D size = new Point2D(64, 64);
         for (Tile tile : tiles) {
             System.out.println(tile);
-            Point2D tilePos = new Point2D(tile.getPos().getX() * tileWidth, tile.getPos().getY() * tileHeight);
+            Point2D tilePos = new Point2D(tile.getPos().getX()*size.getX(), tile.getPos().getY()*size.getY());//new Point2D(tile.getPos().getX() * tileWidth, tile.getPos().getY() * tileHeight);
             spawn(tile.getType(), new SpawnData(tilePos).put("tileSize", size));
         }
     }

@@ -17,7 +17,7 @@ class Tile{
   }
   
   public String toJson(){
-    return String.format("{\n\"uniqueId\": \"%s\",\n\"type\": \"%s\",\n\"pos\": {\n  \"x\": %f,\n  \"y\": %f,\n  \"hash\": 0\n}}", id, typeMap.get(c), x, y);
+    return String.format("{\n\"uniqueId\": \"%s\",\n\"type\": \"%s\",\n\"pos\": {\n  \"x\": %f,\n  \"y\": %f,\n  \"hash\": 0\n}}", id, typeMap.get(c), x/tileSize, y/tileSize); // Divide by tilesize to get index
   }
   
   private void setColor(color c){
