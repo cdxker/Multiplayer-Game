@@ -109,7 +109,7 @@ public class MainMenu extends FXGLMenu {
 
         Rectangle iconBox = new Rectangle(37 * defactoRatio, 37 * defactoRatio, null);
         iconBox.setStroke(Color.BLACK);
-        Image profilePicture = FXGL.getAssetLoader().loadImage("Profile pictures/tire.png");
+        Image profilePicture = FXGL.getAssetLoader().loadImage("Profile pictures/tire.png"); // TODO: Implement way for player to use custom profile picture...
         iconBox.setFill(new ImagePattern(profilePicture));
 
         profileArea.getChildren().addAll(profileName, iconBox);
@@ -155,32 +155,6 @@ public class MainMenu extends FXGLMenu {
         }
     }
 
-    public class BoxButton extends StackPane {
-        public BoxButton(BoxButtonSettings settings) {
-            Text text = new Text(settings.text);
-            text.setFont(settings.font);
-            text.setFill(settings.normTextCol);
-            text.setTranslateY(-settings.vMargin);
-            text.setTranslateX(-settings.hMargin);
-
-            double textWidth = text.getBoundsInLocal().getWidth();
-            double textHeight = text.getBoundsInLocal().getHeight();
-            Rectangle rect = new Rectangle(textWidth + 2 * settings.hMargin, textHeight + 2 * settings.vMargin, settings.normBgCol);
-
-            this.getChildren().addAll(rect, text);
-            this.setOnMouseEntered(event -> {
-                rect.setFill(settings.otherBgCol);
-                text.setFill(settings.otherTextCol);
-            });
-            this.setOnMouseExited(event -> {
-                rect.setFill(settings.normBgCol);
-                text.setFill(settings.normTextCol);
-            });
-            this.setOnMouseClicked(event -> settings.action.run());
-            this.setMaxSize(rect.getWidth(), rect.getHeight());
-        }
-    }
-
     @Override
     protected Button createActionButton(String name, Runnable action) {
         Button btn = new Button(name);
@@ -215,52 +189,4 @@ public class MainMenu extends FXGLMenu {
         return FXGL.getUIFactory().newText(profileName);
     }
 
-    public class BoxButtonSettings {
-        public String text;
-        public Font font;
-        public Color normTextCol;
-        public Color otherTextCol;
-        public Color normBgCol;
-        public Color otherBgCol;
-        public double vMargin;
-        public double hMargin;
-        public Runnable action = () -> {
-        };
-
-        /**
-         * Given the normTextCol, the otherTextCol is set as the complimentary color of normTextCol; The class'
-         * normTextCol is set as the Color object passed as the parameter.
-         *
-         * @param normTextCol Color object to set normTextCol and its complimentary color to set otherTextCol.
-         */
-        public void setComplimentTextColors(Color normTextCol) {
-            this.normTextCol = normTextCol;
-            this.otherTextCol = normTextCol.deriveColor(180, 1, 1, 1);
-        }
-
-        /**
-         * Given the normBgCol, the otherBgCol is set as the complimentary color of normBgCol; The class'
-         * normBgCol is set as the Color object passed as the parameter.
-         *
-         * @param normBgCol Color object to set normBgCol and its complimentary color to set otherBgCol.
-         */
-        public void setComplimentBgColors(Color normBgCol) {
-            this.normBgCol = normBgCol;
-            this.otherBgCol = normBgCol.deriveColor(180, 1, 1, 1);
-        }
-
-        /**
-         * Given the normBgCol, otherBgCol is set as the complimentary color of normBgCol. The normTextCol and
-         * otherTextCol are set as white if their respective background colors have a brightness less than 0.5, otherwise
-         * they are set as black.
-         *
-         * @param normBgCol Color object to set normBgCol and its complimentary color to set otherBgCol. Both are to be
-         *                  used in determining whether normTextCol and otherTextCol are white or black, each.
-         */
-        public void setBackgroundAndTextColors(Color normBgCol) {
-            setComplimentBgColors(normBgCol);
-            this.normTextCol = (normBgCol.getHue() < 0.5) ? Color.WHITE : Color.BLACK;
-            this.otherTextCol = (otherBgCol.getHue() < 0.5) ? Color.WHITE : Color.BLACK;
-        }
-    }
 }
