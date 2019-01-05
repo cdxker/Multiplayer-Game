@@ -1,9 +1,7 @@
 package Game;
 
-import Game.Map.Map;
 import Game.Map.MapBuilder;
 import Game.Map.MapNotFoundException;
-import Game.Map.MapUtilities;
 import Game.UI.SceneCreator;
 import Game.components.DamageComponent;
 import Game.components.FrictionComponent;
@@ -15,16 +13,16 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
+import com.almasb.fxgl.settings.MenuItem;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-import java.io.IOException;
+import java.util.EnumSet;
 
 import static Game.Map.MapReader.getMap;
-import static Game.Map.MapReader.getMaps;
 import static com.almasb.fxgl.app.DSLKt.onKey;
 import static com.almasb.fxgl.app.DSLKt.spawn;
 
@@ -34,14 +32,22 @@ public class GameApp extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1000);
-        settings.setHeight(600);
+        settings.setWidth(1366);
+        settings.setHeight(768);
         settings.setTitle("Bullet Hail");
-        settings.setVersion("0.1");
-
+        //settings.setDialogFactory(new DialogCreator());
+        //settings.setUIFactory();
+        settings.setVersion("v1.0.0");
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
         settings.setSceneFactory(new SceneCreator());
+        settings.setEnabledMenuItems(EnumSet.allOf(MenuItem.class));
+        settings.setAppIcon("AppIcon.png");
+        settings.setFullScreenAllowed(false); // Forced Fullscreen if true/ Toggleable if false
+    }
+
+    @Override
+    protected void initUI() {
     }
 
     @Override
@@ -103,14 +109,6 @@ public class GameApp extends GameApplication {
     }
 
     public static void main(String[] args) {
-        try {
-            MapUtilities.createCustomMapsDir();
-        } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        System.out.println("Done!");
         launch(args);
     }
 
@@ -147,6 +145,4 @@ public class GameApp extends GameApplication {
             else exit();
         });
     }
-
-
 }
