@@ -22,7 +22,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-
 /*
  * To-do list area...
  * TODO: Think about maybe implementing a way for the user to submit their own profile icon rather than using built-in icons.
@@ -31,54 +30,62 @@ import javafx.scene.text.TextAlignment;
         mainLayout.setBackground(new Background(new BackgroundImage(backgroundImage, BackgroundRepeat.ROUND, BackgroundRepeat.ROUND, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)));
  */
 public class MainMenu extends FXGLMenu {
-    private final FontFactory OVERPASS_LIGHT_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-light.otf");
-    private final FontFactory OVERPASS_LIGHT_ITALIC_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-light-italic.otf");
-    private final FontFactory OVERPASS_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-regular.otf");
-    private final FontFactory OVERPASS_HEAVY_ITALIC_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-heavy-italic.otf");
-    private final FontFactory HACK_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("hack/Hack-Regular.ttf");
-
-    private final double fontRatio = 25.0 / 6;
-    private final double marginSize = 42;
-
     public MainMenu(GameApplication app) {
         super(app, MenuType.MAIN_MENU);
+
+        //// Super class adds unwanted nodes to root so these instructions rids of those unwanted nodes
+        //// while maintaining menuRoot and contentRoot.
+        getRoot().getChildren().clear();
+        getRoot().getChildren().add(menuRoot);
+        getRoot().getChildren().add(getContentRoot());
+
+        final FontFactory OVERPASS_LIGHT_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-light.otf");
+        final FontFactory OVERPASS_LIGHT_ITALIC_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-light-italic.otf");
+        final FontFactory OVERPASS_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-regular.otf");
+        final FontFactory OVERPASS_HEAVY_ITALIC_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-heavy-italic.otf");
+        final FontFactory HACK_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("hack/Hack-Regular.ttf");
         final double heightRatio = app.getHeight() / 600.0;
         final double widthRatio = app.getWidth() / 900.0;
+        final double fontRatio = 25.0 / 6;
+        final double defactoRatio = (app.getHeight() < app.getWidth()) ? heightRatio : widthRatio; // Actual ratio to be used in scaling menu elements.
 
         //// Adjusting the overall layout of the main menu
+        double marginSize = 42 * defactoRatio;
         GridPane mainLayout = new GridPane();
-        RowConstraints row = new RowConstraints(app.getHeight() / 2.0 - marginSize * widthRatio);
-        ColumnConstraints col = new ColumnConstraints(app.getWidth() / 2.0 - marginSize * widthRatio);
+        RowConstraints row = new RowConstraints(app.getHeight() / 2.0 - marginSize);
+        ColumnConstraints col = new ColumnConstraints(app.getWidth() / 2.0 - marginSize);
         mainLayout.getRowConstraints().addAll(row, row);
         mainLayout.getColumnConstraints().addAll(col, col);
-        mainLayout.setPadding(new Insets(marginSize * widthRatio));
+        mainLayout.setPadding(new Insets(marginSize));
+        //mainLayout.setBackground(new Background(new BackgroundFill(Color.rgb(230, 224, 211),CornerRadii.EMPTY, Insets.EMPTY)));
+
 
 
         //// Make header and add it to main layout
         Text title = new Text(app.getSettings().getTitle());
-        title.setFont(OVERPASS_HEAVY_ITALIC_FACTORY.newFont(12 * fontRatio * heightRatio));
+        title.setFont(OVERPASS_HEAVY_ITALIC_FACTORY.newFont(12 * fontRatio * defactoRatio));
 
         Text version = new Text(app.getSettings().getVersion());
-        version.setFont(OVERPASS_LIGHT_ITALIC_FACTORY.newFont(4 * fontRatio * heightRatio));
+        version.setFont(OVERPASS_LIGHT_ITALIC_FACTORY.newFont(4 * fontRatio * defactoRatio));
         version.setFill(Color.rgb(120, 120, 120));
 
         VBox header = new VBox(title, version);
-        header.setSpacing(-9 * heightRatio);
+        header.setSpacing(-9 * defactoRatio);
 
         mainLayout.add(header, 0, 0);
 
 
         //// Make TextButtons on left side of menu and add it to main layout
         VBox textButtons = new VBox();
-        textButtons.setSpacing(18 * heightRatio);
+        textButtons.setSpacing(18 * defactoRatio);
         textButtons.setAlignment(Pos.BOTTOM_LEFT);
 
-        Font overpassReg = OVERPASS_REGULAR_FACTORY.newFont(12 * fontRatio * heightRatio);
+        Font overpassReg = OVERPASS_REGULAR_FACTORY.newFont(12 * fontRatio * defactoRatio);
         Color orange = Color.rgb(255, 179, 71);
         TextButton play = new TextButton("Play", overpassReg, orange, this::fireNewGame);
         TextButton modifyCars = new TextButton("Modify Cars", overpassReg, orange, this::doNothing);
 
-        Font overpassLight = OVERPASS_LIGHT_FACTORY.newFont(10 * fontRatio * heightRatio);
+        Font overpassLight = OVERPASS_LIGHT_FACTORY.newFont(10 * fontRatio * defactoRatio);
         Color blue = Color.rgb(41, 128, 187);
         TextButton settings = new TextButton("Settings", overpassLight, blue, this::doNothing);
         TextButton changeProfile = new TextButton("Change profile", overpassLight, blue, this::fireLogout);
@@ -91,16 +98,16 @@ public class MainMenu extends FXGLMenu {
 
         //// Make profile area that is in the top right area of the main menu
         HBox profileArea = new HBox();
-        profileArea.setSpacing(11 * widthRatio);
+        profileArea.setSpacing(11 * defactoRatio);
         profileArea.setAlignment(Pos.TOP_RIGHT);
 
         Text profileName = new Text();
-        profileName.setFont(HACK_REGULAR_FACTORY.newFont(5 * fontRatio * heightRatio));
+        profileName.setFont(HACK_REGULAR_FACTORY.newFont(5 * fontRatio * defactoRatio));
         profileName.setTextAlignment(TextAlignment.RIGHT);
-        profileName.setTranslateY(7 * heightRatio);
+        profileName.setTranslateY(7 * defactoRatio);
         listener.profileNameProperty().addListener((o, oldValue, newValue) -> profileName.setText(newValue));
 
-        Rectangle iconBox = new Rectangle(37 * heightRatio, 37 * heightRatio, null);
+        Rectangle iconBox = new Rectangle(37 * defactoRatio, 37 * defactoRatio, null);
         iconBox.setStroke(Color.BLACK);
         Image profilePicture = FXGL.getAssetLoader().loadImage("Profile pictures/tire.png");
         iconBox.setFill(new ImagePattern(profilePicture));
@@ -114,10 +121,10 @@ public class MainMenu extends FXGLMenu {
         //// Make the "What's New?" button on the bottom right of the main menu
         BoxButtonSettings whatsNewConfig = new BoxButtonSettings();
         whatsNewConfig.text = "What's new?";
-        whatsNewConfig.font = OVERPASS_LIGHT_FACTORY.newFont(4 * fontRatio * heightRatio);
+        whatsNewConfig.font = OVERPASS_LIGHT_FACTORY.newFont(4 * fontRatio * defactoRatio);
         whatsNewConfig.setBackgroundAndTextColors(Color.hsb(180, 1, 0.5));
-        whatsNewConfig.hMargin = 13 * widthRatio;
-        whatsNewConfig.vMargin = 4 * heightRatio;
+        whatsNewConfig.hMargin = 13 * defactoRatio;
+        whatsNewConfig.vMargin = 4 * defactoRatio;
         StackPane whatsNewPane = new BoxButton(whatsNewConfig);
 
         whatsNewPane.setAlignment(Pos.BOTTOM_RIGHT);
@@ -126,44 +133,11 @@ public class MainMenu extends FXGLMenu {
         mainLayout.add(whatsNewPane, 1, 1);
 
         menuRoot.getChildren().add(mainLayout);
+
     }
 
     private void doNothing() {
         // Do nothing
-    }
-
-    @Override
-    protected Button createActionButton(String name, Runnable action) {
-        Button btn = new Button(name);
-        btn.addEventHandler(ActionEvent.ACTION, event -> action.run());
-        return btn;
-    }
-
-    @Override
-    protected Button createActionButton(StringBinding name, Runnable action) {
-        return createActionButton(name.getValue(), action);
-    }
-
-    @Override
-    protected Node createBackground(double width, double height) {
-        Rectangle bg = new Rectangle();
-        bg.setFill(Color.RED);
-        return bg;
-    }
-
-    @Override
-    protected Node createTitleView(String title) {
-        return FXGL.getUIFactory().newText(title);
-    }
-
-    @Override
-    protected Node createVersionView(String version) {
-        return FXGL.getUIFactory().newText(version);
-    }
-
-    @Override
-    protected Node createProfileView(String profileName) {
-        return FXGL.getUIFactory().newText(profileName);
     }
 
     public class TextButton extends Text {
@@ -205,6 +179,40 @@ public class MainMenu extends FXGLMenu {
             this.setOnMouseClicked(event -> settings.action.run());
             this.setMaxSize(rect.getWidth(), rect.getHeight());
         }
+    }
+
+    @Override
+    protected Button createActionButton(String name, Runnable action) {
+        Button btn = new Button(name);
+        btn.addEventHandler(ActionEvent.ACTION, event -> action.run());
+        return btn;
+    }
+
+    @Override
+    protected Button createActionButton(StringBinding name, Runnable action) {
+        return createActionButton(name.getValue(), action);
+    }
+
+    @Override
+    protected Node createBackground(double width, double height) {
+        Rectangle bg = new Rectangle();
+        bg.setFill(Color.RED);
+        return bg;
+    }
+
+    @Override
+    protected Node createTitleView(String title) {
+        return FXGL.getUIFactory().newText(title);
+    }
+
+    @Override
+    protected Node createVersionView(String version) {
+        return FXGL.getUIFactory().newText(version);
+    }
+
+    @Override
+    protected Node createProfileView(String profileName) {
+        return FXGL.getUIFactory().newText(profileName);
     }
 
     public class BoxButtonSettings {
