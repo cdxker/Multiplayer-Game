@@ -54,11 +54,10 @@ public class MainMenu extends FXGLMenu {
         GridPane mainLayout = new GridPane();
         RowConstraints row = new RowConstraints(app.getHeight() / 2.0 - marginSize);
         ColumnConstraints col = new ColumnConstraints(app.getWidth() / 2.0 - marginSize);
-        mainLayout.getRowConstraints().addAll(row, row);
-        mainLayout.getColumnConstraints().addAll(col, col);
-        mainLayout.setPadding(new Insets(marginSize));
-        //mainLayout.setBackground(new Background(new BackgroundFill(Color.rgb(230, 224, 211),CornerRadii.EMPTY, Insets.EMPTY)));
-
+        mainMenuLayout.getRowConstraints().addAll(row, row);
+        mainMenuLayout.getColumnConstraints().addAll(col, col);
+        mainMenuLayout.setPadding(new Insets(marginSize));
+        //mainMenuLayout.setBackground(new Background(new BackgroundFill(Color.rgb(230, 224, 211),CornerRadii.EMPTY, Insets.EMPTY)));
 
 
         //// Make header and add it to main layout
@@ -125,9 +124,8 @@ public class MainMenu extends FXGLMenu {
         whatsNewConfig.setBackgroundAndTextColors(Color.hsb(180, 1, 0.5));
         whatsNewConfig.hMargin = 13 * defactoRatio;
         whatsNewConfig.vMargin = 4 * defactoRatio;
-        StackPane whatsNewPane = new BoxButton(whatsNewConfig);
+        BoxButton whatsNewPane = new BoxButton(whatsNewConfig);
 
-        whatsNewPane.setAlignment(Pos.BOTTOM_RIGHT);
         GridPane.setHalignment(whatsNewPane, HPos.RIGHT);
         GridPane.setValignment(whatsNewPane, VPos.BOTTOM);
         mainLayout.add(whatsNewPane, 1, 1);
