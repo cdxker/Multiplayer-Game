@@ -48,12 +48,27 @@ public class HealthComponent extends Component {
      *
      * @param amount The amount to increase the health by
      */
-    public void increment(double amount) {
+    public void add(double amount) {
         health += amount;
-        health %= maxHealth;
+        if (maxHealth > health){
+            health = maxHealth;
+        }
         if (health <= 0) {
             health = 0;
             killEntity();
         }
     }
+
+    public double getMaxHealth() {
+        return maxHealth;
+    }
+
+    public HealthComponent add(HealthComponent amount){
+        HealthComponent higher;
+        if(amount.getHealth() > this.getHealth()) higher = amount;
+        else higher = this;
+        return new HealthComponent(amount.getHealth() + this.getHealth(), higher.getHealth());
+    }
+
+
 }

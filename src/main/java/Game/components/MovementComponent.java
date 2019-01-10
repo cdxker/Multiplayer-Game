@@ -39,7 +39,7 @@ public class MovementComponent extends Component {
 
     // How much slower the acceleration is each successive frame
     // Places an upper limit on the horizontal velocity of the vehicle
-    private final double startingAccelerationDrag; // the "base" acceleration of the car
+    private double startingAccelerationDrag; // the "base" acceleration of the car
     private double accelerationDrag; // the drag the car is experiencing due to friction
 
     /*
@@ -173,12 +173,32 @@ public class MovementComponent extends Component {
         }
     }
 
+    /**
+     * Increases the starting acceleration as to not infer with
+     * tile components changing instantaneous acceleration drag.
+     *
+     * @param value The value to increase it by
+     */
+    public void incrBaseAccelerationDrag(double value){
+        this.startingAccelerationDrag += value;
+        this.accelerationDrag = startingAccelerationDrag + value;
+    }
+
     /*
      * Getter and Setters
      */
 
-    public void setAccelerationDrag(double drag) {
-        this.accelerationDrag = startingAccelerationDrag + drag;
+    public void incrAccelerationDrag(double drag) {
+        accelerationDrag = startingAccelerationDrag + drag;
+        if(accelerationDrag > 1){
+            accelerationDrag = 1;
+        }else if(accelerationDrag < 0){
+            accelerationDrag = 0;
+        }
+    }
+
+    public double getAccelerationDrag() {
+        return accelerationDrag;
     }
 
     public Point2D getVelocity() {

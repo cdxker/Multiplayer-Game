@@ -2,67 +2,90 @@ package Game;
 
 import Game.components.FrictionComponent;
 import Game.components.HealthComponent;
+import Game.components.powerups.PowerUps;
 import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 import static com.almasb.fxgl.app.DSLKt.*;
 
 public class TileFactory implements EntityFactory {
 
-    public Entities.EntityBuilder genericTile(SpawnData data) {
+    // Special Tiles
+    @Spawns("Wall")
+    public Entity newWallTile(SpawnData data){
+        Point2D size = data.get("tileSize");
+        return Entities.builder()
+                .from(data)
+                .type(EntityType.Wall)
+                .with(new CollidableComponent(true))
+                .viewFromNodeWithBBox(new Rectangle(size.getX(), size.getY(), Color.BLACK))
+                .build();
+    }
+    // Basic Friction Tiles
+
+    private Entities.EntityBuilder genericTile(SpawnData data) {
         return Entities.builder()
                 .type(EntityType.Tile)
                 .from(data)
                 .with(new CollidableComponent(true));
     }
 
-    @Spawns("SlowPowerUp")
-    public Entity newSlowPowerUp(SpawnData data) {
+    @Spawns("Road")
+    public Entity newRoadTile(SpawnData data){
         Point2D size = data.get("tileSize");
         return genericTile(data)
-                .with(new FrictionComponent(-0.5)) // slows the car
-                .viewFromNodeWithBBox(texture("SlowPowerUp.png", size.getX(), size.getY()))
+                .with(new FrictionComponent(0))
+                .viewFromNodeWithBBox(new Rectangle(size.getX(), size.getY(), Color.gray(100)))
                 .build();
+    }
+
+    @Spawns("blank")
+    public Entity newBlankTile(SpawnData data){
+        return genericTile(data).
+                build();
+    }
+
+    // PowerUp tiles
+
+    private Entities.EntityBuilder genericPowerUp(SpawnData data){
+        return Entities.builder()
+                .type(EntityType.PowerUp)
+                .from(data)
+                .with(new CollidableComponent(true));
     }
 
     @Spawns("HealthPowerUp")
     public Entity newHealthPowerUp(SpawnData data){
+        double strength = data.get("Strength");
         Point2D size = data.get("tileSize");
-        return genericTile(data)
-                .with(new HealthComponent(80)) // TODO: create Health Power Up
+        return genericPowerUp(data)
                 .viewFromNodeWithBBox(texture("HealthPowerUp.png", size.getX(), size.getY()))
-                .with(new FrictionComponent(0))
-                .build();
-    }
-
-    @Spawns("border")
-    public Entity newBorderTile(SpawnData data) {
-        return genericTile(data)
-                .with(new FrictionComponent(-.25))
-                .viewFromNodeWithBBox(new Rectangle(50, 50, Color.RED))
-                .build();
-    }
-
-    @Spawns("road")
-    public Entity newRoadTile(SpawnData data) {
-        return genericTile(data)
-                .with(new FrictionComponent(0)) // restores the cars drag to normal
-                .viewFromNodeWithBBox(new Rectangle(50, 50, Color.BLUE))
+                .with(PowerUps.HealthPowerUp(strength))
                 .build();
     }
 
     @Spawns("SpeedPowerUp")
-    public Entity newSpeedPowerUp(SpawnData data) {
+    public Entity newSpeedPowerUp(SpawnData data){
         Point2D size = data.get("tileSize");
-        return genericTile(data)
-                .with(new FrictionComponent(0.1)) // speeds up the car
+        Duration time = data.get("Time");
+        return genericPowerUp(data)
                 .viewFromNodeWithBBox(texture("SpeedPowerUp.png", size.getX(), size.getY()))
+                .with(PowerUps.SpeedPowerUp(time))
                 .build();
     }
 
-
+    @Spawns("SlowPowerUp")
+    public Entity newSlowPowerUp(SpawnData data){
+        Point2D size = data.get("tileSize");
+        Duration time = data.get("Time");
+        return genericPowerUp(data)
+                .viewFromNodeWithBBox(texture("SlowPowerUp.png", size.getX(), size.getY()))
+                .with(PowerUps.SpeedPowerUp(time))
+                .build();
+    }
 }

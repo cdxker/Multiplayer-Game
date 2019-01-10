@@ -14,10 +14,11 @@ class Tile{
       this.y = y;
       this.c = c;
       this.id = Integer.toString(hashCode());
+      println(x);
   }
   
   public String toJson(){
-    return String.format("{\n\"uniqueId\": \"%s\",\n\"type\": \"%s\",\n\"pos\": {\n  \"x\": %f,\n  \"y\": %f,\n  \"hash\": 0\n}}", id, typeMap.get(c), x/tileSize, y/tileSize); // Divide by tilesize to get index
+    return String.format("{\n\"uniqueId\": \"%s\",\n\"type\": \"%s\",\n\"pos\": {\n  \"x\": %f,\n  \"y\": %f,\n  \"hash\": 0\n}}", id, typeMap.get(c), x/tileWidth, y/tileHeight); // Divide by tilesize to get index
   }
   
   private void setColor(color c){
@@ -25,12 +26,12 @@ class Tile{
   }
   
   public boolean mouseOver(){
-    return mouseX >= x && mouseX <= x + tileSize && mouseY >= y && mouseY <= y + tileSize;
+    return mouseX >= x && mouseX <= x + tileWidth && mouseY >= y && mouseY <= y + tileHeight;
   }
   
   public void draw(){
     fill(c);
-    rect(x, y, tileSize, tileSize);
+    rect(x, y, tileWidth, tileHeight);
   }
   
   public String toString(){
