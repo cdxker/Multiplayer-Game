@@ -140,14 +140,13 @@ public class GameApp extends GameApplication {
             e.printStackTrace();
         }
 
-        car = spawn("car", 40, 40);
+        car = spawn("Car", 40, 40);
         Point2D velocity = new Point2D(10, 10);
         spawn("Ball", new SpawnData(30, 30).put("velocity", velocity));
 
         getGameScene().getViewport().setBounds(0, 0, getWidth(), getHeight() + 200);
         getGameScene().getViewport().bindToEntity(car, 40, 40);
-        getGameWorld().addEntity(car);
-        
+
 
         Text text = new Text("Enjoy the ball");
         text.setTranslateY(50);

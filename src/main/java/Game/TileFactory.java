@@ -85,7 +85,7 @@ public class TileFactory implements EntityFactory {
         Duration time = data.get("Time");
         return genericPowerUp(data)
                 .viewFromNodeWithBBox(texture("SlowPowerUp.png", size.getX(), size.getY()))
-                .with(PowerUps.SpeedPowerUp(time))
+                .with(PowerUps.SlowPowerUp(time))
                 .build();
     }
 }

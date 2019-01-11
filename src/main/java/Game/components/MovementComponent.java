@@ -180,8 +180,16 @@ public class MovementComponent extends Component {
      * @param value The value to increase it by
      */
     public void incrBaseAccelerationDrag(double value){
-        this.startingAccelerationDrag += value;
-        this.accelerationDrag = startingAccelerationDrag + value;
+        double deltaDrag = this.accelerationDrag - this.startingAccelerationDrag; // find the difference between drag(drag applied by TileFriction)
+
+        this.startingAccelerationDrag += value; // Change value of starting drag
+
+        this.accelerationDrag = startingAccelerationDrag - deltaDrag; // Set the next frames drag0
+        if(accelerationDrag > 1){
+            accelerationDrag = 1;
+        }else if(accelerationDrag < 0){
+            accelerationDrag = 0;
+        }
     }
 
     /*

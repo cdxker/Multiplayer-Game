@@ -20,15 +20,22 @@ class SpeedEffect extends Effect {
         this.strength = strength;
     }
 
-    @Override
-    public void onEnd(@NotNull Entity entity) {
-        MovementComponent movement = entity.getComponent(MovementComponent.class);
-        movement.incrBaseAccelerationDrag(strength);
-    }
 
     @Override
     public void onStart(@NotNull Entity entity) {
         MovementComponent movement = entity.getComponent(MovementComponent.class);
-        movement.incrBaseAccelerationDrag(-strength);
+        System.out.print(movement.getAccelerationDrag() + "+ " + strength);
+        movement.incrBaseAccelerationDrag(strength);
+        System.out.print("= ");
+        System.out.println(movement.getAccelerationDrag());
     }
+
+    @Override
+    public void onEnd(@NotNull Entity entity) {
+        MovementComponent movement = entity.getComponent(MovementComponent.class);
+        movement.incrBaseAccelerationDrag(-strength);
+        System.out.print(movement.getAccelerationDrag());
+        System.out.println(": Removed");
+    }
+
 }
