@@ -116,6 +116,7 @@ public class GameApp extends GameApplication {
                 carEffects.startEffect(powerUp.getEffect());
             }
         });
+
         getPhysicsWorld().setGravity(0, 0);
     }
 
@@ -137,16 +138,14 @@ public class GameApp extends GameApplication {
         getGameWorld().addEntityFactory(new TileFactory());
 
         try {
-            MapBuilder.configureTileSize(128);
-            MapBuilder.createMap(getMap("the first"));
+            MapBuilder.configureTileSize(64);
+            MapBuilder.createMap(getMap("curvyAlley"));
         } catch (MapNotFoundException e) {
             e.printStackTrace();
         }
 
         car = spawn("Car", 40, 40);
         Point2D velocity = new Point2D(10, 10);
-        spawn("Ball", new SpawnData(30, 30).put("velocity", velocity));
-        getGameScene().getViewport().setBounds(0, 0, getWidth() + 2000, getHeight() + 2000);
 
         getGameScene().getViewport().bindToEntity(car, getWidth() - 100, getHeight() - 100);
     }

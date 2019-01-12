@@ -6,6 +6,8 @@ import Game.components.powerups.PowerUps;
 import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -19,10 +21,14 @@ public class TileFactory implements EntityFactory {
     @Spawns("Wall")
     public Entity newWallTile(SpawnData data){
         Point2D size = data.get("tileSize");
+        PhysicsComponent physics = new PhysicsComponent();
+        physics.setBodyType(BodyType.STATIC);
+
         return Entities.builder()
                 .from(data)
                 .type(EntityType.Wall)
                 .with(new CollidableComponent(true))
+                .with(physics)
                 .viewFromNodeWithBBox(new Rectangle(size.getX(), size.getY(), Color.BLACK))
                 .build();
     }
@@ -40,15 +46,26 @@ public class TileFactory implements EntityFactory {
         Point2D size = data.get("tileSize");
         return genericTile(data)
                 .with(new FrictionComponent(0))
-                .viewFromNodeWithBBox(new Rectangle(size.getX(), size.getY(), Color.gray(100)))
+                .viewFromNodeWithBBox(new Rectangle(size.getX(), size.getY(), Color.rgb(100, 100, 100)))
                 .build();
     }
 
-    @Spawns("blank")
+    @Spawns("Blank")
     public Entity newBlankTile(SpawnData data){
-        return genericTile(data).
-                build();
+        return genericTile(data)
+                .with(new FrictionComponent(0))
+                .build();
     }
+
+    @Spawns("Dirt")
+    public Entity newDirtPowerUp(SpawnData data){
+        Point2D size = data.get("tileSize");
+        return genericTile(data)
+                .with(new FrictionComponent(-0.5))
+                .viewFromNodeWithBBox(new Rectangle(size.getX(), size.getY(), Color.rgb(234,208,168)))
+                .build();
+    }
+
 
     // PowerUp tiles
 

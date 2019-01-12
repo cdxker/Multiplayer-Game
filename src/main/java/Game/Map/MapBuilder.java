@@ -11,6 +11,7 @@ import javafx.util.Duration;
 import java.util.Set;
 
 import static com.almasb.fxgl.app.DSLKt.spawn;
+import static com.almasb.fxgl.app.FXGL.*;
 import static com.almasb.fxgl.app.FXGL.getGameWorld;
 
 public class MapBuilder {
@@ -43,11 +44,14 @@ public class MapBuilder {
      * @param tiles The tiles that want to be spawned
      */
     public static void spawnTiles(Set<Tile> tiles) {
-        System.out.println("width: " + FXGL.getAppWidth() + " Height: " + FXGL.getAppHeight());
+        System.out.println("width: " + getAppWidth() + " Height: " + getAppHeight());
+        getGameScene().getViewport().setBounds(0, 0, (int) (getAppWidth() * tileSize.getX()), (int)(getAppHeight() * tileSize.getY()));
         for (Tile tile : tiles) {
-            System.out.println(tile);
-            Point2D tilePos = new Point2D(tile.getPos().getX()*tileSize.getX(), tile.getPos().getY()*tileSize.getY());
-            spawn(tile.getType(), new SpawnData(tilePos).put("tileSize", tileSize).put("Time", Duration.seconds(10)).put("Strength", 5.0 ));
+            if (!tile.getType().equals("Blank")) {
+                System.out.println(tile);
+                Point2D tilePos = new Point2D(tile.getPos().getX() * tileSize.getX(), tile.getPos().getY() * tileSize.getY());
+                spawn(tile.getType(), new SpawnData(tilePos).put("tileSize", tileSize).put("Time", Duration.seconds(2)).put("Strength", 5.0));
+            }
         }
     }
 
