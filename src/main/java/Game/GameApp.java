@@ -23,6 +23,7 @@ import javafx.scene.text.TextAlignment;
 
 import java.io.IOException;
 
+import static Game.Map.MapReader.getBuiltInMap;
 import static Game.Map.MapReader.getMap;
 import static com.almasb.fxgl.app.DSLKt.onKey;
 import static com.almasb.fxgl.app.DSLKt.spawn;
@@ -139,7 +140,7 @@ public class GameApp extends GameApplication {
 
         try {
             MapBuilder.configureTileSize(64);
-            MapBuilder.createMap(getMap("curvyAlley"));
+            MapBuilder.createMap(getBuiltInMap("curvyalley"));
         } catch (MapNotFoundException e) {
             e.printStackTrace();
         }

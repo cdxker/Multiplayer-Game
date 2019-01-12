@@ -19,7 +19,6 @@ class SpeedEffect extends Effect {
         super(length);
         this.strength = strength;
     }
- 
 
     @Override
     public void onStart(@NotNull Entity entity) {
