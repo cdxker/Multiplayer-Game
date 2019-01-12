@@ -4,13 +4,11 @@ import Game.Map.MapBuilder;
 import Game.Map.MapNotFoundException;
 import Game.Map.MapUtilities;
 import Game.UI.SceneCreator;
-import Game.components.DamageComponent;
-import Game.components.FrictionComponent;
-import Game.components.HealthComponent;
-import Game.components.MovementComponent;
+import Game.components.*;
 import Game.components.powerups.PowerUpComponent;
 import Game.components.powerups.PowerUps;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.extra.entity.effect.Effect;
@@ -80,6 +78,13 @@ public class GameApp extends GameApplication {
             });
 
         });
+
+        onKey(KeyCode.SPACE, "Fire Bullet", ()->{
+            getGameWorld().getEntitiesByComponent(GunCompoent.class).forEach((entity)->{
+                GunCompoent gun = entity.getComponent(GunCompoent.class);
+                gun.shootBullet();
+            });
+        });
     }
 
     @Override
@@ -108,7 +113,6 @@ public class GameApp extends GameApplication {
             protected void onCollision(Entity car, Entity powerUpEntity) {
                 EffectComponent carEffects = car.getComponent(EffectComponent.class);
                 PowerUpComponent powerUp = powerUpEntity.getComponent(PowerUpComponent.class);
-                System.out.println(powerUp.getEffect());
                 carEffects.startEffect(powerUp.getEffect());
             }
         });
@@ -131,7 +135,6 @@ public class GameApp extends GameApplication {
     protected void initGame() {
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntityFactory(new TileFactory());
-        //getGameWorld().addEntity(Entities.makeScreenBounds(40));
 
         try {
             MapBuilder.configureTileSize(128);
@@ -143,17 +146,9 @@ public class GameApp extends GameApplication {
         car = spawn("Car", 40, 40);
         Point2D velocity = new Point2D(10, 10);
         spawn("Ball", new SpawnData(30, 30).put("velocity", velocity));
+        getGameScene().getViewport().setBounds(0, 0, getWidth() + 2000, getHeight() + 2000);
 
-        getGameScene().getViewport().setBounds(0, 0, getWidth(), getHeight() + 200);
-        getGameScene().getViewport().bindToEntity(car, 40, 40);
-
-
-        Text text = new Text("Enjoy the ball");
-        text.setTranslateY(50);
-        text.setTranslateX((getWidth() / 2.0) - 2);
-        text.setTextAlignment(TextAlignment.CENTER);
-        text.setFont(new Font(50));
-        getGameScene().addUINode(text);
+        getGameScene().getViewport().bindToEntity(car, getWidth() - 100, getHeight() - 100);
     }
 
     public void gameOver() {

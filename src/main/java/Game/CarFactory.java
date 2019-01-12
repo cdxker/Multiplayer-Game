@@ -1,6 +1,7 @@
 package Game;
 
 import Game.components.DamageComponent;
+import Game.components.GunCompoent;
 import Game.components.HealthComponent;
 import Game.components.MovementComponent;
 import com.almasb.fxgl.app.FXGL;
@@ -29,6 +30,7 @@ public class CarFactory implements EntityFactory {
                 .viewFromNodeWithBBox(texture("car.png", 64, 32))
                 .with(new CollidableComponent(true))
                 .with(physics)
+                .with(new GunCompoent("Bullet"))
                 .with(new MovementComponent(0.05,0.95,0.80,1,0.5))
                 .with(new HealthComponent(100))
                 .with(new EffectComponent())
@@ -52,7 +54,7 @@ public class CarFactory implements EntityFactory {
                 .build();
     }
 
-    @Spawns("Bouncy Bullet")
+    @Spawns("Bullet")
     public Entity newBullet(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
@@ -63,7 +65,7 @@ public class CarFactory implements EntityFactory {
         return Entities.builder()
                 .type(EntityType.Bullet)
                 .from(data)
-                .viewFromNodeWithBBox(new Circle(20))
+                .viewFromNodeWithBBox(new Circle(5))
                 .with(new CollidableComponent(true))
                 .with(new DamageComponent(5))
                 .with(physics)
