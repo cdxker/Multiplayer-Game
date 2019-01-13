@@ -8,7 +8,7 @@ import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * PowerUp that adds resources to a different component
+ * POWER_UP that adds resources to a different component
  */
 public class HealthPowerUp extends Effect {
 

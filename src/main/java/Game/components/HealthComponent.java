@@ -70,5 +70,9 @@ public class HealthComponent extends Component {
         return new HealthComponent(amount.getHealth() + this.getHealth(), higher.getHealth());
     }
 
+    public void increment(double change){
+        health += change;
+
+    }
 
 }

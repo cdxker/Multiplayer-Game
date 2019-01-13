@@ -21,7 +21,7 @@ public class MapBuilder {
      * Clears the map of all tiles that are currently placed
      */
     public static void clearMap() {
-        getGameWorld().getEntitiesByType(EntityType.Tile).forEach(Entity::removeFromWorld);
+        getGameWorld().getEntitiesByType(EntityType.TILE).forEach(Entity::removeFromWorld);
     }
 
     /**

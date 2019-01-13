@@ -13,7 +13,7 @@ public class Map {
      * The data structure for a map.
      *
      * @param name  The name of map
-     * @param tiles A set of Tile objects
+     * @param tiles A set of TILE objects
      */
     public Map(Set<Tile> tiles, String name, Point2D gridSize) {
         this.tiles = tiles;
@@ -65,7 +65,7 @@ public class Map {
     }
 
     /**
-     * Two Tile objects are equal if they have matching uniqueId's.
+     * Two TILE objects are equal if they have matching uniqueId's.
      */
     @Override
     public boolean equals(Object o) {
@@ -77,7 +77,7 @@ public class Map {
 
     /**
      * This hashcode method is overridden in order to force the use of the overridden equals method.
-     * Use getHashCode() instead if you need the Tile object's hashcode.
+     * Use getHashCode() instead if you need the TILE object's hashcode.
      */
     @Override
     public int hashCode() {

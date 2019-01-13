@@ -1,9 +1,7 @@
 package Game;
 
 import Game.components.FrictionComponent;
-import Game.components.HealthComponent;
 import Game.components.powerups.PowerUps;
-import com.almasb.fxgl.app.DSLKt;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import javafx.geometry.Point2D;
@@ -16,12 +14,12 @@ import static com.almasb.fxgl.app.DSLKt.*;
 public class TileFactory implements EntityFactory {
 
     // Special Tiles
-    @Spawns("Wall")
+    @Spawns("WALL")
     public Entity newWallTile(SpawnData data){
         Point2D size = data.get("tileSize");
         return Entities.builder()
                 .from(data)
-                .type(EntityType.Wall)
+                .type(EntityType.WALL)
                 .with(new CollidableComponent(true))
                 .viewFromNodeWithBBox(new Rectangle(size.getX(), size.getY(), Color.BLACK))
                 .build();
@@ -30,7 +28,7 @@ public class TileFactory implements EntityFactory {
 
     private Entities.EntityBuilder genericTile(SpawnData data) {
         return Entities.builder()
-                .type(EntityType.Tile)
+                .type(EntityType.TILE)
                 .from(data)
                 .with(new CollidableComponent(true));
     }
@@ -50,11 +48,11 @@ public class TileFactory implements EntityFactory {
                 build();
     }
 
-    // PowerUp tiles
+    // POWER_UP tiles
 
     private Entities.EntityBuilder genericPowerUp(SpawnData data){
         return Entities.builder()
-                .type(EntityType.PowerUp)
+                .type(EntityType.POWER_UP)
                 .from(data)
                 .with(new CollidableComponent(true));
     }
