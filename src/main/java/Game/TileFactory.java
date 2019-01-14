@@ -20,7 +20,7 @@ public class TileFactory implements EntityFactory {
     // Special Tiles
     @Spawns("Wall")
     public Entity newWallTile(SpawnData data){
-        Point2D size = data.get("tileSize");
+        double size = data.get("tileSize");
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.STATIC);
 
@@ -29,7 +29,7 @@ public class TileFactory implements EntityFactory {
                 .type(EntityType.Wall)
                 .with(new CollidableComponent(true))
                 .with(physics)
-                .viewFromNodeWithBBox(new Rectangle(size.getX(), size.getY(), Color.BLACK))
+                .viewFromNodeWithBBox(new Rectangle(size, size, Color.BLACK))
                 .build();
     }
     // Basic Friction Tiles
@@ -43,10 +43,10 @@ public class TileFactory implements EntityFactory {
 
     @Spawns("Road")
     public Entity newRoadTile(SpawnData data){
-        Point2D size = data.get("tileSize");
+        double size = data.get("tileSize");
         return genericTile(data)
                 .with(new FrictionComponent(0))
-                .viewFromNodeWithBBox(new Rectangle(size.getX(), size.getY(), Color.rgb(100, 100, 100)))
+                .viewFromNodeWithBBox(new Rectangle(size, size, Color.rgb(100, 100, 100)))
                 .build();
     }
 
@@ -59,10 +59,10 @@ public class TileFactory implements EntityFactory {
 
     @Spawns("Dirt")
     public Entity newDirtPowerUp(SpawnData data){
-        Point2D size = data.get("tileSize");
+        double size = data.get("tileSize");
         return genericTile(data)
                 .with(new FrictionComponent(-0.5))
-                .viewFromNodeWithBBox(new Rectangle(size.getX(), size.getY(), Color.rgb(234,208,168)))
+                .viewFromNodeWithBBox(new Rectangle(size, size, Color.rgb(234,208,168)))
                 .build();
     }
 
@@ -79,29 +79,29 @@ public class TileFactory implements EntityFactory {
     @Spawns("HealthPowerUp")
     public Entity newHealthPowerUp(SpawnData data){
         double strength = data.get("Strength");
-        Point2D size = data.get("tileSize");
+        double size = data.get("tileSize");
         return genericPowerUp(data)
-                .viewFromNodeWithBBox(texture("HealthPowerUp.png", size.getX(), size.getY()))
+                .viewFromNodeWithBBox(texture("HealthPowerUp.png", size, size))
                 .with(PowerUps.HealthPowerUp(strength))
                 .build();
     }
 
     @Spawns("SpeedPowerUp")
     public Entity newSpeedPowerUp(SpawnData data){
-        Point2D size = data.get("tileSize");
+        double size = data.get("tileSize");
         Duration time = data.get("Time");
         return genericPowerUp(data)
-                .viewFromNodeWithBBox(texture("SpeedPowerUp.png", size.getX(), size.getY()))
+                .viewFromNodeWithBBox(texture("SpeedPowerUp.png", size, size))
                 .with(PowerUps.SpeedPowerUp(time))
                 .build();
     }
 
     @Spawns("SlowPowerUp")
     public Entity newSlowPowerUp(SpawnData data){
-        Point2D size = data.get("tileSize");
+        double size = data.get("tileSize");
         Duration time = data.get("Time");
         return genericPowerUp(data)
-                .viewFromNodeWithBBox(texture("SlowPowerUp.png", size.getX(), size.getY()))
+                .viewFromNodeWithBBox(texture("SlowPowerUp.png", size, size))
                 .with(PowerUps.SlowPowerUp(time))
                 .build();
     }

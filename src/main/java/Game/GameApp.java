@@ -33,6 +33,7 @@ import static com.almasb.fxgl.app.DSLKt.spawn;
 public class GameApp extends GameApplication {
 
     Entity car;
+    MapBuilder map;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -44,6 +45,7 @@ public class GameApp extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(true);
         settings.setSceneFactory(new SceneCreator());
+        settings.setFullScreenAllowed(false);
     }
 
     @Override
@@ -121,6 +123,11 @@ public class GameApp extends GameApplication {
         getPhysicsWorld().setGravity(0, 0);
     }
 
+    @Override
+    protected void onUpdate(double tpf) {
+        map.update();
+    }
+
     public static void main(String[] args) {
         try {
             MapUtilities.createCustomMapsDir();
@@ -138,17 +145,16 @@ public class GameApp extends GameApplication {
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntityFactory(new TileFactory());
 
+        car = spawn("Car", 40, 40);
+
         try {
-            MapBuilder.configureTileSize(64);
-            MapBuilder.createMap(getBuiltInMap("curvyalley"));
+            map = new MapBuilder(getBuiltInMap("curvyalley"), car, 64, 0, 0, getWidth(), getHeight());
+            System.out.println(map);
         } catch (MapNotFoundException e) {
+            System.out.println("Fail");
             e.printStackTrace();
         }
 
-        car = spawn("Car", 40, 40);
-        Point2D velocity = new Point2D(10, 10);
-
-        getGameScene().getViewport().bindToEntity(car, getWidth() - 100, getHeight() - 100);
     }
 
     public void gameOver() {

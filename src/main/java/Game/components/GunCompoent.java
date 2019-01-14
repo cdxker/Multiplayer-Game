@@ -6,18 +6,22 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 
 import static com.almasb.fxgl.app.DSLKt.spawn;
+import static com.almasb.fxgl.app.DSLKt.texture;
 
 public class GunCompoent extends Component {
 
     private PhysicsComponent physics;
     private String bulletName;
-    private Entity myEntity;
 
     @Override
     public void onAdded() {
-        myEntity = getEntity();
+        Node gunTexture = texture("gun.png", getEntity().getWidth() * 18 /32, getEntity().getWidth()*10 / 16);
+        gunTexture.setTranslateX(getEntity().getWidth()*16/32);
+        gunTexture.setTranslateY(getEntity().getHeight()*3/16);
+        getEntity().getView().addNode(gunTexture);
     }
 
 

@@ -1,10 +1,10 @@
 package Game;
 
+import Game.Map.MapBuilder;
 import Game.components.DamageComponent;
 import Game.components.GunCompoent;
 import Game.components.HealthComponent;
 import Game.components.MovementComponent;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.extra.entity.components.KeepOnScreenComponent;
@@ -24,10 +24,11 @@ public class CarFactory implements EntityFactory {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
         physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(0, 0));
+
         return Entities.builder()
                 .type(EntityType.Car)
                 .from(data)
-                .viewFromNodeWithBBox(texture("car.png", 64, 32))
+                .viewFromNodeWithBBox(texture("car.png", 64, 64/2))
                 .with(new CollidableComponent(true))
                 .with(physics)
                 .with(new GunCompoent("Bullet"))
@@ -67,7 +68,7 @@ public class CarFactory implements EntityFactory {
                 .from(data)
                 .viewFromNodeWithBBox(new Circle(5))
                 .with(new CollidableComponent(true))
-                .with(new DamageComponent(5))
+                .with(new DamageComponent(20))
                 .with(physics)
                 .with(new KeepOnScreenComponent(true, true))
                 .build();

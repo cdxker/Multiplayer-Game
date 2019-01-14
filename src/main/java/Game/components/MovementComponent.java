@@ -95,7 +95,6 @@ public class MovementComponent extends Component {
      */
     public void onUpdate(double tpf) {
         refreshRate = tpf * 60;
-
         /* Changes velocity by acceleration
          * Since velocity is a vector, and acceleration is represented by
          * a one-dimensional double value, each component is calculated using trigonometry
