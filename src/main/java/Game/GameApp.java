@@ -2,7 +2,6 @@ package Game;
 
 import Game.Map.MapBuilder;
 import Game.Map.MapNotFoundException;
-import Game.Settings.GlobalSettings;
 import Game.UI.SceneCreator;
 import Game.components.DamageComponent;
 import Game.components.FrictionComponent;
