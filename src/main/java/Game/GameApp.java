@@ -2,6 +2,7 @@ package Game;
 
 import Game.Map.MapBuilder;
 import Game.Map.MapNotFoundException;
+import Game.Settings.GlobalSettings;
 import Game.UI.SceneCreator;
 import Game.components.DamageComponent;
 import Game.components.FrictionComponent;
@@ -14,12 +15,15 @@ import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.MenuItem;
+import com.almasb.fxgl.util.Credits;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.EnumSet;
 
 import static Game.Map.MapReader.getMap;
@@ -30,20 +34,50 @@ import static com.almasb.fxgl.app.DSLKt.spawn;
 
 public class GameApp extends GameApplication {
 
+
+    public static GlobalSettings globalSettings;
+
+    static {
+        try {
+            String defaultConfig = "{" +
+                    "\"widthRes\": 900," +
+                    "\"heightRes\": 600," +
+                    "\"introEnabled\": false" +
+                    "}";
+
+            globalSettings = new GlobalSettings("profiles\\GlobalSettings.json", defaultConfig);
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1366);
-        settings.setHeight(768);
-        settings.setTitle("Bullet Hail");
-        //settings.setDialogFactory(new DialogCreator());
-        //settings.setUIFactory();
-        settings.setVersion("v1.0.0");
-        settings.setIntroEnabled(false);
-        settings.setMenuEnabled(true);
-        settings.setSceneFactory(new SceneCreator());
+        settings.setWidth(globalSettings.getWidthRes());
+        settings.setHeight(globalSettings.getHeightRes());
+        settings.setIntroEnabled(globalSettings.isIntroEnabled());
+
+
+        //// Not intended to be changed by players
         settings.setEnabledMenuItems(EnumSet.allOf(MenuItem.class));
+        //settings.setDialogFactory(new DialogCreator());
+        settings.setSceneFactory(new SceneCreator());
+        settings.setFullScreenAllowed(true); // Forced Fullscreen if true/ Toggleable if false
         settings.setAppIcon("AppIcon.png");
-        settings.setFullScreenAllowed(false); // Forced Fullscreen if true/ Toggleable if false
+        settings.setTitle("Bullet Hail");
+        settings.setVersion("v1.0.0");
+        settings.setCSS("main.css");
+        settings.setManualResizeEnabled(false);
+        //settings.setUIFactory();
+        settings.setMenuEnabled(true);
+
+
+        ArrayList<String> credits = new ArrayList<>(settings.getCredits().getList());
+        credits.add("Denzell Ford");
+        credits.add("Terry Garcia");
+        credits.add("Tri Nguyen");
+        credits.add("FXGL by AlmasB");
+        settings.setCredits(new Credits(credits));
     }
 
     @Override
