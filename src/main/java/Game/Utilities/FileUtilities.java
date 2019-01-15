@@ -30,6 +30,19 @@ public class FileUtilities {
     }
 
     /**
+     * Helpful method to avoid repeating boilerplate code for writing text to a file.
+     *
+     * @param file    File object pointing to location of file.
+     * @param content String containing the content to be put in the file.
+     * @return the path of the written file as a Path.
+     * @throws IOException if an I/O error occurs writing to or creating the
+     *                     file, or the text cannot be encoded using the specified charset
+     */
+    public static Path writeString(File file, String content) throws IOException {
+        return Files.writeString(file.toPath(), content);
+    }
+
+    /**
      * Helpful overloaded method of writeText(String, String, Charset) that
      * uses the UTF-8 charset by default.
      * @param stringPath Path to file location.
