@@ -1,30 +1,13 @@
 package Game.UI;
 
-import javafx.geometry.Insets;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-public class BoxButton extends StackPane {
+public class BoxButton extends RectText {
     public BoxButton(BoxButtonSettings settings) {
-        Text text = new Text(settings.text);
-        text.setFont(settings.font);
-        text.setFill(settings.normTextCol);
-
-        double textWidth = text.getBoundsInLocal().getWidth();
-        double textHeight = text.getBoundsInLocal().getHeight();
-        double width = textWidth + 2 * settings.hMargin;
-        double height = textHeight + 2 * settings.vMargin;
-
-        HBox textBox = new HBox(text);
-        textBox.setPadding(new Insets(settings.vMargin, settings.hMargin, settings.vMargin, settings.hMargin));
-        textBox.setPrefSize(width, height);
-        textBox.setMaxSize(width, height);
-
-        Rectangle rect = new Rectangle(width, height, settings.normBgCol);
-
-        this.getChildren().addAll(rect, textBox);
+        super(settings);
+        Rectangle rect = this.getRect();
+        Text text = this.getText();
         this.setOnMouseEntered(event -> {
             rect.setFill(settings.otherBgCol);
             text.setFill(settings.otherTextCol);
@@ -34,8 +17,6 @@ public class BoxButton extends StackPane {
             text.setFill(settings.normTextCol);
         });
         this.setOnMouseClicked(event -> settings.action.run());
-        this.setPrefSize(width, height);
-        this.setMaxSize(width, height);
     }
 }
 
