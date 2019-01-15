@@ -229,26 +229,16 @@ public class MainMenu extends FXGLMenu {
 
         SettingSection controlSection = new SettingSection("Controls");
 
-        VBox controls = new VBox();
-
         PressAnyKeyState pressAnyKeyState = new PressAnyKeyState();
         BackportKt.forEach(app.getInput().getBindings(), (action, trigger) -> {
-            HBox controlField = new HBox();
-            controlField.setSpacing(20 * defactoRatio);
-            controlField.setAlignment(Pos.CENTER_LEFT);
-            controlField.getChildren().add(new Text(action.getName()));
             TriggerView triggerView = new TriggerView(trigger);
             triggerView.triggerProperty().bind(this.app.getInput().triggerProperty(action));
             triggerView.setOnMouseClicked((event) -> {
                 pressAnyKeyState.actionContext = action;
                 FXGL.getStateMachine().pushState(pressAnyKeyState);
             });
-            controlField.getChildren().add(triggerView);
-            controls.getChildren().add(controlField);
+            controlSection.addFields(new SettingField(action.getName() + ":", triggerView));
         });
-
-        SettingField remappableControls = new SettingField("", controls);
-        controlSection.addFields(remappableControls);
 
         SettingSection miscSection = new SettingSection("Misc.");
 
