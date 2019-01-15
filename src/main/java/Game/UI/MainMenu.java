@@ -2,10 +2,16 @@ package Game.UI;
 
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.SubState;
+import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.InputModifier;
+import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.input.view.TriggerView;
 import com.almasb.fxgl.scene.FXGLMenu;
 import com.almasb.fxgl.scene.menu.MenuType;
 import com.almasb.fxgl.settings.ReadOnlyGameSettings;
 import com.almasb.fxgl.ui.FontFactory;
+import com.almasb.fxgl.util.BackportKt;
 import com.almasb.fxgl.util.Language;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.Property;
@@ -18,6 +24,8 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -220,7 +228,27 @@ public class MainMenu extends FXGLMenu {
         audioSection.addFields(musicVolume, soundVolume);
 
         SettingSection controlSection = new SettingSection("Controls");
-        // TODO: Implement remappable controls
+
+        VBox controls = new VBox();
+
+        PressAnyKeyState pressAnyKeyState = new PressAnyKeyState();
+        BackportKt.forEach(app.getInput().getBindings(), (action, trigger) -> {
+            HBox controlField = new HBox();
+            controlField.setSpacing(20 * defactoRatio);
+            controlField.setAlignment(Pos.CENTER_LEFT);
+            controlField.getChildren().add(new Text(action.getName()));
+            TriggerView triggerView = new TriggerView(trigger);
+            triggerView.triggerProperty().bind(this.app.getInput().triggerProperty(action));
+            triggerView.setOnMouseClicked((event) -> {
+                pressAnyKeyState.actionContext = action;
+                FXGL.getStateMachine().pushState(pressAnyKeyState);
+            });
+            controlField.getChildren().add(triggerView);
+            controls.getChildren().add(controlField);
+        });
+
+        SettingField remappableControls = new SettingField("", controls);
+        controlSection.addFields(remappableControls);
 
         SettingSection miscSection = new SettingSection("Misc.");
 
@@ -251,7 +279,7 @@ public class MainMenu extends FXGLMenu {
         }));
         SettingField introEnabled = new SettingField("Intro enabled:", introEnabledCb);
 
-        miscSection.addFields(language, credits, playtime, introEnabled);
+        miscSection.addFields(language, introEnabled, playtime, credits);
 
         sections.getChildren().addAll(videoSection, audioSection, controlSection, miscSection);
 
@@ -438,4 +466,36 @@ public class MainMenu extends FXGLMenu {
         return FXGL.getUIFactory().newText(profileName);
     }
 
+    private class PressAnyKeyState extends SubState { // Copied this code from FXGL class
+        private UserAction actionContext;
+
+        PressAnyKeyState() {
+            this.getInput().addEventHandler(KeyEvent.KEY_PRESSED, (e) -> {
+                if (!Input.isIllegal(e.getCode())) {
+                    boolean rebound = FXGL.getInput().rebind(this.actionContext, e.getCode(), InputModifier.from(e));
+                    if (rebound) {
+                        FXGL.getStateMachine().popState();
+                    }
+
+                }
+            });
+            this.getInput().addEventHandler(MouseEvent.MOUSE_PRESSED, (e) -> {
+                boolean rebound = FXGL.getInput().rebind(this.actionContext, e.getButton(), InputModifier.from(e));
+                if (rebound) {
+                    FXGL.getStateMachine().popState();
+                }
+
+            });
+            Rectangle rect = new Rectangle(250.0D, 100.0D);
+            rect.setStroke(Color.color(0.85D, 0.9D, 0.9D, 0.95D));
+            rect.setStrokeWidth(10.0D);
+            rect.setArcWidth(15.0D);
+            rect.setArcHeight(15.0D);
+            Text text = FXGL.getUIFactory().newText(FXGL.getLocalizedString("menu.pressAnyKey"), 24.0D);
+            StackPane pane = new StackPane(new Node[]{rect, text});
+            pane.setTranslateX((double) (FXGL.getAppWidth() / 2 - 125));
+            pane.setTranslateY((double) (FXGL.getAppHeight() / 2 - 50));
+            this.getChildren().add(pane);
+        }
+    }
 }
