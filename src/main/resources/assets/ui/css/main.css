@@ -1,0 +1,20 @@
+#TransparentScrollPane.scroll-pane,
+#TransparentScrollPane.scroll-pane > .viewport,
+#TransparentScrollPane.scroll-pane > .scroll-bar > .track {
+    -fx-background-color: transparent;
+}
+
+#TransparentScrollPane.scroll-pane > .scroll-bar {
+    -fx-background-color: transparent;
+    -fx-background-insets : 2.0, 0.0, 0.0;
+    -fx-background-radius : 2.0em;
+    -fx-pref-width: 10;
+}
+
+#TransparentScrollPane.scroll-pane > .scroll-bar > .thumb:hover {
+    -fx-background-color: rgb(120, 120, 120);
+}
+
+#TransparentScrollPane.scroll-pane > .scroll-bar > .thumb {
+    -fx-background-color: black;
+}
