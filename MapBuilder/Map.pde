@@ -31,15 +31,12 @@ class Map{
   }
      
   public void updateTile(float x, float y, color newColor){
-    int xPos = (int)x / w;
-    int yPos = (int)y / h;
+
     for(Tile[] t_list : tiles){
       for(Tile tile : t_list){
         if(tile.mouseOver()) tile.setColor(newColor);
       }
     }
-    print("size: " + tiles.length + " ");
-    println(xPos +", "+ yPos);
-  }
+   }
   
 }

@@ -1,34 +1,24 @@
 package Game.Map;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import javafx.geometry.Point2D;
+
 import java.util.Set;
 
 public class Map {
     private String name;
     private Set<Tile> tiles;
+    private Point2D gridSize;
 
     /**
      * The data structure for a map.
      *
      * @param name  The name of map
-     * @param tiles A set of Tile objects
+     * @param tiles A set of TILE objects
      */
-    public Map(String name, Set<Tile> tiles) {
-        this.name = name;
+    public Map(Set<Tile> tiles, String name, Point2D gridSize) {
         this.tiles = tiles;
-    }
-
-    /**
-     * The data structure for a map.
-     * Uses:
-     * new Map(name, tile1, tile2, tile3)
-     *
-     * @param name The name of the map
-     * @param tiles An unspecified amount of tiles
-     */
-    public Map(String name, Tile... tiles) {
-        this(name, new HashSet<>(Arrays.asList(tiles)));
+        this.name = name;
+        this.gridSize = gridSize;
     }
 
     public String getName() {
@@ -75,7 +65,7 @@ public class Map {
     }
 
     /**
-     * Two Tile objects are equal if they have matching uniqueId's.
+     * Two TILE objects are equal if they have matching uniqueId's.
      */
     @Override
     public boolean equals(Object o) {
@@ -87,7 +77,7 @@ public class Map {
 
     /**
      * This hashcode method is overridden in order to force the use of the overridden equals method.
-     * Use getHashCode() instead if you need the Tile object's hashcode.
+     * Use getHashCode() instead if you need the TILE object's hashcode.
      */
     @Override
     public int hashCode() {
@@ -96,5 +86,13 @@ public class Map {
 
     public int getHashCode() {
         return super.hashCode();
+    }
+
+    public Point2D getGridSize() {
+        return gridSize;
+    }
+
+    public void setGridSize(Point2D gridSize) {
+        this.gridSize = gridSize;
     }
 }

@@ -12,7 +12,7 @@ public class Tile {
     private Point2D pos;
 
     /**
-     * Creates a Tile object with a uniqueId, type, and position.
+     * Creates a TILE object with a uniqueId, type, and position.
      */
     public Tile(String uniqueId, String type, Point2D pos) {
         this.uniqueId = uniqueId;
@@ -21,7 +21,7 @@ public class Tile {
     }
 
     /**
-     * Creates a Tile object using the object's HashCode as the uniqueId.
+     * Creates a TILE object using the object's HashCode as the uniqueId.
      * Helpful if you want something else to come up with a HashCode rather than yourself.
      */
     public Tile(String type, Point2D pos) {
@@ -64,8 +64,8 @@ public class Tile {
     }
 
     /**
-     * This method is used to determine if a Tile object is a valid object. A
-     * valid Tile object is defined as having none of its class fields as null.
+     * This method is used to determine if a TILE object is a valid object. A
+     * valid TILE object is defined as having none of its class fields as null.
      *
      * @return returns true if the uniqueId, type, and pos fields of the object
      * are not null.
@@ -75,7 +75,7 @@ public class Tile {
     }
 
     /**
-     * Two Tile objects are equal if they have matching uniqueId's.
+     * Two TILE objects are equal if they have matching uniqueId's.
      */
     @Override
     public boolean equals(Object o) {
@@ -87,7 +87,7 @@ public class Tile {
 
     /**
      * This hashcode method is overridden in order to force the use of the overridden equals method.
-     * Use getHashCode() instead if you need the Tile object's hashcode.
+     * Use getHashCode() instead if you need the TILE object's hashcode.
      */
     @Override
     public int hashCode() {
@@ -96,5 +96,10 @@ public class Tile {
 
     public int getHashCode() {
         return super.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s TILE x:%f, y:%f, id: %s", type, pos.getX(), pos.getY(), uniqueId);
     }
 }

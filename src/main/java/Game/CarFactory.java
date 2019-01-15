@@ -6,6 +6,7 @@ import Game.components.MovementComponent;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.extra.entity.components.KeepOnScreenComponent;
+import com.almasb.fxgl.extra.entity.effect.EffectComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
@@ -16,25 +17,41 @@ import static com.almasb.fxgl.app.DSLKt.texture;
 
 public class CarFactory implements EntityFactory {
 
-    @Spawns("Car")
-    public Entity newCar(SpawnData data) {
+    @Spawns("PLAYER2")
+    public Entity spawnPlayer2(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
         physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(0, 0));
-
         return Entities.builder()
-                .type(EntityType.Car)
+                .type(EntityType.CAR)
                 .from(data)
-                .viewFromNodeWithBBox(texture("arrow.png", 40, 20))
+                .viewFromNodeWithBBox(texture("car.png", 64, 32))
                 .with(new CollidableComponent(true))
                 .with(physics)
-                .with(new MovementComponent(0.05,0.95,0.90,1,0.5))
+                .with(new MovementComponent(0.05,0.95,0.80,1,0.5))
                 .with(new HealthComponent(100))
-                .with(new KeepOnScreenComponent(true, true))
+                .with(new EffectComponent())
                 .build();
     }
 
-    @Spawns("Ball")
+    @Spawns("PLAYER1")
+    public Entity spawnPlayer1(SpawnData data) {
+        PhysicsComponent physics = new PhysicsComponent();
+        physics.setBodyType(BodyType.DYNAMIC);
+        physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(0, 0));
+        return Entities.builder()
+                .type(EntityType.CAR)
+                .from(data)
+                .viewFromNodeWithBBox(texture("car.png", 64, 32))
+                .with(new CollidableComponent(true))
+                .with(physics)
+                .with(new MovementComponent(0.05,0.95,0.80,1,0.5))
+                .with(new HealthComponent(100))
+                .with(new EffectComponent())
+                .build();
+    }
+
+    @Spawns("BALL")
     public Entity newBall(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
@@ -43,7 +60,7 @@ public class CarFactory implements EntityFactory {
         physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(velocity));
 
         return Entities.builder()
-                .type(EntityType.Ball)
+                .type(EntityType.BALL)
                 .from(data)
                 .viewFromNodeWithBBox(new Circle(20))
                 .with(physics)
@@ -51,7 +68,7 @@ public class CarFactory implements EntityFactory {
                 .build();
     }
 
-    @Spawns("Bouncy Bullet")
+    @Spawns("Bouncy BULLET")
     public Entity newBullet(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
@@ -60,7 +77,7 @@ public class CarFactory implements EntityFactory {
         physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(velocity));
 
         return Entities.builder()
-                .type(EntityType.Bullet)
+                .type(EntityType.BULLET)
                 .from(data)
                 .viewFromNodeWithBBox(new Circle(20))
                 .with(new CollidableComponent(true))

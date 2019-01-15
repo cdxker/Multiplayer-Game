@@ -2,9 +2,12 @@ package Game.Map;
 
 
 import Game.EntityType;
+import com.almasb.fxgl.app.FXGL;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
+import javafx.geometry.Point2D;
+import javafx.util.Duration;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import static com.almasb.fxgl.app.DSLKt.spawn;
@@ -12,11 +15,13 @@ import static com.almasb.fxgl.app.FXGL.getGameWorld;
 
 public class MapBuilder {
 
+    private static Point2D tileSize = new Point2D(64, 64);
+
     /**
      * Clears the map of all tiles that are currently placed
      */
     public static void clearMap() {
-        getGameWorld().getEntitiesByType(EntityType.Tile).forEach(entity -> entity.removeFromWorld());
+        getGameWorld().getEntitiesByType(EntityType.TILE).forEach(Entity::removeFromWorld);
     }
 
     /**
@@ -28,26 +33,29 @@ public class MapBuilder {
         spawnTiles(map.getTiles());
     }
 
+    public static void spawnTiles(Tile... tiles){
+        spawnTiles(Set.of(tiles));
+    }
+
     /**
      * Spawns each tile on map based on map data
      *
      * @param tiles The tiles that want to be spawned
-     *              TODO: make sure to check the tile is valid
      */
     public static void spawnTiles(Set<Tile> tiles) {
+        System.out.println("width: " + FXGL.getAppWidth() + " Height: " + FXGL.getAppHeight());
         for (Tile tile : tiles) {
-            spawn(tile.getType(), tile.getPos()); // TODO: Possibly scale the values based of a grid system?
+            System.out.println(tile);
+            Point2D tilePos = new Point2D(tile.getPos().getX()*tileSize.getX(), tile.getPos().getY()*tileSize.getY());
+            spawn(tile.getType(), new SpawnData(tilePos).put("tileSize", tileSize).put("Time", Duration.seconds(10)).put("Strength", 5.0 ));
         }
     }
 
-
-    /**
-     * Spawns each tile on map based on map data
-     *
-     * @param tiles The tiles that want to be spawned
-     */
-    public static void spawnTiles(Tile... tiles) {
-        spawnTiles(new HashSet<>(Arrays.asList(tiles)));
+    public static void configureTileSize(Point2D tileSize){
+        MapBuilder.tileSize = tileSize;
     }
 
+    public static void configureTileSize(double tileSize){
+        MapBuilder.tileSize = new Point2D(tileSize, tileSize);
+    }
 }

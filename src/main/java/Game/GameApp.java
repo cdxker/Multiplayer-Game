@@ -11,6 +11,8 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
+import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.settings.MenuItem;
@@ -26,14 +28,16 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 
 import static Game.Map.MapReader.getMap;
+
 import static com.almasb.fxgl.app.DSLKt.onKey;
 import static com.almasb.fxgl.app.DSLKt.spawn;
 
 
 
 public class GameApp extends GameApplication {
-
-
+    private Entity player1 = new Entity();
+    private Entity player2 = new Entity();
+  
     public static GlobalSettings globalSettings;
 
     static {
@@ -85,42 +89,84 @@ public class GameApp extends GameApplication {
 
     @Override
     protected void initInput() {
-        // TODO: extract this to a method
-        onKey(KeyCode.A, "Left", () -> {
-            getGameWorld().getEntitiesByComponent(MovementComponent.class).forEach((entity) -> {
-                MovementComponent component = entity.getComponent(MovementComponent.class);
-                component.steerLeft();
-            });
+        Input input = getInput(); // get input service
 
-        });
-        onKey(KeyCode.D, "Right", () -> {
-            getGameWorld().getEntitiesByComponent(MovementComponent.class).forEach((entity) -> {
-                MovementComponent component = entity.getComponent(MovementComponent.class);
-                component.steerRight();
-            });
-
-        });
-
-        onKey(KeyCode.W, "Speed up", () -> {
-            getGameWorld().getEntitiesByComponent(MovementComponent.class).forEach((entity) -> {
-                MovementComponent component = entity.getComponent(MovementComponent.class);
+        /*
+         * The next four blocks are the controls for player 1
+         * In order: Up, Down, Left, Right
+         */
+        input.addAction(new UserAction("Speed Up 1") {
+            @Override
+            protected void onAction() {
+                MovementComponent component = player1.getComponent(MovementComponent.class);
                 component.speedUp();
-            });
+            }
+        }, KeyCode.W);
 
-        });
+        input.addAction(new UserAction("Slow Down 1") {
+            @Override
+            protected void onAction() {
+                MovementComponent component = player1.getComponent(MovementComponent.class);
+                component.speedUp();
+            }
+        }, KeyCode.S);
 
-        onKey(KeyCode.S, "Down", () -> {
-            getGameWorld().getEntitiesByComponent(MovementComponent.class).forEach((entity) -> {
-                MovementComponent component = entity.getComponent(MovementComponent.class);
-                component.slowDown();
-            });
+        input.addAction(new UserAction("Steer Right 1") {
+            @Override
+            protected void onAction() {
+                MovementComponent component = player1.getComponent(MovementComponent.class);
+                component.steerRight();
+            }
+        }, KeyCode.D);
 
-        });
+        input.addAction(new UserAction("Steer Left 1") {
+            @Override
+            protected void onAction() {
+                MovementComponent component = player1.getComponent(MovementComponent.class);
+                component.steerLeft();
+            }
+        }, KeyCode.A);
+
+        /*
+         * The next four blocks are the controls for player 2
+         * In order: Up, Down, Left, Right
+         */
+        input.addAction(new UserAction("Speed Up 2") {
+            @Override
+            protected void onAction() {
+                MovementComponent component = player2.getComponent(MovementComponent.class);
+                component.speedUp();
+            }
+        }, KeyCode.UP);
+
+        input.addAction(new UserAction("Slow Down 2") {
+            @Override
+            protected void onAction() {
+                MovementComponent component = player2.getComponent(MovementComponent.class);
+                component.speedUp();
+            }
+        }, KeyCode.DOWN);
+
+        input.addAction(new UserAction("Steer Right 2") {
+            @Override
+            protected void onAction() {
+                MovementComponent component = player2.getComponent(MovementComponent.class);
+                component.steerRight();
+            }
+        }, KeyCode.RIGHT);
+
+        input.addAction(new UserAction("Steer Left 2") {
+            @Override
+            protected void onAction() {
+                MovementComponent component = player2.getComponent(MovementComponent.class);
+                component.steerLeft();
+            }
+        }, KeyCode.LEFT);
     }
 
     @Override
     protected void initPhysics() {
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Car, EntityType.Bullet) {
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER1, EntityType.BULLET) {
             @Override
             protected void onCollision(Entity car, Entity bullet) {
                 HealthComponent carHealth = car.getComponent(HealthComponent.class);
@@ -130,7 +176,27 @@ public class GameApp extends GameApplication {
             }
         });
 
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Car, EntityType.Tile) {
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER1, EntityType.TILE) {
+            @Override
+            protected void onCollision(Entity car, Entity tile) {
+                MovementComponent carMovement = car.getComponent(MovementComponent.class);
+                FrictionComponent friction = tile.getComponent(FrictionComponent.class);
+                carMovement.setAccelerationDrag(friction.getDrag());
+            }
+        });
+        getPhysicsWorld().setGravity(0, 0);
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER2, EntityType.BULLET) {
+            @Override
+            protected void onCollision(Entity car, Entity bullet) {
+                HealthComponent carHealth = car.getComponent(HealthComponent.class);
+                DamageComponent damage = bullet.getComponent(DamageComponent.class);
+                System.out.println("ouch");
+                carHealth.increment(-damage.getDamage());
+            }
+        });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER2, EntityType.TILE) {
             @Override
             protected void onCollision(Entity car, Entity tile) {
                 MovementComponent carMovement = car.getComponent(MovementComponent.class);
@@ -157,10 +223,11 @@ public class GameApp extends GameApplication {
             e.printStackTrace();
         }
 
-        spawn("Car", 100, 100);
-        //FXGL.getAudioPlayer().playMusic("car_hype_music.mp3");
+        player1 = spawn("PLAYER1", 100, 100);
+        player2 = spawn("PLAYER2", 200, 200);
+//        FXGL.getAudioPlayer().playMusic("car_hype_music.mp3");
         Point2D velocity = new Point2D(10, 10);
-        spawn("Ball", new SpawnData(30, 30).put("velocity", velocity));
+        spawn("BALL", new SpawnData(30, 30).put("velocity", velocity));
 
         System.out.println(getHeight());
 
