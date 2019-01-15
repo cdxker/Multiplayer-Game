@@ -28,11 +28,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 
 import static Game.Map.MapReader.getMap;
-
-import static com.almasb.fxgl.app.DSLKt.onKey;
 import static com.almasb.fxgl.app.DSLKt.spawn;
-
-
 
 public class GameApp extends GameApplication {
     private Entity player1 = new Entity();
