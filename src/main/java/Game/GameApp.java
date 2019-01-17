@@ -97,7 +97,6 @@ public class GameApp extends GameApplication {
             protected void onCollision(Entity car, Entity bullet) {
                 HealthComponent carHealth = car.getComponent(HealthComponent.class);
                 DamageComponent damage = bullet.getComponent(DamageComponent.class);
-                System.out.println("ouch");
                 carHealth.add(-damage.getDamage());
             }
         });
@@ -119,7 +118,6 @@ public class GameApp extends GameApplication {
                 carEffects.startEffect(powerUp.getEffect());
             }
         });
-
         getPhysicsWorld().setGravity(0, 0);
     }
 
@@ -154,7 +152,6 @@ public class GameApp extends GameApplication {
             System.out.println("Fail");
             e.printStackTrace();
         }
-
     }
 
     public void gameOver() {

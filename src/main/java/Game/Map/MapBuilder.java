@@ -10,6 +10,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -40,6 +41,7 @@ public class MapBuilder {
         screen = new Rectangle(w, h);
         screen.setTranslateX(x);
         screen.setTranslateY(y);
+        pane.setMaxSize(getAppWidth()*2, getAppHeight()*2);
         getGameScene().addUINode(pane);
         map.getTiles().removeIf(tile -> tile.getType().equals("Blank")); // Too difficult to change maps
     }
@@ -53,17 +55,22 @@ public class MapBuilder {
     }
 
     public void update() {
-        pane.getChildren().remove(0, pane.getChildren().size());
+        pane.getChildren().remove(0, pane.getChildren().size()); // clear screen
         clearMap();
-        screen.setTranslateX(-entityToTrack.getPosition().getX() + pane.getWidth() / 2);
-        screen.setTranslateY(-entityToTrack.getPosition().getY() + pane.getHeight() / 2);
+        pane.setTranslateX(-entityToTrack.getPosition().getX() + pane.getWidth() / 2);
+        pane.setTranslateY(-entityToTrack.getPosition().getY() + pane.getHeight() / 2);
+
+        screen.setX(-entityToTrack.getPosition().getX() + pane.getWidth() / 2);
+        screen.setY(-entityToTrack.getPosition().getY() + pane.getHeight() / 2);
         System.out.println(screen.getX());
         for (Tile t : map.getTiles()) {
             Point2D tile = t.getPos().multiply(tileSize);
             if (screen.contains(tile)) {
                 // mabye we cna use the position component to change the X and Y values
-                Entity e = spawn(t.getType(), new SpawnData(tile.subtract(screen.getX(), screen.getY())).put("tileSize", tileSize).put("Time", Duration.seconds(3)).put("Strength", 5.0));
+                Entity e = spawn(t.getType(), new SpawnData(tile).put("tileSize", tileSize).put("Time", Duration.seconds(3)).put("Strength", 5.0));
                 // Is there a way to reduce this?
+                //e.setX(screen.getTranslateX());
+                //e.setY(screen.getTranslateY());
                 pane.getChildren().add(e.getView());
             }
         }
@@ -75,7 +82,6 @@ public class MapBuilder {
             boolean tile = type.equals(EntityType.Tile);
             return !wall && !powerUp && !tile;
         }));
-        System.out.println(entities);
         for(Entity entity: entities){
             pane.getChildren().add(entity.getView());
         } // Store these value in cache to increase performance while running
