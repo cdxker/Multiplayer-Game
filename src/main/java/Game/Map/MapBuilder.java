@@ -30,6 +30,8 @@ public class MapBuilder {
     private Map map;
     private Rectangle screen;
 
+
+
     int x = 0;
     int y = 0;
 
@@ -41,9 +43,11 @@ public class MapBuilder {
         screen = new Rectangle(w, h);
         screen.setTranslateX(x);
         screen.setTranslateY(y);
-        pane.setMaxSize(getAppWidth()*2, getAppHeight()*2);
+        pane.setMaxSize(10000000, 10000000);
         getGameScene().addUINode(pane);
         map.getTiles().removeIf(tile -> tile.getType().equals("Blank")); // Too difficult to change maps
+
+
     }
 
     /**
@@ -57,12 +61,11 @@ public class MapBuilder {
     public void update() {
         pane.getChildren().remove(0, pane.getChildren().size()); // clear screen
         clearMap();
-        pane.setTranslateX(-entityToTrack.getPosition().getX() + pane.getWidth() / 2);
-        pane.setTranslateY(-entityToTrack.getPosition().getY() + pane.getHeight() / 2);
+        pane.setTranslateX(-entityToTrack.getPosition().getX() + screen.getWidth() / 2);
+        pane.setTranslateY(-entityToTrack.getPosition().getY() + screen.getHeight() / 2);
 
-        screen.setX(-entityToTrack.getPosition().getX() + pane.getWidth() / 2);
-        screen.setY(-entityToTrack.getPosition().getY() + pane.getHeight() / 2);
-        System.out.println(screen.getX());
+        screen.setX(entityToTrack.getPosition().getX() - screen.getWidth() / 4);
+        screen.setY(entityToTrack.getPosition().getY() - screen.getHeight() / 4);
         for (Tile t : map.getTiles()) {
             Point2D tile = t.getPos().multiply(tileSize);
             if (screen.contains(tile)) {
@@ -73,6 +76,7 @@ public class MapBuilder {
                 //e.setY(screen.getTranslateY());
                 pane.getChildren().add(e.getView());
             }
+
         }
         List<Entity> entities = game.getEntitiesFiltered((entity -> {
             // While this takes up some memory this is not our problem
