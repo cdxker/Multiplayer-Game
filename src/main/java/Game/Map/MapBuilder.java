@@ -61,23 +61,20 @@ public class MapBuilder {
     public void update() {
         pane.getChildren().remove(0, pane.getChildren().size()); // clear screen
         clearMap();
-        pane.setTranslateX(-entityToTrack.getPosition().getX() + screen.getWidth() / 2);
-        pane.setTranslateY(-entityToTrack.getPosition().getY() + screen.getHeight() / 2);
+        pane.setTranslateY(-entityToTrack.getPosition().getY() + screen.getHeight() / 2); // Changing the value makes the rendering different
+        pane.setTranslateX(-entityToTrack.getPosition().getX() + screen.getWidth() / 2);  // Changing the value makes the rendering different
 
-        screen.setX(entityToTrack.getPosition().getX() - screen.getWidth() / 4);
-        screen.setY(entityToTrack.getPosition().getY() - screen.getHeight() / 4);
+        screen.setX(entityToTrack.getPosition().getX() - screen.getWidth() / 2);
+        screen.setY(entityToTrack.getPosition().getY() - screen.getHeight() / 2);
         for (Tile t : map.getTiles()) {
             Point2D tile = t.getPos().multiply(tileSize);
             if (screen.contains(tile)) {
-                // mabye we cna use the position component to change the X and Y values
                 Entity e = spawn(t.getType(), new SpawnData(tile).put("tileSize", tileSize).put("Time", Duration.seconds(3)).put("Strength", 5.0));
                 // Is there a way to reduce this?
-                //e.setX(screen.getTranslateX());
-                //e.setY(screen.getTranslateY());
                 pane.getChildren().add(e.getView());
             }
-
         }
+
         List<Entity> entities = game.getEntitiesFiltered((entity -> {
             // While this takes up some memory this is not our problem
             Object type = entity.getType();
