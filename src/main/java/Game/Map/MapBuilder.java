@@ -99,6 +99,7 @@ public class MapBuilder {
         }
     }
 
+
     public double getTileSize() {
         return tileSize;
     }

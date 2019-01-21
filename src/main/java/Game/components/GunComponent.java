@@ -11,7 +11,7 @@ import javafx.scene.Node;
 import static com.almasb.fxgl.app.DSLKt.spawn;
 import static com.almasb.fxgl.app.DSLKt.texture;
 
-public class GunCompoent extends Component {
+public class GunComponent extends Component {
 
     private PhysicsComponent physics;
     private String bulletName;
@@ -25,7 +25,7 @@ public class GunCompoent extends Component {
     }
 
 
-    public GunCompoent(String bulletName){
+    public GunComponent(String bulletName){
         this.bulletName = bulletName;
     }
 

@@ -1,5 +1,5 @@
 package Game;
 
 public enum EntityType {
-    Car, Bullet, Tile, Ball, PowerUp, Wall
+    Bullet, Tile, Ball, PowerUp, Wall, Player1, Player2
 }

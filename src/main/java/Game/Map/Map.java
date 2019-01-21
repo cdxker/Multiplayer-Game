@@ -2,12 +2,14 @@ package Game.Map;
 
 import javafx.geometry.Point2D;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 public class Map {
     private String name;
     private Set<Tile> tiles;
     private Point2D gridSize;
+    private ArrayList<ArrayList<Tile>> tileGrid;
 
     /**
      * The data structure for a map.
@@ -35,6 +37,7 @@ public class Map {
 
     public void setTiles(Set<Tile> tiles) {
         this.tiles = tiles;
+
     }
 
     /**

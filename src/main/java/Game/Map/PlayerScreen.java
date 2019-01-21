@@ -1,9 +1,7 @@
 package Game.Map;
 
 import Game.EntityType;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.RenderLayer;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
@@ -41,7 +39,8 @@ public class PlayerScreen extends Pane {
         for(Entity e : getGameWorld().getEntitiesByType(EntityType.Tile, EntityType.Wall, EntityType.PowerUp)){
             getChildren().add(e.getView());
         }
-        getGameWorld().getEntitiesByType(EntityType.Car, EntityType.Bullet).forEach((e) ->getChildren().add(e.getView()));
+        getGameWorld().getEntitiesByType(EntityType.Player1, EntityType.Player2,EntityType.Bullet).forEach((e) ->getChildren().add(e.getView()));
+
         setTranslateY(-target.getPosition().getY() + rect.getHeight() / 2); // Changing the value makes the rendering different
         setTranslateX(-target.getPosition().getX() + rect.getWidth() / 2);  // Changing the value makes the rendering different
 
