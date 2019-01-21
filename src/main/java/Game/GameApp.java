@@ -3,6 +3,7 @@ package Game;
 import Game.Map.MapBuilder;
 import Game.Map.MapNotFoundException;
 import Game.Map.MapUtilities;
+import Game.Map.PlayerScreen;
 import Game.UI.SceneCreator;
 import Game.components.*;
 import Game.components.powerups.PowerUpComponent;
@@ -17,6 +18,7 @@ import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -146,7 +148,8 @@ public class GameApp extends GameApplication {
         car = spawn("Car", 40, 40);
 
         try {
-            map = new MapBuilder(getBuiltInMap("curvyalley"), car, 64, 0, 0, getWidth(), getHeight());
+            PlayerScreen screen = new PlayerScreen(new Rectangle(0, 0, getWidth(), getHeight()), car);
+            map = new MapBuilder(getBuiltInMap("curvyalley"), 64, screen);
             System.out.println(map);
         } catch (MapNotFoundException e) {
             System.out.println("Fail");

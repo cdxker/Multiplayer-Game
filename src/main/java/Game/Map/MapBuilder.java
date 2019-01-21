@@ -14,6 +14,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -21,33 +23,28 @@ import static com.almasb.fxgl.app.DSLKt.spawn;
 import static com.almasb.fxgl.app.FXGL.*;
 import static com.almasb.fxgl.app.FXGL.getGameWorld;
 
+
+/**
+ * Class that spawns in any entities that are needed to be
+ * viewed by the player.
+ */
 public class MapBuilder {
 
-    private Pane pane = new Pane();
+    private ArrayList<PlayerScreen> screens;
     private double tileSize = 64;
-    private Entity entityToTrack;
     private GameWorld game = getGameWorld();
     private Map map;
-    private Rectangle screen;
 
-
-
-    int x = 0;
-    int y = 0;
-
-
-    public MapBuilder(Map map, Entity entityToTrack, double tileSize, double x, double y, double w, double h) {
+    public MapBuilder(Map map, double tileSize, PlayerScreen... screens) {
         this.map = map;
-        this.entityToTrack = entityToTrack;
         this.tileSize = tileSize;
-        screen = new Rectangle(w, h);
-        screen.setTranslateX(x);
-        screen.setTranslateY(y);
-        pane.setMaxSize(10000000, 10000000);
-        getGameScene().addUINode(pane);
+        this.screens = new ArrayList<PlayerScreen>(Arrays.asList(screens));
         map.getTiles().removeIf(tile -> tile.getType().equals("Blank")); // Too difficult to change maps
+        getGameScene().addUINodes(screens);
+    }
 
-
+    public void addScreen(PlayerScreen screen){
+        screens.add(screen);
     }
 
     /**
@@ -59,34 +56,17 @@ public class MapBuilder {
     }
 
     public void update() {
-        pane.getChildren().remove(0, pane.getChildren().size()); // clear screen
-        clearMap();
-        pane.setTranslateY(-entityToTrack.getPosition().getY() + screen.getHeight() / 2); // Changing the value makes the rendering different
-        pane.setTranslateX(-entityToTrack.getPosition().getX() + screen.getWidth() / 2);  // Changing the value makes the rendering different
-
-        screen.setX(entityToTrack.getPosition().getX() - screen.getWidth() / 2);
-        screen.setY(entityToTrack.getPosition().getY() - screen.getHeight() / 2);
+        clearMap(); // only remove tile and Health Components TODO:(test if removing this option increases performance)
         for (Tile t : map.getTiles()) {
             Point2D tile = t.getPos().multiply(tileSize);
-            if (screen.contains(tile)) {
-                Entity e = spawn(t.getType(), new SpawnData(tile).put("tileSize", tileSize).put("Time", Duration.seconds(3)).put("Strength", 5.0));
-                // Is there a way to reduce this?
-                pane.getChildren().add(e.getView());
+            for(PlayerScreen screen : screens){
+                if (screen.contains(tile)) {
+                    spawn(t.getType(), new SpawnData(tile).put("tileSize", tileSize).put("Time", Duration.seconds(3)).put("Strength", 5.0));
+                    // Is there a way to reduce this?
+                }
             }
         }
-
-        List<Entity> entities = game.getEntitiesFiltered((entity -> {
-            // While this takes up some memory this is not our problem
-            Object type = entity.getType();
-            boolean wall = type.equals(EntityType.Wall);
-            boolean powerUp = type.equals(EntityType.PowerUp);
-            boolean tile = type.equals(EntityType.Tile);
-            return !wall && !powerUp && !tile;
-        }));
-        for(Entity entity: entities){
-            pane.getChildren().add(entity.getView());
-        } // Store these value in cache to increase performance while running
-
+        screens.forEach(PlayerScreen::onUpdate);
     }
 
     /**
