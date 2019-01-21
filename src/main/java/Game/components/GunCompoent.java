@@ -33,13 +33,13 @@ public class GunCompoent extends Component {
         Entity e = getEntity();
         double magnitude = 200;
         float angle = physics.getBody().getAngle(); // angle is measured in radians
-        Point2D pos = e.getCenter().add(Math.cos(angle) * e.getHeight(), 0);
+        Point2D pos = e.getCenter().add(Math.cos(angle) * e.getWidth(), -Math.sin(angle) * e.getHeight());
         Point2D velocity = new Point2D(Math.cos(angle)* magnitude,-Math.sin(angle)* magnitude);
 
 
 
         // create a bullet
-        Entity bullet = spawn(bulletName, new SpawnData(pos.getX(), pos.getY()).put("velocity", velocity));
+        spawn(bulletName, new SpawnData(pos.getX(), pos.getY()).put("velocity", velocity));
         // apply velocity towards the angle of direction of the car
     }
 
