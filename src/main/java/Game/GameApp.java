@@ -31,9 +31,9 @@ import static Game.Map.MapReader.getMap;
 import static com.almasb.fxgl.app.DSLKt.spawn;
 
 public class GameApp extends GameApplication {
-    private Entity player1 = new Entity();
-    private Entity player2 = new Entity();
-  
+    private Entity player1;
+    private Entity player2;
+
     public static GlobalSettings globalSettings;
 
     static {
@@ -162,7 +162,7 @@ public class GameApp extends GameApplication {
 
     @Override
     protected void initPhysics() {
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER1, EntityType.BULLET) {
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.CAR, EntityType.BULLET) {
             @Override
             protected void onCollision(Entity car, Entity bullet) {
                 HealthComponent carHealth = car.getComponent(HealthComponent.class);
@@ -172,27 +172,7 @@ public class GameApp extends GameApplication {
             }
         });
 
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER1, EntityType.TILE) {
-            @Override
-            protected void onCollision(Entity car, Entity tile) {
-                MovementComponent carMovement = car.getComponent(MovementComponent.class);
-                FrictionComponent friction = tile.getComponent(FrictionComponent.class);
-                carMovement.setAccelerationDrag(friction.getDrag());
-            }
-        });
-        getPhysicsWorld().setGravity(0, 0);
-
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER2, EntityType.BULLET) {
-            @Override
-            protected void onCollision(Entity car, Entity bullet) {
-                HealthComponent carHealth = car.getComponent(HealthComponent.class);
-                DamageComponent damage = bullet.getComponent(DamageComponent.class);
-                System.out.println("ouch");
-                carHealth.increment(-damage.getDamage());
-            }
-        });
-
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER2, EntityType.TILE) {
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.CAR, EntityType.TILE) {
             @Override
             protected void onCollision(Entity car, Entity tile) {
                 MovementComponent carMovement = car.getComponent(MovementComponent.class);
@@ -219,8 +199,8 @@ public class GameApp extends GameApplication {
             e.printStackTrace();
         }
 
-        player1 = spawn("PLAYER1", 100, 100);
-        player2 = spawn("PLAYER2", 200, 200);
+        player1 = spawn("CAR", 100, 100);
+        player2 = spawn("CAR", 200, 200);
 //        FXGL.getAudioPlayer().playMusic("car_hype_music.mp3");
         Point2D velocity = new Point2D(10, 10);
         spawn("BALL", new SpawnData(30, 30).put("velocity", velocity));

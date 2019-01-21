@@ -17,24 +17,7 @@ import static com.almasb.fxgl.app.DSLKt.texture;
 
 public class CarFactory implements EntityFactory {
 
-    @Spawns("PLAYER2")
-    public Entity spawnPlayer2(SpawnData data) {
-        PhysicsComponent physics = new PhysicsComponent();
-        physics.setBodyType(BodyType.DYNAMIC);
-        physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(0, 0));
-        return Entities.builder()
-                .type(EntityType.CAR)
-                .from(data)
-                .viewFromNodeWithBBox(texture("car.png", 64, 32))
-                .with(new CollidableComponent(true))
-                .with(physics)
-                .with(new MovementComponent(0.05,0.95,0.80,1,0.5))
-                .with(new HealthComponent(100))
-                .with(new EffectComponent())
-                .build();
-    }
-
-    @Spawns("PLAYER1")
+    @Spawns("CAR")
     public Entity spawnPlayer1(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
