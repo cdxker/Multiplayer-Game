@@ -65,6 +65,9 @@ public class PlayerScreen extends Pane {
     }
 
     private void add(Entity e) {
+        if(!rect.contains(e.getPosition())){
+            return;
+        }
         Node view;
         if(id == 0) {
             view = e.getComponent(ScreenComponent.class).getView();
