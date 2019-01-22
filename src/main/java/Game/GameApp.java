@@ -1,9 +1,6 @@
 package Game;
 
-import Game.Map.MapBuilder;
-import Game.Map.MapNotFoundException;
-import Game.Map.MapUtilities;
-import Game.Map.PlayerScreen;
+import Game.Map.*;
 import Game.UI.SceneCreator;
 import Game.components.*;
 import Game.components.powerups.PowerUpComponent;
@@ -34,8 +31,8 @@ public class GameApp extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(960);
-        settings.setHeight(540);
+        settings.setWidth(1920);
+        settings.setHeight(1080);
         settings.setTitle("Bullet Hail");
         settings.setVersion("0.1");
 
@@ -66,7 +63,7 @@ public class GameApp extends GameApplication {
             @Override
             protected void onAction() {
                 MovementComponent component = player1.getComponent(MovementComponent.class);
-                component.speedUp();
+                component.slowDown();
             }
         }, KeyCode.S);
 
@@ -102,7 +99,7 @@ public class GameApp extends GameApplication {
             @Override
             protected void onAction() {
                 MovementComponent component = player2.getComponent(MovementComponent.class);
-                component.speedUp();
+                component.slowDown();
             }
         }, KeyCode.DOWN);
 
@@ -195,7 +192,6 @@ public class GameApp extends GameApplication {
                 carEffects.startEffect(powerUp.getEffect());
             }
         });
-        getPhysicsWorld().setGravity(0, 0);
     }
 
     @Override
@@ -227,6 +223,7 @@ public class GameApp extends GameApplication {
             PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth()/2, getHeight()), player1);
             PlayerScreen screen2 = new PlayerScreen(new Rectangle(getWidth()/2, 0, getWidth()/2, getHeight()), player2);
             map = new MapBuilder(getBuiltInMap("curvyalley"), 64, screen1, screen2);
+
             System.out.println(map);
         } catch (MapNotFoundException e) {
             System.out.println("Fail");
