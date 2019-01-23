@@ -38,6 +38,21 @@ public class TileFactory implements EntityFactory {
                 .with(new ScreenComponent2(view2))
                 .build();
     }
+
+    @Spawns("Finish Line")
+    public Entity newFinsihLine(SpawnData data){
+        double size = data.get("tileSize");
+        Node view1 = new Rectangle(size, size, Color.rgb(100, 100, 100));
+        Node view2 = new Rectangle(size, size, Color.rgb(100, 100, 100));
+
+        return Entities.builder()
+                .type(EntityType.FINISHLINE)
+                .from(data)
+                .viewFromNodeWithBBox(view1)
+                .with(new ScreenComponent(view1))
+                .with(new ScreenComponent2(view2))
+                .build();
+    }
     // Basic Friction Tiles
 
     private Entities.EntityBuilder genericTile(SpawnData data) {
@@ -46,6 +61,7 @@ public class TileFactory implements EntityFactory {
                 .from(data)
                 .with(new CollidableComponent(true));
     }
+
 
     @Spawns("Road")
     public Entity newRoadTile(SpawnData data){
