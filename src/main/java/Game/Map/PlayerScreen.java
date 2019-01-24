@@ -4,14 +4,11 @@ import Game.EntityType;
 import Game.components.ScreenComponent;
 import Game.components.ScreenComponent2;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.view.EntityView;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-
-import java.awt.*;
 
 import static com.almasb.fxgl.app.FXGL.*;
 
@@ -55,7 +52,7 @@ public class PlayerScreen extends Pane {
         getChildren().add(0, bg);
 
         // Draws entities on game world
-        getGameWorld().getEntitiesByType(EntityType.Tile, EntityType.Wall, EntityType.PowerUp).forEach(this::add);
+        getGameWorld().getEntitiesByType(EntityType.Tile, EntityType.Wall, EntityType.PowerUp, EntityType.FINISHLINE).forEach(this::add);
         getGameWorld().getEntitiesByType(EntityType.Player1, EntityType.Player2,EntityType.Bullet).forEach(this::add);
 
         //setTranslateY(-target.getPosition().getY() + rect.getHeight() / 2); // Changing the value makes the rendering different
@@ -68,17 +65,30 @@ public class PlayerScreen extends Pane {
         if(!rect.contains(e.getPosition())){
             return;
         }
+        //System.out.println(e.getPosition().multiply(1.0/64.0));
         Node view;
         if(id == 0) {
             view = e.getComponent(ScreenComponent.class).getView();
         }else{
             view = e.getComponent(ScreenComponent2.class).getView();
         }
-        System.out.print(e.getView().getTranslateX() + " ");
+        System.out.println(e.getPosition().multiply(1/64.0));
         view.translateXProperty().bind(e.xProperty().subtract(rect.getX()));
         view.translateYProperty().bind(e.yProperty().subtract(rect.getY()));
-        System.out.println(e.getView().getTranslateX());
         getChildren().add(view);
+    }
+
+    public void add(Node view){
+        view.setTranslateX(view.getTranslateX() - rect.getX());
+        view.setTranslateX(view.getTranslateX() - rect.getY());
+        getChildren().add(view);
+    }
+
+
+    public void addAll(Node... views){
+        for (Node view: views) {
+            add(view);
+        }
     }
 
 

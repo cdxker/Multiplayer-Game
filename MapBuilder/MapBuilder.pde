@@ -14,6 +14,7 @@ final color HealthPower = color(0, 255, 0);
 final color SlowPower = color(255, 0, 0);
 final color SpeedPower = color(0, 100, 0);
 final color[] Types = {blankColor, dirtColor, roadColor, borderColor};
+final color finishColor = color(
 int index = 0;
 
 ArrayList<ColorButton> uiElements;
@@ -26,6 +27,7 @@ HashMap<Integer, String> typeMap = new HashMap<Integer, String>();{
   typeMap.put(HealthPower, "HealthPowerUp");
   typeMap.put(SpeedPower, "SpeedPowerUp");
   typeMap.put(SlowPower, "SlowPowerUp");
+  typeMap.put(finishColor, "Finish Line");
 }
 
 color PushPower = Types[index];
