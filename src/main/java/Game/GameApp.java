@@ -9,24 +9,19 @@ import Game.components.powerups.PowerUpComponent;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.extra.entity.effect.EffectComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.settings.GameSettings;
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
-import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.Map;
 
 import static Game.Map.MapReader.getBuiltInMap;
-
-import static com.almasb.fxgl.app.DSLKt.*;
+import static com.almasb.fxgl.app.DSLKt.spawn;
 
 public class GameApp extends GameApplication {
 
@@ -244,9 +239,6 @@ public class GameApp extends GameApplication {
                 }
             }
         });
-
-    }
-
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Bullet, EntityType.Wall) {
             @Override
             protected void onCollision(Entity bullet, Entity tile) {
