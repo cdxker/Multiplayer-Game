@@ -3,32 +3,36 @@ package Game;
 import Game.Map.MapBuilder;
 import Game.Map.MapNotFoundException;
 import Game.Map.MapUtilities;
+import Game.Map.PlayerScreen;
 import Game.UI.SceneCreator;
-import Game.components.DamageComponent;
-import Game.components.FrictionComponent;
-import Game.components.HealthComponent;
-import Game.components.MovementComponent;
+import Game.components.*;
 import Game.components.powerups.PowerUpComponent;
 import Game.components.powerups.PowerUps;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.extra.entity.effect.Effect;
 import com.almasb.fxgl.extra.entity.effect.EffectComponent;
+import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.util.Credits;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static Game.Map.MapReader.getBuiltInMap;
 import static Game.Map.MapReader.getMap;
 import static com.almasb.fxgl.app.DSLKt.onKey;
 import static com.almasb.fxgl.app.DSLKt.spawn;
@@ -40,6 +44,7 @@ public class GameApp extends GameApplication {
     private Entity player2 = new Entity();
 
     public static GlobalSettings globalSettings;
+    MapBuilder map;
 
     static {
         try {
@@ -201,7 +206,7 @@ public class GameApp extends GameApplication {
             protected void onCollision(Entity car, Entity tile) {
                 MovementComponent carMovement = car.getComponent(MovementComponent.class);
                 FrictionComponent friction = tile.getComponent(FrictionComponent.class);
-                carMovement.incrAccelerationDrag(friction.getDrag());
+                carMovement.incrBaseAccelerationDrag(friction.getDrag());
             }
         });
 
@@ -233,7 +238,7 @@ public class GameApp extends GameApplication {
             protected void onCollision(Entity car, Entity tile) {
                 MovementComponent carMovement = car.getComponent(MovementComponent.class);
                 FrictionComponent friction = tile.getComponent(FrictionComponent.class);
-                carMovement.incrAccelerationDrag(friction.getDrag());
+                carMovement.incrBaseAccelerationDrag(friction.getDrag());
             }
         });
 
