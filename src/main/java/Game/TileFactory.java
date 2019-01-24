@@ -1,10 +1,14 @@
 package Game;
 
 import Game.components.FrictionComponent;
+import Game.components.ScreenComponent;
+import Game.components.ScreenComponent2;
 import Game.components.powerups.PowerUps;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
-import javafx.geometry.Point2D;
+import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -14,45 +18,91 @@ import static com.almasb.fxgl.app.DSLKt.*;
 public class TileFactory implements EntityFactory {
 
     // Special Tiles
-    @Spawns("WALL")
+    @Spawns("Wall")
     public Entity newWallTile(SpawnData data){
-        Point2D size = data.get("tileSize");
+        double size = data.get("tileSize");
+        PhysicsComponent physics = new PhysicsComponent();
+        physics.setBodyType(BodyType.STATIC);
+
+        Node view1 = new Rectangle(size, size, Color.BLACK);
+        Node view2 = new Rectangle(size, size, Color.BLACK);
+
         return Entities.builder()
                 .from(data)
-                .type(EntityType.WALL)
+                .type(EntityType.Wall)
                 .with(new CollidableComponent(true))
-                .viewFromNodeWithBBox(new Rectangle(size.getX(), size.getY(), Color.BLACK))
+                .with(physics)
+                .viewFromNodeWithBBox(view1)
+                .with(new ScreenComponent(view1))
+                .with(new ScreenComponent2(view2))
+                .build();
+    }
+
+    @Spawns("Finish Line")
+    public Entity newFinsihLine(SpawnData data){
+        double size = data.get("tileSize");
+        Node view1 = new Rectangle(size, size, Color.rgb(100, 100, 100));
+        Node view2 = new Rectangle(size, size, Color.rgb(100, 100, 100));
+
+        return Entities.builder()
+                .type(EntityType.FINISHLINE)
+                .from(data)
+                .viewFromNodeWithBBox(view1)
+                .with(new ScreenComponent(view1))
+                .with(new ScreenComponent2(view2))
                 .build();
     }
     // Basic Friction Tiles
 
     private Entities.EntityBuilder genericTile(SpawnData data) {
         return Entities.builder()
-                .type(EntityType.TILE)
+                .type(EntityType.Tile)
                 .from(data)
                 .with(new CollidableComponent(true));
     }
 
+
     @Spawns("Road")
     public Entity newRoadTile(SpawnData data){
-        Point2D size = data.get("tileSize");
+        double size = data.get("tileSize");
+        Node view1 = new Rectangle(size, size, Color.rgb(100, 100, 100));
+        Node view2 = new Rectangle(size, size, Color.rgb(100, 100, 100));
+
         return genericTile(data)
                 .with(new FrictionComponent(0))
-                .viewFromNodeWithBBox(new Rectangle(size.getX(), size.getY(), Color.gray(100)))
+                .viewFromNodeWithBBox(view1)
+                .with(new ScreenComponent(view1))
+                .with(new ScreenComponent2(view2))
                 .build();
     }
 
-    @Spawns("blank")
+    @Spawns("Blank")
     public Entity newBlankTile(SpawnData data){
-        return genericTile(data).
-                build();
+        return genericTile(data)
+                .with(new FrictionComponent(0))
+                .build();
     }
 
-    // POWER_UP tiles
+    @Spawns("Dirt")
+    public Entity newDirtPowerUp(SpawnData data){
+        double size = data.get("tileSize");
+        Node view1 = new Rectangle(size, size, Color.rgb(234,208,168));
+        Node view2 = new Rectangle(size, size, Color.rgb(234,208,168));
+
+        return genericTile(data)
+                .with(new FrictionComponent(-0.5))
+                .viewFromNodeWithBBox(view1)
+                .with(new ScreenComponent(view1))
+                .with(new ScreenComponent2(view2))
+                .build();
+    }
+
+
+    // PowerUp tiles
 
     private Entities.EntityBuilder genericPowerUp(SpawnData data){
         return Entities.builder()
-                .type(EntityType.POWER_UP)
+                .type(EntityType.PowerUp)
                 .from(data)
                 .with(new CollidableComponent(true));
     }
@@ -60,29 +110,42 @@ public class TileFactory implements EntityFactory {
     @Spawns("HealthPowerUp")
     public Entity newHealthPowerUp(SpawnData data){
         double strength = data.get("Strength");
-        Point2D size = data.get("tileSize");
+        double size = data.get("tileSize");
+        Node view1 = texture("HealthPowerUp.png", size, size);
+        Node view2 = texture("HealthPowerUp.png", size, size);
         return genericPowerUp(data)
-                .viewFromNodeWithBBox(texture("HealthPowerUp.png", size.getX(), size.getY()))
+                .viewFromNodeWithBBox(view1)
+                .with(new ScreenComponent(view1))
+                .with(new ScreenComponent2(view2))
                 .with(PowerUps.HealthPowerUp(strength))
                 .build();
     }
 
     @Spawns("SpeedPowerUp")
     public Entity newSpeedPowerUp(SpawnData data){
-        Point2D size = data.get("tileSize");
+        double size = data.get("tileSize");
         Duration time = data.get("Time");
+        Node view1 = texture("SpeedPowerUp.png", size, size);
+        Node view2 = texture("SpeedPowerUp.png", size, size);
         return genericPowerUp(data)
-                .viewFromNodeWithBBox(texture("SpeedPowerUp.png", size.getX(), size.getY()))
+                .viewFromNodeWithBBox(view1)
+                .with(new ScreenComponent(view1))
+                .with(new ScreenComponent2(view2))
                 .with(PowerUps.SpeedPowerUp(time))
                 .build();
     }
 
     @Spawns("SlowPowerUp")
     public Entity newSlowPowerUp(SpawnData data){
-        Point2D size = data.get("tileSize");
+        double size = data.get("tileSize");
         Duration time = data.get("Time");
+        Node view1 = texture("SlowPowerUp.png", size, size);
+        Node view2 = texture("SlowPowerUp.png", size, size);
+
         return genericPowerUp(data)
-                .viewFromNodeWithBBox(texture("SlowPowerUp.png", size.getX(), size.getY()))
+                .viewFromNodeWithBBox(view1)
+                .with(new ScreenComponent(view1))
+                .with(new ScreenComponent2(view2))
                 .with(PowerUps.SlowPowerUp(time))
                 .build();
     }

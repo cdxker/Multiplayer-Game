@@ -2,18 +2,22 @@ package Game;
 
 import Game.Map.MapBuilder;
 import Game.Map.MapNotFoundException;
+import Game.Map.MapUtilities;
 import Game.UI.SceneCreator;
 import Game.components.DamageComponent;
 import Game.components.FrictionComponent;
 import Game.components.HealthComponent;
 import Game.components.MovementComponent;
+import Game.components.powerups.PowerUpComponent;
+import Game.components.powerups.PowerUps;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.input.Input;
-import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.extra.entity.effect.Effect;
+import com.almasb.fxgl.extra.entity.effect.EffectComponent;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.util.Credits;
 import javafx.geometry.Point2D;
@@ -26,7 +30,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import static Game.Map.MapReader.getMap;
+import static com.almasb.fxgl.app.DSLKt.onKey;
 import static com.almasb.fxgl.app.DSLKt.spawn;
+
+
 
 public class GameApp extends GameApplication {
     private Entity player1 = new Entity();
@@ -78,6 +85,7 @@ public class GameApp extends GameApplication {
 
     @Override
     protected void initInput() {
+        // TODO: extract this to a method
         Input input = getInput(); // get input service
 
         /*
@@ -96,7 +104,7 @@ public class GameApp extends GameApplication {
             @Override
             protected void onAction() {
                 MovementComponent component = player1.getComponent(MovementComponent.class);
-                component.speedUp();
+                component.slowDown();
             }
         }, KeyCode.S);
 
@@ -132,7 +140,7 @@ public class GameApp extends GameApplication {
             @Override
             protected void onAction() {
                 MovementComponent component = player2.getComponent(MovementComponent.class);
-                component.speedUp();
+                component.slowDown();
             }
         }, KeyCode.DOWN);
 
@@ -151,52 +159,116 @@ public class GameApp extends GameApplication {
                 component.steerLeft();
             }
         }, KeyCode.LEFT);
+
+        input.addAction(new UserAction("Fire Bullet 1") {
+            @Override
+            protected void onActionBegin() {
+                GunComponent component = player1.getComponent(GunComponent.class);
+                component.shootBullet();
+            }
+        }, KeyCode.F);
+
+        input.addAction(new UserAction("Fire Bullet 2") {
+            @Override
+            protected void onActionBegin() {
+                GunComponent component = player2.getComponent(GunComponent.class);
+                component.shootBullet();
+            }
+        }, KeyCode.M);
     }
 
     @Override
     protected void initPhysics() {
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER1, EntityType.BULLET) {
+        getPhysicsWorld().setGravity(0, 0);
+
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player1, EntityType.Bullet) {
             @Override
             protected void onCollision(Entity car, Entity bullet) {
-                HealthComponent carHealth = car.getComponent(HealthComponent.class);
-                DamageComponent damage = bullet.getComponent(DamageComponent.class);
-                System.out.println("ouch");
-                carHealth.increment(-damage.getDamage());
+                BulletComponent bul = bullet.getComponent(BulletComponent.class);
+                if(bul.getParent().isType(EntityType.Player2)) {
+                    HealthComponent carHealth = car.getComponent(HealthComponent.class);
+                    DamageComponent damage = bullet.getComponent(DamageComponent.class);
+                    carHealth.add(-damage.getDamage());
+
+                    FXGL.getMasterTimer().runOnceAfter(bullet::removeFromWorld, Duration.seconds(0.01));
+                }
             }
         });
 
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER1, EntityType.TILE) {
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player1, EntityType.Tile) {
             @Override
             protected void onCollision(Entity car, Entity tile) {
                 MovementComponent carMovement = car.getComponent(MovementComponent.class);
                 FrictionComponent friction = tile.getComponent(FrictionComponent.class);
-                carMovement.setAccelerationDrag(friction.getDrag());
+                carMovement.incrAccelerationDrag(friction.getDrag());
             }
         });
-        getPhysicsWorld().setGravity(0, 0);
 
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER2, EntityType.BULLET) {
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player1, EntityType.PowerUp) {
+            @Override
+            protected void onCollision(Entity car, Entity powerUpEntity) {
+                EffectComponent carEffects = car.getComponent(EffectComponent.class);
+                PowerUpComponent powerUp = powerUpEntity.getComponent(PowerUpComponent.class);
+                carEffects.startEffect(powerUp.getEffect());
+            }
+        });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player2, EntityType.Bullet) {
             @Override
             protected void onCollision(Entity car, Entity bullet) {
-                HealthComponent carHealth = car.getComponent(HealthComponent.class);
-                DamageComponent damage = bullet.getComponent(DamageComponent.class);
-                System.out.println("ouch");
-                carHealth.increment(-damage.getDamage());
+                BulletComponent bul = bullet.getComponent(BulletComponent.class);
+                if(bul.getParent().isType(EntityType.Player1)) {
+                    HealthComponent carHealth = car.getComponent(HealthComponent.class);
+                    DamageComponent damage = bullet.getComponent(DamageComponent.class);
+                    carHealth.add(-damage.getDamage());
+
+                    FXGL.getMasterTimer().runOnceAfter(bullet::removeFromWorld, Duration.seconds(0.01));
+                }
             }
         });
 
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER2, EntityType.TILE) {
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player2, EntityType.Tile) {
             @Override
             protected void onCollision(Entity car, Entity tile) {
                 MovementComponent carMovement = car.getComponent(MovementComponent.class);
                 FrictionComponent friction = tile.getComponent(FrictionComponent.class);
-                carMovement.setAccelerationDrag(friction.getDrag());
+                carMovement.incrAccelerationDrag(friction.getDrag());
             }
         });
-        getPhysicsWorld().setGravity(0, 0);
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player2, EntityType.PowerUp) {
+            @Override
+            protected void onCollision(Entity car, Entity powerUpEntity) {
+                EffectComponent carEffects = car.getComponent(EffectComponent.class);
+                PowerUpComponent powerUp = powerUpEntity.getComponent(PowerUpComponent.class);
+                carEffects.startEffect(powerUp.getEffect());
+            }
+        });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Bullet, EntityType.Wall) {
+            @Override
+            protected void onCollision(Entity bullet, Entity tile) {
+                FXGL.getMasterTimer().runOnceAfter(bullet::removeFromWorld, Duration.seconds(0.01));
+            }
+        });
+    }
+
+
+    @Override
+    protected void onUpdate(double tpf) {
+        map.update();
     }
 
     public static void main(String[] args) {
+        try {
+            MapUtilities.createCustomMapsDir();
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        System.out.println("Done!");
         launch(args);
     }
 
@@ -204,28 +276,21 @@ public class GameApp extends GameApplication {
     protected void initGame() {
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntityFactory(new TileFactory());
-        getGameWorld().addEntity(Entities.makeScreenBounds(40));
+
+        player1 = spawn("Player1", 40, 40);
+        player2 = spawn("Player2", 0, 0);
 
         try {
-            MapBuilder.createMap(getMap("output"));
+            double tileSize = 64;
+            PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth()/2, getHeight()), player1);
+            PlayerScreen screen2 = new PlayerScreen(new Rectangle(getWidth()/2, 0, getWidth()/2, getHeight()), player2);
+            map = new MapBuilder(getBuiltInMap("curvyalley"), 64, screen1, screen2);
+
+            System.out.println(map);
         } catch (MapNotFoundException e) {
+            System.out.println("Fail");
             e.printStackTrace();
         }
-
-        player1 = spawn("PLAYER1", 100, 100);
-        player2 = spawn("PLAYER2", 200, 200);
-//        FXGL.getAudioPlayer().playMusic("car_hype_music.mp3");
-        Point2D velocity = new Point2D(10, 10);
-        spawn("BALL", new SpawnData(30, 30).put("velocity", velocity));
-
-        System.out.println(getHeight());
-
-        Text text = new Text("Enjoy the ball");
-        text.setTranslateY(50);
-        text.setTranslateX((getWidth() / 2.0) - 2);
-        text.setTextAlignment(TextAlignment.CENTER);
-        text.setFont(new Font(50));
-        getGameScene().addUINode(text);
     }
 
     public void gameOver() {
@@ -234,4 +299,6 @@ public class GameApp extends GameApplication {
             else exit();
         });
     }
+
+
 }
