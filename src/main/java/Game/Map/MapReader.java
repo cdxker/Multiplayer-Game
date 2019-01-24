@@ -137,7 +137,7 @@ public class MapReader {
             try {
                 maps.add(createMapFromFile(file));
             } catch (IOException | JsonSyntaxException e) {
-                logger.warning(e.getStackTrace()[0].toString()); // TODO: Need to experiment with this...
+                logger.warning(e.getStackTrace()[0].toString());
             }
         }
         return maps;

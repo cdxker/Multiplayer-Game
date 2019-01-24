@@ -1,9 +1,12 @@
 package Game;
 
-import Game.Map.*;
+import Game.Map.MapBuilder;
+import Game.Map.MapNotFoundException;
+import Game.Map.PlayerScreen;
 import Game.UI.SceneCreator;
 import Game.components.*;
 import Game.components.powerups.PowerUpComponent;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.extra.entity.effect.EffectComponent;
@@ -14,12 +17,10 @@ import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 
-import java.io.IOException;
+import java.util.Map;
 
 import static Game.Map.MapReader.getBuiltInMap;
-import static com.almasb.fxgl.app.DSLKt.onKey;
 import static com.almasb.fxgl.app.DSLKt.spawn;
-
 
 
 public class GameApp extends GameApplication {
@@ -137,6 +138,12 @@ public class GameApp extends GameApplication {
     }
 
     @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("player1Wins", false);
+        vars.put("player2Wins", false);
+    }
+
+    @Override
     protected void initPhysics() {
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player1, EntityType.Bullet) {
             @Override
@@ -192,22 +199,70 @@ public class GameApp extends GameApplication {
                 carEffects.startEffect(powerUp.getEffect());
             }
         });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player1, EntityType.FINISHLINE) {
+            @Override
+            protected void onCollision(Entity a, Entity b) {
+                getGameState().setValue("player1Wins", true);
+            }
+        });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player1, EntityType.FINISHLINE) {
+            @Override
+            protected void onCollision(Entity a, Entity b) {
+                if (!getGameState().getBoolean("player2Wins")) {
+                    getGameState().setValue("player1Wins", true);
+                    getGameState().setValue("player2Wins", false);
+                }
+            }
+        });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player2, EntityType.FINISHLINE) {
+            @Override
+            protected void onCollision(Entity a, Entity b) {
+                System.out.println("win");
+                if (!getGameState().getBoolean("player1Wins")) {
+                    getGameState().setValue("player2Wins", true);
+                    getGameState().setValue("player1Wins", false);
+                }
+            }
+        });
+
     }
 
     @Override
     protected void onUpdate(double tpf) {
-        map.update();
+        boolean p1Wins = getGameState().getBoolean("player1Wins");
+        boolean p2Wins = getGameState().getBoolean("player2Wins");
+
+        if(p1Wins || p2Wins){
+            endGame(p1Wins, p2Wins);
+        }else {
+            map.update();
+        }
+    }
+
+    private void endGame(boolean p1Wins, boolean p2Wins) {
+        var winText = FXGL.getUIFactory().newText("You win");
+        var loseText = FXGL.getUIFactory().newText("You Lose");
+        winText.setTranslateY(getHeight() / 2.0);
+
+        if (p1Wins){
+            winText.setTranslateX(getWidth() / 4.0);
+            loseText.setTranslateY(getWidth()*3 / 4.0);
+            getGameScene().addUINodes(winText, loseText);
+        }else if(p2Wins){
+            loseText.setTranslateX(getWidth() / 4.0);
+            winText.setTranslateY(getWidth()*3 / 4.0);
+            getGameScene().addUINodes(loseText, winText);
+        }
+    }
+
+    public MapBuilder getMap() {
+        return map;
     }
 
     public static void main(String[] args) {
-        try {
-            MapUtilities.createCustomMapsDir();
-        } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        System.out.println("Done!");
         launch(args);
     }
 
@@ -216,15 +271,13 @@ public class GameApp extends GameApplication {
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntityFactory(new TileFactory());
 
-        player1 = spawn("Player1", 40, 40);
-        player2 = spawn("Player2", 0, 0);
+        player1 = spawn("Player2", 0, 0);
+        player2 = spawn("Player1", 40, 40);
 
         try {
-            PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth()/2, getHeight()), player1);
-            PlayerScreen screen2 = new PlayerScreen(new Rectangle(getWidth()/2, 0, getWidth()/2, getHeight()), player2);
-            map = new MapBuilder(getBuiltInMap("curvyalley"), 64, screen1, screen2);
-
-            System.out.println(map);
+            PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth()/2.0, getHeight()), player1);
+            PlayerScreen screen2 = new PlayerScreen(new Rectangle(getWidth()/2, 0, getWidth()/2.0, getHeight()), player2);
+            map = new MapBuilder(getBuiltInMap("theChallenge"), 64, screen1, screen2);
         } catch (MapNotFoundException e) {
             System.out.println("Fail");
             e.printStackTrace();
