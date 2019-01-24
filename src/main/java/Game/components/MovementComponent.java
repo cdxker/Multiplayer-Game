@@ -172,6 +172,10 @@ public class MovementComponent extends Component {
         }
     }
 
+    public void accelerates(Point2D force){
+        setVelocity(getVelocity().add(force));
+    }
+
     /**
      * Increases the starting acceleration as to not infer with
      * tile components changing instantaneous acceleration drag.

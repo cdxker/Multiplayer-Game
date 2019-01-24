@@ -36,11 +36,10 @@ public class CarFactory implements EntityFactory {
         Node view2 = texture("car.png", 64, 64/2);
 
         return genericPlayer(data)
-                .type(EntityType.Player2)
+                .type(EntityType.Player1)
                 .viewFromNodeWithBBox(view1)
                 .with(new ScreenComponent(view1))
                 .with(new ScreenComponent2(view2))
-                .with(new HealthComponent(100))
                 .with(new GunComponent("Bullet", 50))
                 .build();
     }
@@ -85,6 +84,7 @@ public class CarFactory implements EntityFactory {
         physics.setBodyType(BodyType.DYNAMIC);
 
         Point2D velocity = data.get("velocity");
+        Entity player = data.get("player");
         physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(velocity));
         Node view1 = new Circle(5);
         Node view2 = new Circle(5);
@@ -97,6 +97,7 @@ public class CarFactory implements EntityFactory {
                 .with(new DamageComponent(5))
                 .with(new ScreenComponent(view1))
                 .with(new ScreenComponent2(view2))
+                .with(new BulletComponent(player, velocity))
                 .with(physics)
                 .build();
     }
