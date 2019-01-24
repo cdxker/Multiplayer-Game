@@ -4,22 +4,26 @@ import Game.Map.*;
 import Game.UI.SceneCreator;
 import Game.components.*;
 import Game.components.powerups.PowerUpComponent;
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.extra.entity.effect.EffectComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
+import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 import java.io.IOException;
 
 import static Game.Map.MapReader.getBuiltInMap;
-import static com.almasb.fxgl.app.DSLKt.onKey;
-import static com.almasb.fxgl.app.DSLKt.spawn;
-
+import static com.almasb.fxgl.app.DSLKt.*;
 
 
 public class GameApp extends GameApplication {
@@ -31,8 +35,8 @@ public class GameApp extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(1920);
-        settings.setHeight(1080);
+        settings.setWidth(960);
+        settings.setHeight(540);
         settings.setTitle("Bullet Hail");
         settings.setVersion("0.1");
 
@@ -121,7 +125,7 @@ public class GameApp extends GameApplication {
 
         input.addAction(new UserAction("Fire Bullet 1") {
             @Override
-            protected void onAction() {
+            protected void onActionBegin() {
                 GunComponent component = player1.getComponent(GunComponent.class);
                 component.shootBullet();
             }
@@ -129,7 +133,7 @@ public class GameApp extends GameApplication {
 
         input.addAction(new UserAction("Fire Bullet 2") {
             @Override
-            protected void onAction() {
+            protected void onActionBegin() {
                 GunComponent component = player2.getComponent(GunComponent.class);
                 component.shootBullet();
             }
@@ -138,12 +142,20 @@ public class GameApp extends GameApplication {
 
     @Override
     protected void initPhysics() {
+        getPhysicsWorld().setGravity(0, 0);
+
+
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player1, EntityType.Bullet) {
             @Override
             protected void onCollision(Entity car, Entity bullet) {
-                HealthComponent carHealth = car.getComponent(HealthComponent.class);
-                DamageComponent damage = bullet.getComponent(DamageComponent.class);
-                carHealth.add(-damage.getDamage());
+                BulletComponent bul = bullet.getComponent(BulletComponent.class);
+                if(bul.getParent().isType(EntityType.Player2)) {
+                    HealthComponent carHealth = car.getComponent(HealthComponent.class);
+                    DamageComponent damage = bullet.getComponent(DamageComponent.class);
+                    carHealth.add(-damage.getDamage());
+
+                    FXGL.getMasterTimer().runOnceAfter(bullet::removeFromWorld, Duration.seconds(0.01));
+                }
             }
         });
 
@@ -164,14 +176,18 @@ public class GameApp extends GameApplication {
                 carEffects.startEffect(powerUp.getEffect());
             }
         });
-        getPhysicsWorld().setGravity(0, 0);
 
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player2, EntityType.Bullet) {
             @Override
             protected void onCollision(Entity car, Entity bullet) {
-                HealthComponent carHealth = car.getComponent(HealthComponent.class);
-                DamageComponent damage = bullet.getComponent(DamageComponent.class);
-                carHealth.add(-damage.getDamage());
+                BulletComponent bul = bullet.getComponent(BulletComponent.class);
+                if(bul.getParent().isType(EntityType.Player1)) {
+                    HealthComponent carHealth = car.getComponent(HealthComponent.class);
+                    DamageComponent damage = bullet.getComponent(DamageComponent.class);
+                    carHealth.add(-damage.getDamage());
+
+                    FXGL.getMasterTimer().runOnceAfter(bullet::removeFromWorld, Duration.seconds(0.01));
+                }
             }
         });
 
@@ -192,7 +208,15 @@ public class GameApp extends GameApplication {
                 carEffects.startEffect(powerUp.getEffect());
             }
         });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Bullet, EntityType.Wall) {
+            @Override
+            protected void onCollision(Entity bullet, Entity tile) {
+                FXGL.getMasterTimer().runOnceAfter(bullet::removeFromWorld, Duration.seconds(0.01));
+            }
+        });
     }
+
 
     @Override
     protected void onUpdate(double tpf) {
@@ -220,6 +244,7 @@ public class GameApp extends GameApplication {
         player2 = spawn("Player2", 0, 0);
 
         try {
+            double tileSize = 64;
             PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth()/2, getHeight()), player1);
             PlayerScreen screen2 = new PlayerScreen(new Rectangle(getWidth()/2, 0, getWidth()/2, getHeight()), player2);
             map = new MapBuilder(getBuiltInMap("curvyalley"), 64, screen1, screen2);

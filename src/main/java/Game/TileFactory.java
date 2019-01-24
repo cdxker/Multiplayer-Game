@@ -24,7 +24,6 @@ public class TileFactory implements EntityFactory {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.STATIC);
 
-        Node view = new Rectangle(size, size, Color.BLACK);
         Node view1 = new Rectangle(size, size, Color.BLACK);
         Node view2 = new Rectangle(size, size, Color.BLACK);
 

@@ -26,7 +26,6 @@ public class CarFactory implements EntityFactory {
                 .from(data)
                 .with(new CollidableComponent(true))
                 .with(physics)
-                .with(new MovementComponent(0.05,0.95,0.80,2.5,0.5))
                 .with(new HealthComponent(100))
                 .with(new EffectComponent());
 
@@ -41,6 +40,7 @@ public class CarFactory implements EntityFactory {
                 .viewFromNodeWithBBox(view1)
                 .with(new ScreenComponent(view1))
                 .with(new ScreenComponent2(view2))
+                .with(new MovementComponent(0.05,0.95,0.80,2.5,0.5))
                 .with(new GunComponent("Bullet"))
                 .build();
     }
@@ -58,6 +58,7 @@ public class CarFactory implements EntityFactory {
                 .viewFromNodeWithBBox(view1)
                 .with(new ScreenComponent(view1))
                 .with(new ScreenComponent2(view2))
+                .with(new MovementComponent(0.05,0.95,0.80,2.5,0.5))
                 .with(new GunComponent("Bullet"))
                 .build();
     }
@@ -87,6 +88,7 @@ public class CarFactory implements EntityFactory {
         physics.setBodyType(BodyType.DYNAMIC);
 
         Point2D velocity = data.get("velocity");
+        Entity player = data.get("player");
         physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(velocity));
         Node view1 = new Circle(5);
         Node view2 = new Circle(5);
@@ -99,8 +101,9 @@ public class CarFactory implements EntityFactory {
                 .with(new DamageComponent(20))
                 .with(new ScreenComponent(view1))
                 .with(new ScreenComponent2(view2))
+                .with(new BulletComponent(player, velocity))
                 .with(physics)
-                .with(new KeepOnScreenComponent(true, true))
+//                .with(new KeepOnScreenComponent(true, true))
                 .build();
     }
 }

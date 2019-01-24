@@ -1,6 +1,5 @@
 package Game.components;
 
-import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.component.Component;
@@ -21,6 +20,9 @@ public class GunComponent extends Component {
         Node gunTexture1 = texture("gun.png", getEntity().getWidth() * 18 /32, getEntity().getWidth()*10 / 16);
         Node gunTexture2 = texture("gun.png", getEntity().getWidth() * 18 /32, getEntity().getWidth()*10 / 16);
 
+        double offsetX = 0.1*getEntity().getWidth() * Math.cos(getEntity().getRotation());
+        double offsetY = 0.1*getEntity().getWidth() * Math.cos(getEntity().getRotation());
+
         gunTexture1.setTranslateX(getEntity().getWidth()*16/32);
         gunTexture1.setTranslateY(getEntity().getHeight()*3/16);
 
@@ -38,17 +40,20 @@ public class GunComponent extends Component {
     }
 
     public void shootBullet(){
-        Entity e = getEntity();
-        double magnitude = 200;
+        Entity player = getEntity();
+        double magnitude = 2000;
         float angle = physics.getBody().getAngle(); // angle is measured in radians
-        Point2D pos = e.getCenter().add(Math.cos(angle) * e.getWidth(), -Math.sin(angle) * e.getHeight());
+        Point2D pos = player.getCenter().add(Math.cos(angle) * player.getWidth(), -Math.sin(angle) * player.getHeight());
         Point2D velocity = new Point2D(Math.cos(angle)* magnitude,-Math.sin(angle)* magnitude);
 
 
 
         // create a bullet
-        spawn(bulletName, new SpawnData(pos.getX(), pos.getY()).put("velocity", velocity));
+        spawn(bulletName, new SpawnData(pos.getX(), pos.getY()).put("velocity", velocity).put("player",player));
+        MovementComponent playerMovement = player.getComponent(MovementComponent.class);
+        playerMovement.accelerates(velocity.multiply(-0.001));
         // apply velocity towards the angle of direction of the car
+
     }
 
 }
