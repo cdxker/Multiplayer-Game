@@ -24,7 +24,6 @@ public class TileFactory implements EntityFactory {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.STATIC);
 
-        Node view = new Rectangle(size, size, Color.BLACK);
         Node view1 = new Rectangle(size, size, Color.BLACK);
         Node view2 = new Rectangle(size, size, Color.BLACK);
 
@@ -42,12 +41,14 @@ public class TileFactory implements EntityFactory {
     @Spawns("Finish Line")
     public Entity newFinsihLine(SpawnData data){
         double size = data.get("tileSize");
-        Node view1 = new Rectangle(size, size, Color.rgb(100, 100, 100));
-        Node view2 = new Rectangle(size, size, Color.rgb(100, 100, 100));
 
+        Node view1 = texture("finishLine.png", size, size);
+        Node view2 = texture("finishLine.png", size, size);
+        
         return Entities.builder()
                 .type(EntityType.FINISHLINE)
                 .from(data)
+                .with(new CollidableComponent(true))
                 .viewFromNodeWithBBox(view1)
                 .with(new ScreenComponent(view1))
                 .with(new ScreenComponent2(view2))
