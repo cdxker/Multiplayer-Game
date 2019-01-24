@@ -1,4 +1,4 @@
-package Game.UI;
+package Game.UI.Elements;
 
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;

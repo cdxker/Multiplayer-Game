@@ -15,7 +15,6 @@ import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.settings.GameSettings;
-import com.almasb.fxgl.settings.MenuItem;
 import com.almasb.fxgl.util.Credits;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
@@ -25,7 +24,6 @@ import javafx.scene.text.TextAlignment;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.EnumSet;
 
 import static Game.Map.MapReader.getMap;
 import static com.almasb.fxgl.app.DSLKt.spawn;
@@ -33,7 +31,7 @@ import static com.almasb.fxgl.app.DSLKt.spawn;
 public class GameApp extends GameApplication {
     private Entity player1 = new Entity();
     private Entity player2 = new Entity();
-  
+
     public static GlobalSettings globalSettings;
 
     static {
@@ -56,20 +54,15 @@ public class GameApp extends GameApplication {
         settings.setHeight(globalSettings.getHeightRes());
         settings.setIntroEnabled(globalSettings.isIntroEnabled());
 
-
         //// Not intended to be changed by players
-        settings.setEnabledMenuItems(EnumSet.allOf(MenuItem.class));
-        //settings.setDialogFactory(new DialogCreator());
         settings.setSceneFactory(new SceneCreator());
+        settings.setManualResizeEnabled(false);
         settings.setFullScreenAllowed(true); // Forced Fullscreen if true/ Toggleable if false
         settings.setAppIcon("AppIcon.png");
         settings.setTitle("Bullet Hail");
         settings.setVersion("v1.0.0");
-        settings.setCSS("main.css");
-        settings.setManualResizeEnabled(false);
-        //settings.setUIFactory();
         settings.setMenuEnabled(true);
-
+        settings.setCSS("main.css");
 
         ArrayList<String> credits = new ArrayList<>(settings.getCredits().getList());
         credits.add("Denzell Ford");

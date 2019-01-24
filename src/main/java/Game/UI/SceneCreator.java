@@ -9,4 +9,8 @@ public class SceneCreator extends SceneFactory {
     public FXGLMenu newMainMenu(GameApplication app) {
         return new MainMenu(app);
     }
+
+    public FXGLMenu newGameMenu(GameApplication app) {
+        return new GameMenu(app);
+    }
 }

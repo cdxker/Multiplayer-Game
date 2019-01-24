@@ -1,5 +1,8 @@
 package Game.UI;
 
+import Game.UI.Elements.BoxButton;
+import Game.UI.Elements.BoxButtonSettings;
+import Game.UI.Elements.TextButton;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.SubState;
@@ -48,15 +51,15 @@ import static Game.GameApp.globalSettings;
         mainLayout.setBackground(new Background(new BackgroundImage(backgroundImage, BackgroundRepeat.ROUND, BackgroundRepeat.ROUND, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)));
  */
 public class MainMenu extends FXGLMenu {
-    final FontFactory OVERPASS_LIGHT_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-light.otf");
-    final FontFactory OVERPASS_LIGHT_ITALIC_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-light-italic.otf");
-    final FontFactory OVERPASS_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-regular.otf");
-    final FontFactory OVERPASS_HEAVY_ITALIC_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-heavy-italic.otf");
-    final FontFactory OVERPASS_MONO_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("overpass-mono/overpass-mono-regular.otf");
-    final FontFactory HACK_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("hack/Hack-Regular.ttf");
-    final FontFactory ASAP_SEMIBOLD_FACTORY = FXGL.getAssetLoader().loadFont("asap/Asap-SemiBold.ttf");
-    final FontFactory ASAP_MEDIUM_FACTORY = FXGL.getAssetLoader().loadFont("asap/Asap-Medium.ttf");
-    final FontFactory ASAP_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("asap/Asap-Regular.ttf");
+    public static final FontFactory OVERPASS_LIGHT_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-light.otf");
+    public static final FontFactory OVERPASS_LIGHT_ITALIC_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-light-italic.otf");
+    public static final FontFactory OVERPASS_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-regular.otf");
+    public static final FontFactory OVERPASS_HEAVY_ITALIC_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-heavy-italic.otf");
+    public static final FontFactory OVERPASS_MONO_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("overpass-mono/overpass-mono-regular.otf");
+    public static final FontFactory HACK_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("hack/Hack-Regular.ttf");
+    public static final FontFactory ASAP_SEMIBOLD_FACTORY = FXGL.getAssetLoader().loadFont("asap/Asap-SemiBold.ttf");
+    public static final FontFactory ASAP_MEDIUM_FACTORY = FXGL.getAssetLoader().loadFont("asap/Asap-Medium.ttf");
+    public static final FontFactory ASAP_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("asap/Asap-Regular.ttf");
     final double heightRatio = app.getHeight() / 600.0;
     final double widthRatio = app.getWidth() / 900.0;
     final double fontRatio = 25.0 / 6;
@@ -66,7 +69,6 @@ public class MainMenu extends FXGLMenu {
 
     public MainMenu(GameApplication app) {
         super(app, MenuType.MAIN_MENU);
-
 
         //// Super class adds unwanted nodes to root, so these instructions rids of those unwanted nodes
         //// while maintaining menuRoot and contentRoot.
@@ -82,7 +84,6 @@ public class MainMenu extends FXGLMenu {
         mainMenuLayout.getRowConstraints().addAll(row, row);
         mainMenuLayout.getColumnConstraints().addAll(col, col);
         mainMenuLayout.setPadding(new Insets(marginSize));
-        //mainMenuLayout.setBackground(new Background(new BackgroundFill(Color.rgb(230, 224, 211),CornerRadii.EMPTY, Insets.EMPTY)));
 
 
         //// Make header and add it to main layout
@@ -177,22 +178,10 @@ public class MainMenu extends FXGLMenu {
         // Do nothing
     }
 
-    public class TextButton extends Text {
-        public TextButton(String text, Font font, Color normCol, Color otherCol, Runnable action) {
-            super(text);
-            this.setFont(font);
-            this.setFill(normCol);
-            this.setOnMouseEntered(event -> this.setFill(otherCol));
-            this.setOnMouseExited(event -> this.setFill(normCol));
-            this.setOnMouseClicked(event -> action.run());
-        }
-
-        public TextButton(String text, Font font, Color otherCol, Runnable action) {
-            this(text, font, Color.BLACK, otherCol, action);
-        }
-    }
-
     private void showSettingsPage() {
+        getContentRoot().getChildren().clear(); // For some reason, there exists nodes in the contentRoot node that
+        // stick out at the top of the screen.
+
         final double margin = 48 * defactoRatio;
 
         VBox page = new VBox();
@@ -289,7 +278,7 @@ public class MainMenu extends FXGLMenu {
 
         page.getChildren().addAll(header, content, backButtonWrap);
 
-        switchMenuContentTo(page);
+        switchMenuTo(page);
     }
 
     private SettingField getAudioSlider(String label, Property<Number> prop) {
@@ -313,9 +302,9 @@ public class MainMenu extends FXGLMenu {
             try {
                 globalSettings.setWidthRes(chosenRes.width);
                 globalSettings.setHeightRes(chosenRes.height);
-                FXGL.getDisplay().showConfirmationBox("Success! Please restart the game to have this change take effect.", this::blackHole);
+                FXGL.getDisplay().showMessageBox("Success! Please restart the game to have this change take effect.");
             } catch (IOException e) {
-                FXGL.getDisplay().showConfirmationBox("Error! Could not write change to disk.", this::blackHole);
+                FXGL.getDisplay().showMessageBox("Error! Could not write change to disk.");
             }
         });
         return resChoices;
@@ -331,8 +320,8 @@ public class MainMenu extends FXGLMenu {
     }
 
     private void returnToMainMenu() {
-        getContentRoot().getChildren().clear();
         switchMenuTo(mainMenuLayout);
+        menuRoot.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
     }
 
     @Override
@@ -343,7 +332,6 @@ public class MainMenu extends FXGLMenu {
 
     @Override
     protected void switchMenuContentTo(Node content) {
-        menuRoot.getChildren().clear();
         getContentRoot().getChildren().clear();
         getContentRoot().getChildren().add(content);
     }
