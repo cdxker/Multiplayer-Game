@@ -9,17 +9,23 @@ int gridHeight = 50;
 final color dirtColor = color(182,159,102);
 final color borderColor = color(255, 0 , 0);
 final color roadColor = #D2D1CD;
-final color blankColor = color(100, 100, 100); 
+final color blankColor = color(100, 100, 100);
+final color HealthPower = color(0, 255, 0);
+final color SlowPower = color(255, 0, 0);
+final color SpeedPower = color(0, 100, 0);
 final color[] Types = {blankColor, dirtColor, roadColor, borderColor};
 int index = 0;
 
 ArrayList<ColorButton> uiElements;
 
 HashMap<Integer, String> typeMap = new HashMap<Integer, String>();{
-  typeMap.put(dirtColor, "SlowPowerUp");
-  typeMap.put(borderColor, "HealthPowerUp");
-  typeMap.put(roadColor, "SpeedPowerUp");
-  typeMap.put(blankColor, "blank");
+  typeMap.put(dirtColor, "Dirt");
+  typeMap.put(borderColor, "Wall");
+  typeMap.put(roadColor, "Road");
+  typeMap.put(blankColor, "Blank");
+  typeMap.put(HealthPower, "HealthPowerUp");
+  typeMap.put(SpeedPower, "SpeedPowerUp");
+  typeMap.put(SlowPower, "SlowPowerUp");
 }
 
 color PushPower = Types[index];

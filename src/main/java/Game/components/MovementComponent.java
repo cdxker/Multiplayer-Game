@@ -95,7 +95,6 @@ public class MovementComponent extends Component {
      */
     public void onUpdate(double tpf) {
         refreshRate = tpf * 60;
-
         /* Changes velocity by acceleration
          * Since velocity is a vector, and acceleration is represented by
          * a one-dimensional double value, each component is calculated using trigonometry
@@ -171,6 +170,10 @@ public class MovementComponent extends Component {
             // Below a certain speed, the vehicle's ability to rotate slows down
             angularVelocity -= getSpeed() * steering * angularDrag;
         }
+    }
+
+    public void accelerates(Point2D force){
+        setVelocity(getVelocity().add(force));
     }
 
     /**
