@@ -33,52 +33,35 @@ public class CarFactory implements EntityFactory {
 
     @Spawns("Player1")
     public Entity spawnPlayer1(SpawnData data) {
-        Node view1 = texture("player1.png", 64, 64/2);
-        Node view2 = texture("player1.png", 64, 64/2);
+        int size = data.get("size");
+        Node view1 = texture("player1.png", size, size/2);
+        Node view2 = texture("player1.png", size, size/2);
         return genericPlayer(data)
                 .type(EntityType.Player1)
                 .viewFromNodeWithBBox(view1)
                 .with(new ScreenComponent(view1))
                 .with(new ScreenComponent2(view2))
-                .with(new MovementComponent(0.05,0.95,0.80,2.5,0.5))
+                .with(new MovementComponent(0.05,0.95,0.80,1.5,0.5))
                 .with(new GunComponent("Bullet"))
                 .build();
     }
 
     @Spawns("Player2")
     public Entity spawnPlayer2(SpawnData data) {
+        int size = data.get("size");
+        Node view1 = texture("player1.png", size, size/2);
+        Node view2 = texture("player1.png", size, size/2);
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
         physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(0, 0));
-        Node view1 = texture("player2.png", 64, 64/2);
-        Node view2 = texture("player2.png", 64, 64/2);
 
         return genericPlayer(data)
                 .type(EntityType.Player2)
                 .viewFromNodeWithBBox(view1)
                 .with(new ScreenComponent(view1))
                 .with(new ScreenComponent2(view2))
-                .with(new MovementComponent(0.05,0.95,0.80,2.5,0.5))
+                .with(new MovementComponent(0.05,0.95,0.80,1.5,0.5))
                 .with(new GunComponent("Bullet"))
-                .build();
-    }
-
-    @Spawns("Ball")
-    public Entity newBall(SpawnData data) {
-        PhysicsComponent physics = new PhysicsComponent();
-        physics.setBodyType(BodyType.DYNAMIC);
-        physics.setFixtureDef(new FixtureDef().restitution(1.0f)); // makes it bounce off stuff
-        Point2D velocity = data.get("velocity"); // gets the data injected from spawns() (look in game app implementation)
-        physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(velocity));
-        Node view = new Circle(20);
-        return Entities.builder()
-                .type(EntityType.Ball)
-                .from(data)
-                .viewFromNodeWithBBox(view)
-                .with(physics)
-                .with(new ScreenComponent(view))
-                .with(new ScreenComponent2(view))
-                .with(new KeepOnScreenComponent(true, true))
                 .build();
     }
 

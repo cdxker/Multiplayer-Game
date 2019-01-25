@@ -7,6 +7,7 @@ import Game.components.powerups.PowerUpComponent;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.extra.entity.effect.EffectComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
@@ -40,6 +41,7 @@ public class GameApp extends GameApplication {
     MapBuilder mapBuilder;
     Map map;
     double tileSize = 64;
+    double UIElementSize = 64;
 
     ArrayList<Node> gameDataElements = new ArrayList<>();
 
@@ -71,6 +73,7 @@ public class GameApp extends GameApplication {
         settings.setTitle("Bullet Hail");
         settings.setVersion("v1.0.0");
         settings.setMenuEnabled(true);
+        settings.setIntroEnabled(true);
         settings.setCSS("main.css");
 
         ArrayList<String> credits = new ArrayList<>(settings.getCredits().getList());
@@ -192,7 +195,6 @@ public class GameApp extends GameApplication {
                     HealthComponent carHealth = car.getComponent(HealthComponent.class);
                     DamageComponent damage = bullet.getComponent(DamageComponent.class);
                     carHealth.add(-damage.getDamage());
-                    System.out.println(damage.getDamage());
 
                     FXGL.getMasterTimer().runOnceAfter(bullet::removeFromWorld, Duration.seconds(0.01));
                 }
@@ -286,8 +288,8 @@ public class GameApp extends GameApplication {
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntityFactory(new TileFactory());
 
-        player1 = spawn("Player1", 40, 40);
-        player2 = spawn("Player2", 0, 0);
+        player1 = spawn("Player1", new SpawnData(100,100).put("size",64));
+        player2 = spawn("Player2", new SpawnData(100,200).put("size",64));
 
         try {
             PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth()/2, getHeight()), player1);
@@ -315,40 +317,59 @@ public class GameApp extends GameApplication {
         updateBorder();
         updateMinimap();
         updatePlayer();
+        updateInputTutorial();
+    }
+
+    private void updateInputTutorial(){
+
+        String input1 = getInput().triggerProperty(getInput().getActionByName("Fire Bullet 1")).getValue().toString();
+        Text player1Input = new Text("Press " + input1 + " to fire a bullet");
+        player1Input.setFont(new Font(30));
+        player1Input.setFill(Color.WHITE);
+
+        String input2 = getInput().triggerProperty(getInput().getActionByName("Fire Bullet 2")).getValue().toString();
+        Text player2Input = new Text("Press " + input2 + " to fire a bullet");
+        player2Input.setFont(new Font(30));
+        player2Input.setFill(Color.WHITE);
+
+        gameDataElements.add(player1Input);
+        gameDataElements.add(player2Input);
+
+        addUINode(player1Input,UIElementSize, UIElementSize-10);
+        addUINode(player2Input,getWidth()/2+UIElementSize,UIElementSize-10);
     }
 
     private void updatePlayer(){
         HealthComponent health1 = player1.getComponent(HealthComponent.class);
         HealthComponent health2 = player2.getComponent(HealthComponent.class);
 
-        Text healthLabel1 = new Text("Player 1:\n" + (int)health1.getHealth() + "/" + (int)health1.getMaxHealth() + "HP");
+        Text healthLabel1 = new Text("Player 1:\n" + (int)health1.getHealth() + "/" + (int)health1.getMaxHealth() + " HP");
         healthLabel1.setFont(new Font(20));
         healthLabel1.setFill(Color.WHITE);
 
-        Text healthLabel2 = new Text("Player 2:\n" + (int)health2.getHealth() + "/" + (int)health2.getMaxHealth() + "HP");
+        Text healthLabel2 = new Text("Player 2:\n" + (int)health2.getHealth() + "/" + (int)health2.getMaxHealth() + " HP");
         healthLabel2.setFont(new Font(20));
         healthLabel2.setFill(Color.WHITE);
-
 
         gameDataElements.add(healthLabel1);
         gameDataElements.add(healthLabel2);
 
-        addUINode(healthLabel1,getWidth()/2-tileSize+14,tileSize+20);
-        addUINode(healthLabel2,getWidth()/2-tileSize+14,tileSize*2+20);
+        addUINode(healthLabel1,getWidth()/2-UIElementSize+14,UIElementSize+20);
+        addUINode(healthLabel2,getWidth()/2-UIElementSize+14,UIElementSize*2+20);
 
     }
 
     private void updateBorder(){
-        Rectangle outBorder = new Rectangle(getWidth()-tileSize, getHeight()-tileSize, Color.TRANSPARENT);
+        Rectangle outBorder = new Rectangle(getWidth()-UIElementSize, getHeight()-UIElementSize, Color.TRANSPARENT);
         outBorder.setStroke(Color.BLACK);
-        outBorder.setStrokeWidth(tileSize);
-        Rectangle midBorder = new Rectangle(tileSize*2, getHeight(), Color.BLACK);
+        outBorder.setStrokeWidth(UIElementSize);
+        Rectangle midBorder = new Rectangle(UIElementSize*2, getHeight(), Color.BLACK);
 
-        Rectangle player1Border = new Rectangle(getWidth()/2-2*tileSize, getHeight()-2*tileSize, Color.TRANSPARENT);
+        Rectangle player1Border = new Rectangle(getWidth()/2-2*UIElementSize, getHeight()-2*UIElementSize, Color.TRANSPARENT);
         player1Border.setStroke(Color.RED);
         player1Border.setStrokeWidth(5);
 
-        Rectangle player2Border = new Rectangle(getWidth()/2-2*tileSize, getHeight()-2*tileSize, Color.TRANSPARENT);
+        Rectangle player2Border = new Rectangle(getWidth()/2-2*UIElementSize, getHeight()-2*UIElementSize, Color.TRANSPARENT);
         player2Border.setStroke(Color.BLUE);
         player2Border.setStrokeWidth(5);
 
@@ -357,10 +378,10 @@ public class GameApp extends GameApplication {
         gameDataElements.add(player1Border);
         gameDataElements.add(player2Border);
 
-        addUINode(outBorder, tileSize/2, tileSize/2);
-        addUINode(midBorder, getWidth()/2-tileSize,0);
-        addUINode(player1Border, tileSize,tileSize);
-        addUINode(player2Border, getWidth()/2+tileSize,tileSize);
+        addUINode(outBorder, UIElementSize/2, UIElementSize/2);
+        addUINode(midBorder, getWidth()/2-UIElementSize,0);
+        addUINode(player1Border, UIElementSize,UIElementSize);
+        addUINode(player2Border, getWidth()/2+UIElementSize,UIElementSize);
     }
 
     private void updateMinimap(){
@@ -400,10 +421,10 @@ public class GameApp extends GameApplication {
         Point2D p2 = player2.getPosition();
         for(int i = -1; i < 2; i++) {
             for(int j = -1; j < 2; j++) {
-                int x1 = i + (int) (p1.getX() / tileSize);
-                int y1 = j + (int) (p1.getY() / tileSize);
-                int x2 = i + (int) (p2.getX() / tileSize);
-                int y2 = j + (int) (p2.getY() / tileSize);
+                int x1 = i + (int) (p1.getX() / UIElementSize);
+                int y1 = j + (int) (p1.getY() / UIElementSize);
+                int x2 = i + (int) (p2.getX() / UIElementSize);
+                int y2 = j + (int) (p2.getY() / UIElementSize);
                 if (x1 > 0 && x1 <= miniX && y1 > 0 && y1 <= miniY) {
                     px.setColor(x1, y1, Color.RED);
                 }
@@ -430,7 +451,7 @@ public class GameApp extends GameApplication {
 
         gameDataElements.add(minimapView);
 
-        addUINode(minimapView, getWidth()/2-minimapSize/2,getHeight()-minimapSize-tileSize);
+        addUINode(minimapView, getWidth()/2-minimapSize/2,getHeight()-minimapSize-UIElementSize);
 
         Text minimapLabel = new Text("Minimap");
         minimapLabel.setFont(new Font(20));
@@ -438,7 +459,6 @@ public class GameApp extends GameApplication {
 
         gameDataElements.add(minimapLabel);
 
-        addUINode(minimapLabel,getWidth()/2-minimapSize/2,getHeight()-minimapSize-tileSize-20);
+        addUINode(minimapLabel,getWidth()/2-minimapSize/2,getHeight()-minimapSize-UIElementSize-20);
     }
-
 }

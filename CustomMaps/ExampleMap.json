@@ -2,7 +2,7 @@
   "name": "ExampleMap",
   "tiles": [
     {
-      "uniqueId": "912011468",
+      "uniqueId": "1891546521",
       "type": "wood",
       "pos": {
         "x": 750.0,
@@ -11,7 +11,7 @@
       }
     },
     {
-      "uniqueId": "1881129850",
+      "uniqueId": "1312884893",
       "type": "ice",
       "pos": {
         "x": 250.0,
@@ -20,7 +20,7 @@
       }
     },
     {
-      "uniqueId": "1095293768",
+      "uniqueId": "849373393",
       "type": "boost",
       "pos": {
         "x": 500.0,

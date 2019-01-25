@@ -39,7 +39,8 @@ public class HealthComponent extends Component {
         movement.stops();
         FXGL.getMasterTimer().runOnceAfter(()->{
             movement.resumeMoving();
-        }, Duration.seconds(2));
+            health = maxHealth;
+        }, Duration.seconds(3));
     }
 
     public double getHealth() {

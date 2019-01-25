@@ -20,9 +20,6 @@ public class GunComponent extends Component {
         Node gunTexture1 = texture("gun.png", getEntity().getWidth() * 18 /32, getEntity().getWidth()*10 / 16);
         Node gunTexture2 = texture("gun.png", getEntity().getWidth() * 18 /32, getEntity().getWidth()*10 / 16);
 
-        double offsetX = 0.1*getEntity().getWidth() * Math.cos(getEntity().getRotation());
-        double offsetY = 0.1*getEntity().getWidth() * Math.cos(getEntity().getRotation());
-
         gunTexture1.setTranslateX(getEntity().getWidth()*16/32);
         gunTexture1.setTranslateY(getEntity().getHeight()*3/16);
 
