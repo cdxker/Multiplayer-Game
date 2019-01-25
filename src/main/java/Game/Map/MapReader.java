@@ -10,10 +10,7 @@ import javafx.geometry.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static Game.Map.MapUtilities.*;
@@ -33,7 +30,9 @@ public class MapReader {
         String name = getNameFromJson(rootJson);
         HashSet<Tile> tiles = getTilesFromJson(rootJson);
         Point2D gridSize = getGridSize(rootJson);
-        return new Map(tiles, name, gridSize);
+        Point2D startPosP1 = getStartPos("startPosP1", rootJson);
+        Point2D startPosP2 = getStartPos("startPosP2", rootJson);
+        return new Map(tiles, name, gridSize, startPosP1, startPosP2);
     }
 
     public static HashSet<Map> getMaps() {
@@ -114,6 +113,12 @@ public class MapReader {
         }
     }
 
+    public static ArrayList<String> getMapNames() {
+        ArrayList<String> names = new ArrayList<>();
+        getMaps().forEach(map -> names.add(map.getName()));
+        return names;
+    }
+
     public static Map createMapFromFile(File file) throws IOException, JsonSyntaxException {
         return createMapFromJson(Files.readString(file.toPath()));
     }
@@ -148,7 +153,7 @@ public class MapReader {
      *
      * @param jsonData A string containing JSON data to be turned into a JsonObject
      * @return A JsonObject of the jsonData.
-     * @throws JsonSyntaxException Throws if jsonData is not syntactically JSON.
+     * @throws JsonSyntaxException Throws if jsonData is not syntactically valid JSON.
      */
     public static JsonObject getJsonObject(String jsonData) throws JsonSyntaxException {
         JsonParser parserJson = new JsonParser();
@@ -193,5 +198,12 @@ public class MapReader {
     public static String getNameFromJson(JsonObject rootJson) {
         /* The replaceAll call removes " from the beginning and ending of the string. */
         return rootJson.get("name").toString().replaceAll("(?:^\")|(?:\"$)", "");
+    }
+
+    public static Point2D getStartPos(String fieldName, JsonObject rootJson) {
+        JsonObject startPos = rootJson.get(fieldName).getAsJsonObject();
+        double xPos = startPos.get("x").getAsDouble();
+        double yPos = startPos.get("y").getAsDouble();
+        return new Point2D(xPos, yPos);
     }
 }

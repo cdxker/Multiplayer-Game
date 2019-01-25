@@ -2,14 +2,14 @@ package Game.Map;
 
 import javafx.geometry.Point2D;
 
-import java.util.ArrayList;
 import java.util.Set;
 
 public class Map {
     private String name;
     private Set<Tile> tiles;
     private Point2D gridSize;
-    private ArrayList<ArrayList<Tile>> tileGrid;
+    private Point2D startPosP1;
+    private Point2D startPosP2;
 
     /**
      * The data structure for a map.
@@ -17,10 +17,12 @@ public class Map {
      * @param name  The name of map
      * @param tiles A set of TILE objects
      */
-    public Map(Set<Tile> tiles, String name, Point2D gridSize) {
+    public Map(Set<Tile> tiles, String name, Point2D gridSize, Point2D startPosP1, Point2D startPosP2) {
         this.tiles = tiles;
         this.name = name;
         this.gridSize = gridSize;
+        this.startPosP1 = startPosP1;
+        this.startPosP2 = startPosP2;
     }
 
     public String getName() {
@@ -38,6 +40,22 @@ public class Map {
     public void setTiles(Set<Tile> tiles) {
         this.tiles = tiles;
 
+    }
+
+    public Point2D getStartPosP1() {
+        return startPosP1;
+    }
+
+    public void setStartPosP1(Point2D startPosP1) {
+        this.startPosP1 = startPosP1;
+    }
+
+    public Point2D getStartPosP2() {
+        return startPosP2;
+    }
+
+    public void setStartPosP2(Point2D startPosP2) {
+        this.startPosP2 = startPosP2;
     }
 
     /**

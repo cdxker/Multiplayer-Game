@@ -1,5 +1,13 @@
 {
   "name": "curvyalley",
+  "startPosP1": {
+    "x": 40,
+    "y": 40
+  },
+  "startPosP2": {
+    "x": 0,
+    "y": 0
+  },
   "tiles":[{
 "uniqueId": "3508458",
 "type": "Wall",

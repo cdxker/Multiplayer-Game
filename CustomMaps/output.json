@@ -1,5 +1,13 @@
 {
   "name" : "Output",
+  "startPosP1": {
+    "x": 40,
+    "y": 40
+  },
+  "startPosP2": {
+    "x": 0,
+    "y": 0
+  },
   "tiles":[{
 "uniqueId": "921033495",
 "type": "Dirt",

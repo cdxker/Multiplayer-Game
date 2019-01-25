@@ -7,34 +7,26 @@ import Game.Map.PlayerScreen;
 import Game.UI.SceneCreator;
 import Game.components.*;
 import Game.components.powerups.PowerUpComponent;
-import Game.components.powerups.PowerUps;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.extra.entity.effect.Effect;
 import com.almasb.fxgl.extra.entity.effect.EffectComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.util.Credits;
-import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import static Game.Map.MapReader.getBuiltInMap;
 import static Game.Map.MapReader.getMap;
-import static com.almasb.fxgl.app.DSLKt.onKey;
+import static Game.Map.MapReader.getMapNames;
 import static com.almasb.fxgl.app.DSLKt.spawn;
 
 
@@ -44,7 +36,8 @@ public class GameApp extends GameApplication {
     private Entity player2 = new Entity();
 
     public static GlobalSettings globalSettings;
-    MapBuilder map;
+    public static MapBuilder map;
+    public static Map<String, Object> cvars = new HashMap<>();
 
     static {
         try {
@@ -285,16 +278,21 @@ public class GameApp extends GameApplication {
         player1 = spawn("Player1", 40, 40);
         player2 = spawn("Player2", 0, 0);
 
-        try {
-            double tileSize = 64;
-            PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth()/2, getHeight()), player1);
-            PlayerScreen screen2 = new PlayerScreen(new Rectangle(getWidth()/2, 0, getWidth()/2, getHeight()), player2);
-            map = new MapBuilder(getBuiltInMap("curvyalley"), 64, screen1, screen2);
+        double tileSize = 64;
+        PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth() / 2, getHeight()), player1);
+        PlayerScreen screen2 = new PlayerScreen(new Rectangle(getWidth() / 2, 0, getWidth() / 2, getHeight()), player2);
+        map = new MapBuilder((Game.Map.Map) cvars.get("map"), 64, screen1, screen2);
 
-            System.out.println(map);
+        System.out.println(map);
+    }
+
+    @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        cvars = vars;
+        try {
+            cvars.put("map", getMap(getMapNames().get(0)));
         } catch (MapNotFoundException e) {
-            System.out.println("Fail");
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
