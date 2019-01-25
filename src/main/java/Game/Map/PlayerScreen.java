@@ -55,8 +55,6 @@ public class PlayerScreen extends Pane {
         getGameWorld().getEntitiesByType(EntityType.Tile, EntityType.Wall, EntityType.PowerUp, EntityType.FINISHLINE).forEach(this::add);
         getGameWorld().getEntitiesByType(EntityType.Player1, EntityType.Player2,EntityType.Bullet).forEach(this::add);
 
-        //setTranslateY(-target.getPosition().getY() + rect.getHeight() / 2); // Changing the value makes the rendering different
-        //setTranslateX(-target.getPosition().getX() + rect.getWidth() / 2);  // Changing the value makes the rendering different
         rect.setX(target.getPosition().getX() - rect.getWidth() / 2);
         rect.setY(target.getPosition().getY() - rect.getHeight() / 2);
     }
@@ -67,12 +65,11 @@ public class PlayerScreen extends Pane {
         }
         //System.out.println(e.getPosition().multiply(1.0/64.0));
         Node view;
-        if(id == 0) {
+        if(id % 2 == 0) {
             view = e.getComponent(ScreenComponent.class).getView();
         }else{
             view = e.getComponent(ScreenComponent2.class).getView();
         }
-        System.out.println(e.getPosition().multiply(1/64.0));
         view.translateXProperty().bind(e.xProperty().subtract(rect.getX()));
         view.translateYProperty().bind(e.yProperty().subtract(rect.getY()));
         getChildren().add(view);

@@ -40,6 +40,7 @@ public class CarFactory implements EntityFactory {
                 .viewFromNodeWithBBox(view1)
                 .with(new ScreenComponent(view1))
                 .with(new ScreenComponent2(view2))
+                .with(new HealthComponent(100))
                 .with(new GunComponent("Bullet", 50))
                 .build();
     }

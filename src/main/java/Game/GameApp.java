@@ -32,8 +32,8 @@ public class GameApp extends GameApplication {
 
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(960);
-        settings.setHeight(540);
+        settings.setWidth(1920);
+        settings.setHeight(1080);
         settings.setTitle("Bullet Hail");
         settings.setVersion("0.1");
 
@@ -286,6 +286,7 @@ public class GameApp extends GameApplication {
 
     @Override
     protected void initGame() {
+        System.out.println("Hello Initing");
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntityFactory(new TileFactory());
 
@@ -297,7 +298,7 @@ public class GameApp extends GameApplication {
             System.out.println(map);
             PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth()/2.0, getHeight()), player1);
             PlayerScreen screen2 = new PlayerScreen(new Rectangle(getWidth()/2, 0, getWidth()/2.0, getHeight()), player2);
-            map = new MapBuilder(getBuiltInMap("theChallenge"), tileSize, screen1, screen2);
+            map = new MapBuilder(getBuiltInMap("curvyalley"), tileSize, screen1, screen2);
         } catch (MapNotFoundException e) {
             System.out.println("Fail");
             e.printStackTrace();
@@ -306,7 +307,7 @@ public class GameApp extends GameApplication {
 
     public void gameOver() {
         getDisplay().showConfirmationBox("Play again?", (yes) -> {
-            if (yes) startNewGame();
+            if (!yes) startNewGame();
             else exit();
         });
     }
