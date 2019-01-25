@@ -74,10 +74,10 @@ public class PlayerScreen extends Pane {
         }else{
             view = e.getComponent(ScreenComponent2.class).getView();
         }
-        System.out.print(e.getView().getTranslateX() + " ");
+//        System.out.print(e.getView().getTranslateX() + " ");
         view.translateXProperty().bind(e.xProperty().subtract(rect.getX()));
         view.translateYProperty().bind(e.yProperty().subtract(rect.getY()));
-        System.out.println(e.getView().getTranslateX());
+//        System.out.println(e.getView().getTranslateX());
         getChildren().add(view);
     }
 

@@ -33,8 +33,8 @@ public class CarFactory implements EntityFactory {
 
     @Spawns("Player1")
     public Entity spawnPlayer1(SpawnData data) {
-        Node view1 = texture("car.png", 64, 64/2);
-        Node view2 = texture("car.png", 64, 64/2);
+        Node view1 = texture("player1.png", 64, 64/2);
+        Node view2 = texture("player1.png", 64, 64/2);
         return genericPlayer(data)
                 .type(EntityType.Player1)
                 .viewFromNodeWithBBox(view1)
@@ -50,8 +50,8 @@ public class CarFactory implements EntityFactory {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
         physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(0, 0));
-        Node view1 = texture("car.png", 64, 64/2);
-        Node view2 = texture("car.png", 64, 64/2);
+        Node view1 = texture("player2.png", 64, 64/2);
+        Node view2 = texture("player2.png", 64, 64/2);
 
         return genericPlayer(data)
                 .type(EntityType.Player2)
