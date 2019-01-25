@@ -49,7 +49,7 @@ public class MapBuilder {
     }
 
     public void update() {
-        clearMap(); // only remove tile and Health Components TODO:(test if removing this option increases performance)
+        clearMap(); // only remove tile and Health Components
         for (Tile t : map.getTiles()) {
             Point2D tile = t.getPos().multiply(tileSize);
             for(PlayerScreen screen : screens){

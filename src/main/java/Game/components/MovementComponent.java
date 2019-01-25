@@ -1,5 +1,6 @@
 package Game.components;
 
+import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.core.math.Vec2;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.components.RotationComponent;
@@ -33,6 +34,7 @@ public class MovementComponent extends Component {
 
     // How much the acceleration increases each frame while pressing forward
     private double enginePower = 0.05;
+    private double enginePowerStore = enginePower;
 
     // How much slower the vehicle is each successive frame without acceleration
     private double velocityDrag = 0.95;
@@ -195,9 +197,14 @@ public class MovementComponent extends Component {
         }
     }
 
-    /*
-     * Getter and Setters
-     */
+    public void incrAccelerationDrag(double drag) {
+        accelerationDrag = startingAccelerationDrag + drag;
+        if(accelerationDrag > 1){
+            accelerationDrag = 1;
+        }else if(accelerationDrag < 0){
+            accelerationDrag = 0;
+        }
+    }
 
     public void setAccelerationDrag(double drag) {
         accelerationDrag = startingAccelerationDrag + drag;
@@ -210,6 +217,14 @@ public class MovementComponent extends Component {
 
     public double getAccelerationDrag() {
         return accelerationDrag;
+    }
+
+    public void stops(){
+        enginePower = 0;
+    }
+
+    public void resumeMoving(){
+        enginePower = enginePowerStore;
     }
 
     public Point2D getVelocity() {

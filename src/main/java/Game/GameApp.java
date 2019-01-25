@@ -1,42 +1,35 @@
 package Game;
 
-import Game.Map.MapBuilder;
-import Game.Map.MapNotFoundException;
-import Game.Map.MapUtilities;
-import Game.Map.PlayerScreen;
+import Game.Map.*;
 import Game.UI.SceneCreator;
 import Game.components.*;
 import Game.components.powerups.PowerUpComponent;
-import Game.components.powerups.PowerUps;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.extra.entity.effect.Effect;
 import com.almasb.fxgl.extra.entity.effect.EffectComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.util.Credits;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 import static Game.Map.MapReader.getBuiltInMap;
-import static Game.Map.MapReader.getMap;
-import static com.almasb.fxgl.app.DSLKt.onKey;
-import static com.almasb.fxgl.app.DSLKt.spawn;
-
+import static com.almasb.fxgl.app.DSLKt.*;
 
 
 public class GameApp extends GameApplication {
@@ -44,7 +37,11 @@ public class GameApp extends GameApplication {
     private Entity player2 = new Entity();
 
     public static GlobalSettings globalSettings;
-    MapBuilder map;
+    MapBuilder mapBuilder;
+    Map map;
+    double tileSize = 64;
+
+    ArrayList<Node> gameDataElements = new ArrayList<>();
 
     static {
         try {
@@ -195,6 +192,7 @@ public class GameApp extends GameApplication {
                     HealthComponent carHealth = car.getComponent(HealthComponent.class);
                     DamageComponent damage = bullet.getComponent(DamageComponent.class);
                     carHealth.add(-damage.getDamage());
+                    System.out.println(damage.getDamage());
 
                     FXGL.getMasterTimer().runOnceAfter(bullet::removeFromWorld, Duration.seconds(0.01));
                 }
@@ -206,7 +204,7 @@ public class GameApp extends GameApplication {
             protected void onCollision(Entity car, Entity tile) {
                 MovementComponent carMovement = car.getComponent(MovementComponent.class);
                 FrictionComponent friction = tile.getComponent(FrictionComponent.class);
-                carMovement.incrBaseAccelerationDrag(friction.getDrag());
+                carMovement.incrAccelerationDrag(friction.getDrag());
             }
         });
 
@@ -238,7 +236,7 @@ public class GameApp extends GameApplication {
             protected void onCollision(Entity car, Entity tile) {
                 MovementComponent carMovement = car.getComponent(MovementComponent.class);
                 FrictionComponent friction = tile.getComponent(FrictionComponent.class);
-                carMovement.incrBaseAccelerationDrag(friction.getDrag());
+                carMovement.incrAccelerationDrag(friction.getDrag());
             }
         });
 
@@ -259,10 +257,16 @@ public class GameApp extends GameApplication {
         });
     }
 
-
     @Override
     protected void onUpdate(double tpf) {
-        map.update();
+        mapBuilder.update();
+
+        for(Node node: gameDataElements){
+            removeUINode(node);
+        }
+        gameDataElements.clear();
+
+        updateGameDataElements();
     }
 
     public static void main(String[] args) {
@@ -286,12 +290,14 @@ public class GameApp extends GameApplication {
         player2 = spawn("Player2", 0, 0);
 
         try {
-            double tileSize = 64;
             PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth()/2, getHeight()), player1);
             PlayerScreen screen2 = new PlayerScreen(new Rectangle(getWidth()/2, 0, getWidth()/2, getHeight()), player2);
-            map = new MapBuilder(getBuiltInMap("curvyalley"), 64, screen1, screen2);
+            map = getBuiltInMap("curvyalley");
+            System.out.println(map.getTiles());
+            map.createTileGrid();
+            mapBuilder = new MapBuilder(map, tileSize, screen1, screen2);
 
-            System.out.println(map);
+            System.out.println(mapBuilder);
         } catch (MapNotFoundException e) {
             System.out.println("Fail");
             e.printStackTrace();
@@ -305,5 +311,134 @@ public class GameApp extends GameApplication {
         });
     }
 
+    private void updateGameDataElements(){
+        updateBorder();
+        updateMinimap();
+        updatePlayer();
+    }
+
+    private void updatePlayer(){
+        HealthComponent health1 = player1.getComponent(HealthComponent.class);
+        HealthComponent health2 = player2.getComponent(HealthComponent.class);
+
+        Text healthLabel1 = new Text("Player 1:\n" + (int)health1.getHealth() + "/" + (int)health1.getMaxHealth() + "HP");
+        healthLabel1.setFont(new Font(20));
+        healthLabel1.setFill(Color.WHITE);
+
+        Text healthLabel2 = new Text("Player 2:\n" + (int)health2.getHealth() + "/" + (int)health2.getMaxHealth() + "HP");
+        healthLabel2.setFont(new Font(20));
+        healthLabel2.setFill(Color.WHITE);
+
+
+        gameDataElements.add(healthLabel1);
+        gameDataElements.add(healthLabel2);
+
+        addUINode(healthLabel1,getWidth()/2-tileSize+14,tileSize+20);
+        addUINode(healthLabel2,getWidth()/2-tileSize+14,tileSize*2+20);
+
+    }
+
+    private void updateBorder(){
+        Rectangle outBorder = new Rectangle(getWidth()-tileSize, getHeight()-tileSize, Color.TRANSPARENT);
+        outBorder.setStroke(Color.BLACK);
+        outBorder.setStrokeWidth(tileSize);
+        Rectangle midBorder = new Rectangle(tileSize*2, getHeight(), Color.BLACK);
+
+        Rectangle player1Border = new Rectangle(getWidth()/2-2*tileSize, getHeight()-2*tileSize, Color.TRANSPARENT);
+        player1Border.setStroke(Color.RED);
+        player1Border.setStrokeWidth(5);
+
+        Rectangle player2Border = new Rectangle(getWidth()/2-2*tileSize, getHeight()-2*tileSize, Color.TRANSPARENT);
+        player2Border.setStroke(Color.BLUE);
+        player2Border.setStrokeWidth(5);
+
+        gameDataElements.add(outBorder);
+        gameDataElements.add(midBorder);
+        gameDataElements.add(player1Border);
+        gameDataElements.add(player2Border);
+
+        addUINode(outBorder, tileSize/2, tileSize/2);
+        addUINode(midBorder, getWidth()/2-tileSize,0);
+        addUINode(player1Border, tileSize,tileSize);
+        addUINode(player2Border, getWidth()/2+tileSize,tileSize);
+    }
+
+    private void updateMinimap(){
+        int miniX = (int)map.getGridSize().getX();
+        int miniY = (int)map.getGridSize().getY();
+
+        WritableImage minimap = new WritableImage(miniX + 2, miniY + 2);
+        PixelWriter px = minimap.getPixelWriter();
+        for(int x = 0; x < miniX; x++) {
+            for (int y = 0; y < miniY; y++) {
+                Tile tile = map.getTile(x, y);
+                switch(tile.getType()) {
+                    case "Wall":
+                        px.setColor(x + 1, y + 1, Color.WHITE);
+                        break;
+                    case "Road":
+                        px.setColor(x + 1, y + 1, Color.GRAY);
+                        break;
+                    case "Dirt":
+                        px.setColor(x + 1, y + 1, Color.DARKGRAY);
+                        break;
+                    case "HealthPowerUp":
+                    case "SpeedPowerUp":
+                        px.setColor(x + 1, y + 1, Color.GREEN);
+                        break;
+                    case "SlowPowerUp":
+                        px.setColor(x + 1, y + 1, Color.RED);
+                        break;
+                    default:
+                        px.setColor(x + 1, y + 1, Color.BLACK);
+                        break;
+                }
+            }
+        }
+
+        Point2D p1 = player1.getPosition();
+        Point2D p2 = player2.getPosition();
+        for(int i = -1; i < 2; i++) {
+            for(int j = -1; j < 2; j++) {
+                int x1 = i + (int) (p1.getX() / tileSize);
+                int y1 = j + (int) (p1.getY() / tileSize);
+                int x2 = i + (int) (p2.getX() / tileSize);
+                int y2 = j + (int) (p2.getY() / tileSize);
+                if (x1 > 0 && x1 <= miniX && y1 > 0 && y1 <= miniY) {
+                    px.setColor(x1, y1, Color.RED);
+                }
+                if (x2 > 0 && x2 <= miniX && y2 > 0 && y2 <= miniY) {
+                    px.setColor(x2, y2, Color.BLUE);
+                }
+            }
+        }
+
+        for(int i = 0; i < miniX+2; i++){
+            px.setColor(i, 0, Color.WHITE);
+            px.setColor(i, miniY+1, Color.WHITE);
+        }
+        for(int i = 0; i < miniY+2; i++){
+            px.setColor(0, i, Color.WHITE);
+            px.setColor(miniX+1, i, Color.WHITE);
+        }
+
+        double minimapSize = 100;
+        ImageView minimapView = new ImageView();
+        minimapView.setImage(minimap);
+        minimapView.setFitHeight(minimapSize);
+        minimapView.setFitWidth(minimapSize);
+
+        gameDataElements.add(minimapView);
+
+        addUINode(minimapView, getWidth()/2-minimapSize/2,getHeight()-minimapSize-tileSize);
+
+        Text minimapLabel = new Text("Minimap");
+        minimapLabel.setFont(new Font(20));
+        minimapLabel.setFill(Color.WHITE);
+
+        gameDataElements.add(minimapLabel);
+
+        addUINode(minimapLabel,getWidth()/2-minimapSize/2,getHeight()-minimapSize-tileSize-20);
+    }
 
 }

@@ -98,4 +98,24 @@ public class Map {
     public void setGridSize(Point2D gridSize) {
         this.gridSize = gridSize;
     }
+
+    public void createTileGrid(){
+        tileGrid = new ArrayList<ArrayList<Tile>>();
+        for(int i = 0; i < (int)gridSize.getX(); i++){
+            ArrayList<Tile> tileRow = new ArrayList<Tile>();
+            tileGrid.add(tileRow);
+            for(int j = 0; j < (int)gridSize.getY(); j++){
+                tileRow.add(new Tile("0","Wall", new Point2D(1,1)));
+            }
+        }
+        for(Tile t: tiles){
+            int x = (int)(t.getPos().getX()-2);
+            int y = (int)(t.getPos().getY());
+            tileGrid.get(x).set(y, t);
+        }
+    }
+    public Tile getTile(int x, int y){
+        return tileGrid.get(x).get(y);
+    }
+
 }

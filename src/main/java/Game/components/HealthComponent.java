@@ -5,6 +5,7 @@ import Game.GameApp;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
+import javafx.util.Duration;
 
 /**
  * This component contains an entities health
@@ -34,9 +35,11 @@ public class HealthComponent extends Component {
 
     private void killEntity() {
         Entity entity = getEntity();
-        entity.removeFromWorld();
-        // TODO : add dying animation
-        FXGL.<GameApp>getAppCast().gameOver();
+        MovementComponent movement = entity.getComponent(MovementComponent.class);
+        movement.stops();
+        FXGL.getMasterTimer().runOnceAfter(()->{
+            movement.resumeMoving();
+        }, Duration.seconds(2));
     }
 
     public double getHealth() {
@@ -50,7 +53,7 @@ public class HealthComponent extends Component {
      */
     public void add(double amount) {
         health += amount;
-        if (maxHealth > health){
+        if (maxHealth < health){
             health = maxHealth;
         }
         if (health <= 0) {
@@ -72,7 +75,6 @@ public class HealthComponent extends Component {
 
     public void increment(double change){
         health += change;
-
     }
 
 }
