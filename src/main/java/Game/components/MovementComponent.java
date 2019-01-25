@@ -206,10 +206,6 @@ public class MovementComponent extends Component {
         }
     }
 
-    /*
-     * Getter and Setters
-     */
-
     public void setAccelerationDrag(double drag) {
         accelerationDrag = startingAccelerationDrag + drag;
         if(accelerationDrag > 1){
