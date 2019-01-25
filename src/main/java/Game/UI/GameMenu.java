@@ -43,7 +43,6 @@ public class GameMenu extends FXGLMenu {
         headerSettings.normTextCol = Color.WHITE;
         RectText header = new RectText(headerSettings);
 
-
         BoxButtonSettings continueSettings = new BoxButtonSettings();
         continueSettings.text = "Continue";
         continueSettings.font = OVERPASS_LIGHT_FACTORY.newFont(7 * fontRatio * defactoRatio);
@@ -51,6 +50,14 @@ public class GameMenu extends FXGLMenu {
         continueSettings.normTextCol = Color.WHITE;
         continueSettings.otherTextCol = Color.rgb(41, 128, 187);
         BoxButton continueGame = new BoxButton(continueSettings);
+
+        BoxButtonSettings saveSettings = new BoxButtonSettings();
+        saveSettings.text = "Save game";
+        saveSettings.font = OVERPASS_LIGHT_FACTORY.newFont(7 * fontRatio * defactoRatio);
+        saveSettings.action = this::fireSave;
+        saveSettings.normTextCol = Color.WHITE;
+        saveSettings.otherTextCol = Color.rgb(41, 128, 187);
+        BoxButton saveGame = new BoxButton(saveSettings);
 
         BoxButtonSettings returnSettings = new BoxButtonSettings();
         returnSettings.text = "Return to main menu";
@@ -60,7 +67,7 @@ public class GameMenu extends FXGLMenu {
         returnSettings.otherTextCol = Color.rgb(41, 128, 187);
         BoxButton gotoMainMenu = new BoxButton(returnSettings);
 
-        VBox items = new VBox(header, continueGame, gotoMainMenu);
+        VBox items = new VBox(header, continueGame,saveGame, gotoMainMenu);
         items.setAlignment(Pos.CENTER);
         items.setBackground(new Background(new BackgroundFill(Color.rgb(0, 0, 0, 0.50), CornerRadii.EMPTY, Insets.EMPTY)));
 

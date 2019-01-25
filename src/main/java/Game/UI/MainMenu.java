@@ -27,6 +27,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -40,6 +41,7 @@ import javafx.scene.text.TextAlignment;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import static Game.GameApp.globalSettings;
 
@@ -105,17 +107,18 @@ public class MainMenu extends FXGLMenu {
         textButtons.setSpacing(18 * defactoRatio);
         textButtons.setAlignment(Pos.BOTTOM_LEFT);
 
-        Font overpassReg = OVERPASS_REGULAR_FACTORY.newFont(12 * fontRatio * defactoRatio);
+        Font overpassReg = OVERPASS_REGULAR_FACTORY.newFont(10 * fontRatio * defactoRatio);
         Color orange = Color.rgb(255, 179, 71);
         TextButton play = new TextButton("Play", overpassReg, orange, this::fireNewGame);
         TextButton modifyCars = new TextButton("Modify Cars", overpassReg, orange, this::doNothing);
 
-        Font overpassLight = OVERPASS_LIGHT_FACTORY.newFont(10 * fontRatio * defactoRatio);
+        Font overpassLight = OVERPASS_LIGHT_FACTORY.newFont(8 * fontRatio * defactoRatio);
         Color blue = Color.rgb(41, 128, 187);
         TextButton settings = new TextButton("Settings", overpassLight, blue, this::showSettingsPage);
         TextButton changeProfile = new TextButton("Change profile", overpassLight, blue, this::fireLogout);
+        TextButton tutorial = new TextButton("Tutorial", overpassLight, blue, this::showTutorialPage);
         TextButton exitGame = new TextButton("Exit Game", overpassLight, blue, this::fireExit);
-        textButtons.getChildren().addAll(play, modifyCars, settings, changeProfile, exitGame);
+        textButtons.getChildren().addAll(play, modifyCars, settings, changeProfile, tutorial, exitGame);
 
         GridPane.setValignment(textButtons, VPos.BOTTOM);
         mainMenuLayout.add(textButtons, 0, 1);
@@ -176,6 +179,82 @@ public class MainMenu extends FXGLMenu {
      */
     private void blackHole(Object... consumable) {
         // Do nothing
+    }
+
+    private void showTutorialPage() {
+        getContentRoot().getChildren().clear(); // For some reason, there exists nodes in the contentRoot node that
+        // stick out at the top of the screen.
+
+        final double margin = 48 * defactoRatio;
+
+        VBox page = new VBox();
+        page.setTranslateY(-9 * defactoRatio);
+        page.setPadding(new Insets(margin));
+        page.setPrefWidth(app.getWidth());
+        page.setSpacing(25 * defactoRatio);
+
+        //// Make header
+        Text header = new Text("Tutorial");
+        header.setFont(ASAP_SEMIBOLD_FACTORY.newFont(margin));
+
+        List<String> tutorialText = FXGL.getAssetLoader().loadText("tutorial.txt");
+
+        List<String> introText = FXGL.getAssetLoader().loadText("intro.txt");
+        List<String> objectiveText = FXGL.getAssetLoader().loadText("objective.txt");
+        List<String> controlsText = FXGL.getAssetLoader().loadText("controls.txt");
+        List<String> boostText = FXGL.getAssetLoader().loadText("boost.txt");
+
+        Image boostImage = FXGL.getAssetLoader().loadImage("types-of-boosts.png");
+
+        ScrollPane content = new ScrollPane();
+        content.setId("TransparentScrollPane");
+        content.setPrefSize(app.getWidth() - margin * 4, 2 * app.getHeight() / 3.0);
+        content.setMaxSize(app.getWidth() - margin * 4, 2 * app.getHeight() / 3.0);
+        content.setPadding(new Insets(0, 0, 0, margin));
+
+        VBox tutorialTextSpace = new VBox();
+
+        innerMethod addTextToScrollPane = (String name, List<String> strings) ->{
+            Text heading = new Text(name);
+            heading.setFont(new Font(30));
+            tutorialTextSpace.getChildren().addAll(heading);
+            for (String str : strings) {
+                Text strBox = new Text();
+                strBox.setText(str);
+                strBox.setFont(new Font(20));
+                strBox.wrappingWidthProperty().bind(content.widthProperty().add(-2 * margin));
+                tutorialTextSpace.getChildren().addAll(strBox);
+            }
+        };
+
+        addTextToScrollPane.run("Intro", introText);
+        addTextToScrollPane.run("Objective", objectiveText);
+        addTextToScrollPane.run("Controls", controlsText);
+        addTextToScrollPane.run("Boost", boostText);
+
+        tutorialTextSpace.getChildren().add(new ImageView(boostImage));
+        content.setContent(tutorialTextSpace);
+
+        BoxButtonSettings backButtonConfig = new BoxButtonSettings();
+        backButtonConfig.hMargin = 8 * defactoRatio;
+        backButtonConfig.vMargin = 8 * defactoRatio;
+        backButtonConfig.text = "Go Back";
+        backButtonConfig.action = this::returnToMainMenu;
+        backButtonConfig.setBackgroundAndTextColors(Color.BLACK);
+
+        BoxButton backButton = new BoxButton(backButtonConfig);
+
+        HBox backButtonWrap = new HBox(backButton);
+        backButtonWrap.setAlignment(Pos.BOTTOM_RIGHT);
+
+        page.getChildren().addAll(header, content, backButtonWrap);
+
+        switchMenuTo(page);
+    }
+
+
+    interface innerMethod {
+        void run(String str, List<String> strings);
     }
 
     private void showSettingsPage() {

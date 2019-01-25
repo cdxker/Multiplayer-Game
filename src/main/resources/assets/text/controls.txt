@@ -1,0 +1,4 @@
+ - The players control the movement of their vehicles using four directional buttons. The default controls is WASD for Player 1 and the arrow buttons for Player 2. 
+ - The Up control and Down control determines parallel direction in which the players' vehicles accelerate (forward-up/backward-down). The Left control and Right control determines the sideway direction in which the players' vehicles rotate (counter-clockwise-left/clockwise-right).
+ - The players control the firing of their guns using a single button. The default is F for Player 1 and M for Player 2.
+ - Controls can be changed in the Settings Menu.
