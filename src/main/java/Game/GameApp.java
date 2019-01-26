@@ -290,7 +290,7 @@ public class GameApp extends GameApplication {
     protected void initGameVars(Map<String, Object> vars) {
         cvars = vars;
         try {
-            cvars.put("map", getMap(getMapNames().get(0)));
+            cvars.put("map", getMap(getMapNames().get(0))); //TODO: Simplify this and add caching in MapReader class
         } catch (MapNotFoundException e) {
             throw new RuntimeException(e);
         }

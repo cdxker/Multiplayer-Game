@@ -1,5 +1,7 @@
 package Game.UI;
 
+import Game.GameApp;
+import Game.Map.MapNotFoundException;
 import Game.UI.Elements.BoxButton;
 import Game.UI.Elements.BoxButtonSettings;
 import Game.UI.Elements.TextButton;
@@ -42,6 +44,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import static Game.GameApp.globalSettings;
+import static Game.Map.MapReader.getMap;
+import static Game.Map.MapReader.getMapNames;
 
 /*
  * To-do list area...
@@ -110,12 +114,27 @@ public class MainMenu extends FXGLMenu {
         TextButton play = new TextButton("Play", overpassReg, orange, this::fireNewGame);
         TextButton modifyCars = new TextButton("Modify Cars", overpassReg, orange, this::doNothing);
 
+        ArrayList<String> mapNames = getMapNames();
+        ChoiceBox<String> chooseMap = new ChoiceBox<>(FXCollections.observableArrayList(getMapNames()));
+        chooseMap.getSelectionModel().select(0);
+        chooseMap.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                GameApp.cvars.put("map", getMap(mapNames.get(newValue.intValue())));
+            } catch (MapNotFoundException e) {
+                FXGL.getDisplay().showMessageBox("An error has occurred with your chosen map.");
+            }
+        });
+
+        HBox playField = new HBox(play, chooseMap);
+        playField.setSpacing(10 * defactoRatio);
+        playField.setAlignment(Pos.CENTER_LEFT);
+
         Font overpassLight = OVERPASS_LIGHT_FACTORY.newFont(10 * fontRatio * defactoRatio);
         Color blue = Color.rgb(41, 128, 187);
         TextButton settings = new TextButton("Settings", overpassLight, blue, this::showSettingsPage);
         TextButton changeProfile = new TextButton("Change profile", overpassLight, blue, this::fireLogout);
         TextButton exitGame = new TextButton("Exit Game", overpassLight, blue, this::fireExit);
-        textButtons.getChildren().addAll(play, modifyCars, settings, changeProfile, exitGame);
+        textButtons.getChildren().addAll(playField, modifyCars, settings, changeProfile, exitGame);
 
         GridPane.setValignment(textButtons, VPos.BOTTOM);
         mainMenuLayout.add(textButtons, 0, 1);
@@ -470,7 +489,7 @@ public class MainMenu extends FXGLMenu {
             rect.setArcWidth(15.0D);
             rect.setArcHeight(15.0D);
             Text text = FXGL.getUIFactory().newText(FXGL.getLocalizedString("menu.pressAnyKey"), 24.0D);
-            StackPane pane = new StackPane(new Node[]{rect, text});
+            StackPane pane = new StackPane(rect, text);
             pane.setTranslateX((double) (FXGL.getAppWidth() / 2 - 125));
             pane.setTranslateY((double) (FXGL.getAppHeight() / 2 - 50));
             this.getChildren().add(pane);
