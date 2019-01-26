@@ -1,7 +1,6 @@
 package Game;
 
 import Game.Map.MapBuilder;
-import Game.Map.MapNotFoundException;
 import Game.Map.MapUtilities;
 import Game.Map.PlayerScreen;
 import Game.UI.SceneCreator;
@@ -22,10 +21,8 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.HashMap;
 
-import static Game.Map.MapReader.getMap;
-import static Game.Map.MapReader.getMapNames;
 import static com.almasb.fxgl.app.DSLKt.spawn;
 
 
@@ -33,6 +30,7 @@ import static com.almasb.fxgl.app.DSLKt.spawn;
 public class GameApp extends GameApplication {
     private Entity player1 = new Entity();
     private Entity player2 = new Entity();
+    public static HashMap<String, Object> cvars = new HashMap<>();
 
     public static GlobalSettings globalSettings;
     public static MapBuilder map;
@@ -279,20 +277,11 @@ public class GameApp extends GameApplication {
         double tileSize = 64;
         PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth() / 2, getHeight()), player1);
         PlayerScreen screen2 = new PlayerScreen(new Rectangle(getWidth() / 2, 0, getWidth() / 2, getHeight()), player2);
-        map = new MapBuilder(getGameState().getObject("map"), 64, screen1, screen2);
+        map = new MapBuilder((Game.Map.Map)cvars.get("map"), 64, screen1, screen2);
 
         System.out.println(map);
     }
 
-    @Override
-    protected void initGameVars(Map<String, Object> vars) {
-        try {
-            getGameState().setValue("map", getMap(getMapNames().get(0)));
-        } catch (MapNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
 
     public void gameOver() {
         getDisplay().showConfirmationBox("Play again?", (yes) -> {
