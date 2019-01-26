@@ -14,7 +14,7 @@ final color HealthPower = color(0, 255, 0);
 final color SlowPower = color(255, 0, 0);
 final color SpeedPower = color(0, 100, 0);
 final color[] Types = {blankColor, dirtColor, roadColor, borderColor};
-final color finishColor = color(
+final color finishColor = color(255, 255, 0);
 int index = 0;
 
 ArrayList<ColorButton> uiElements;
