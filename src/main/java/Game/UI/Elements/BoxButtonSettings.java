@@ -1,17 +1,12 @@
-package Game.UI;
+package Game.UI.Elements;
 
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 
-public class RectTextSettings {
-    public String text;
-    public Font font;
-    public Color normTextCol;
+public class BoxButtonSettings extends RectTextSettings {
     public Color otherTextCol;
-    public Color normBgCol;
     public Color otherBgCol;
-    public double vMargin;
-    public double hMargin;
+    public Runnable action = () -> {
+    };
 
     /**
      * Given the normTextCol, the otherTextCol is set as the complimentary color of normTextCol; The class'
@@ -49,5 +44,4 @@ public class RectTextSettings {
         this.otherTextCol = (otherBgCol.getHue() < 0.5) ? Color.WHITE : Color.BLACK;
     }
 }
-
 

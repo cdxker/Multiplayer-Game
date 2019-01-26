@@ -1,4 +1,4 @@
-package Game.UI;
+package Game.UI.Elements;
 
 import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;

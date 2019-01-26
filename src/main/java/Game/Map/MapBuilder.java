@@ -2,60 +2,75 @@ package Game.Map;
 
 
 import Game.EntityType;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.entity.SpawnData;
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static com.almasb.fxgl.app.DSLKt.spawn;
+import static com.almasb.fxgl.app.FXGL.*;
 import static com.almasb.fxgl.app.FXGL.getGameWorld;
 
+
+/**
+ * Class that spawns in any entities that are needed to be
+ * viewed by the player.
+ */
 public class MapBuilder {
 
-    private static Point2D tileSize = new Point2D(64, 64);
+    private ArrayList<PlayerScreen> screens;
+    private double tileSize = 64;
+    private GameWorld game = getGameWorld();
+    private Map map;
+
+    public MapBuilder(Map map, double tileSize, PlayerScreen... screens) {
+        this.map = map;
+        this.tileSize = tileSize;
+        this.screens = new ArrayList<PlayerScreen>(Arrays.asList(screens));
+        map.getTiles().removeIf(tile -> tile.getType().equals("Blank")); // Too difficult to change maps
+        getGameScene().addUINodes(screens);
+    }
+
+    public void addScreen(PlayerScreen screen){
+        screens.add(screen);
+    }
 
     /**
      * Clears the map of all tiles that are currently placed
      */
     public static void clearMap() {
-        getGameWorld().getEntitiesByType(EntityType.TILE).forEach(Entity::removeFromWorld);
+        getGameWorld().getEntitiesByType(EntityType.Tile).forEach(Entity::removeFromWorld);
+        getGameWorld().getEntitiesByType(EntityType.Wall).forEach(Entity::removeFromWorld);
+        getGameWorld().getEntitiesByType(EntityType.PowerUp).forEach(Entity::removeFromWorld);
     }
 
-    /**
-     * Spawns the tiles onto the map based of map data
-     *
-     * @param map The map that contains the tiles
-     */
-    public static void createMap(Map map) {
-        spawnTiles(map.getTiles());
-    }
-
-    public static void spawnTiles(Tile... tiles){
-        spawnTiles(Set.of(tiles));
-    }
-
-    /**
-     * Spawns each tile on map based on map data
-     *
-     * @param tiles The tiles that want to be spawned
-     */
-    public static void spawnTiles(Set<Tile> tiles) {
-        System.out.println("width: " + FXGL.getAppWidth() + " Height: " + FXGL.getAppHeight());
-        for (Tile tile : tiles) {
-            System.out.println(tile);
-            Point2D tilePos = new Point2D(tile.getPos().getX()*tileSize.getX(), tile.getPos().getY()*tileSize.getY());
-            spawn(tile.getType(), new SpawnData(tilePos).put("tileSize", tileSize).put("Time", Duration.seconds(10)).put("Strength", 5.0 ));
+    public void update() {
+        clearMap(); // only remove tile and Health Components
+        for (Tile t : map.getTiles()) {
+            Point2D tile = t.getPos().multiply(tileSize);
+            for(PlayerScreen screen : screens){
+                if (screen.contains(tile)) {
+                    spawn(t.getType(), new SpawnData(tile).put("tileSize", tileSize).put("Time", Duration.seconds(3)).put("Strength", 5.0));
+                    // Is there a way to reduce this?
+                }
+            }
         }
+        screens.forEach(PlayerScreen::onUpdate);
+    }
+    public double getTileSize() {
+        return tileSize;
     }
 
-    public static void configureTileSize(Point2D tileSize){
-        MapBuilder.tileSize = tileSize;
+    public void configureTileSize(double tileSize){
+        tileSize = tileSize;
     }
 
-    public static void configureTileSize(double tileSize){
-        MapBuilder.tileSize = new Point2D(tileSize, tileSize);
+    public void setMap(Map map) {
+        this.map = map;
     }
+
 }

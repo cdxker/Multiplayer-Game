@@ -1,5 +1,8 @@
 package Game.UI;
 
+import Game.UI.Elements.BoxButton;
+import Game.UI.Elements.BoxButtonSettings;
+import Game.UI.Elements.TextButton;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.SubState;
@@ -24,6 +27,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -37,6 +41,7 @@ import javafx.scene.text.TextAlignment;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import static Game.GameApp.globalSettings;
 
@@ -48,15 +53,15 @@ import static Game.GameApp.globalSettings;
         mainLayout.setBackground(new Background(new BackgroundImage(backgroundImage, BackgroundRepeat.ROUND, BackgroundRepeat.ROUND, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)));
  */
 public class MainMenu extends FXGLMenu {
-    final FontFactory OVERPASS_LIGHT_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-light.otf");
-    final FontFactory OVERPASS_LIGHT_ITALIC_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-light-italic.otf");
-    final FontFactory OVERPASS_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-regular.otf");
-    final FontFactory OVERPASS_HEAVY_ITALIC_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-heavy-italic.otf");
-    final FontFactory OVERPASS_MONO_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("overpass-mono/overpass-mono-regular.otf");
-    final FontFactory HACK_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("hack/Hack-Regular.ttf");
-    final FontFactory ASAP_SEMIBOLD_FACTORY = FXGL.getAssetLoader().loadFont("asap/Asap-SemiBold.ttf");
-    final FontFactory ASAP_MEDIUM_FACTORY = FXGL.getAssetLoader().loadFont("asap/Asap-Medium.ttf");
-    final FontFactory ASAP_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("asap/Asap-Regular.ttf");
+    public static final FontFactory OVERPASS_LIGHT_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-light.otf");
+    public static final FontFactory OVERPASS_LIGHT_ITALIC_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-light-italic.otf");
+    public static final FontFactory OVERPASS_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-regular.otf");
+    public static final FontFactory OVERPASS_HEAVY_ITALIC_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-heavy-italic.otf");
+    public static final FontFactory OVERPASS_MONO_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("overpass-mono/overpass-mono-regular.otf");
+    public static final FontFactory HACK_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("hack/Hack-Regular.ttf");
+    public static final FontFactory ASAP_SEMIBOLD_FACTORY = FXGL.getAssetLoader().loadFont("asap/Asap-SemiBold.ttf");
+    public static final FontFactory ASAP_MEDIUM_FACTORY = FXGL.getAssetLoader().loadFont("asap/Asap-Medium.ttf");
+    public static final FontFactory ASAP_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("asap/Asap-Regular.ttf");
     final double heightRatio = app.getHeight() / 600.0;
     final double widthRatio = app.getWidth() / 900.0;
     final double fontRatio = 25.0 / 6;
@@ -66,7 +71,6 @@ public class MainMenu extends FXGLMenu {
 
     public MainMenu(GameApplication app) {
         super(app, MenuType.MAIN_MENU);
-
 
         //// Super class adds unwanted nodes to root, so these instructions rids of those unwanted nodes
         //// while maintaining menuRoot and contentRoot.
@@ -82,7 +86,6 @@ public class MainMenu extends FXGLMenu {
         mainMenuLayout.getRowConstraints().addAll(row, row);
         mainMenuLayout.getColumnConstraints().addAll(col, col);
         mainMenuLayout.setPadding(new Insets(marginSize));
-        //mainMenuLayout.setBackground(new Background(new BackgroundFill(Color.rgb(230, 224, 211),CornerRadii.EMPTY, Insets.EMPTY)));
 
 
         //// Make header and add it to main layout
@@ -104,17 +107,18 @@ public class MainMenu extends FXGLMenu {
         textButtons.setSpacing(18 * defactoRatio);
         textButtons.setAlignment(Pos.BOTTOM_LEFT);
 
-        Font overpassReg = OVERPASS_REGULAR_FACTORY.newFont(12 * fontRatio * defactoRatio);
+        Font overpassReg = OVERPASS_REGULAR_FACTORY.newFont(10 * fontRatio * defactoRatio);
         Color orange = Color.rgb(255, 179, 71);
         TextButton play = new TextButton("Play", overpassReg, orange, this::fireNewGame);
         TextButton modifyCars = new TextButton("Modify Cars", overpassReg, orange, this::doNothing);
 
-        Font overpassLight = OVERPASS_LIGHT_FACTORY.newFont(10 * fontRatio * defactoRatio);
+        Font overpassLight = OVERPASS_LIGHT_FACTORY.newFont(8 * fontRatio * defactoRatio);
         Color blue = Color.rgb(41, 128, 187);
         TextButton settings = new TextButton("Settings", overpassLight, blue, this::showSettingsPage);
         TextButton changeProfile = new TextButton("Change profile", overpassLight, blue, this::fireLogout);
+        TextButton tutorial = new TextButton("Tutorial", overpassLight, blue, this::showTutorialPage);
         TextButton exitGame = new TextButton("Exit Game", overpassLight, blue, this::fireExit);
-        textButtons.getChildren().addAll(play, modifyCars, settings, changeProfile, exitGame);
+        textButtons.getChildren().addAll(play, modifyCars, settings, changeProfile, tutorial, exitGame);
 
         GridPane.setValignment(textButtons, VPos.BOTTOM);
         mainMenuLayout.add(textButtons, 0, 1);
@@ -177,22 +181,86 @@ public class MainMenu extends FXGLMenu {
         // Do nothing
     }
 
-    public class TextButton extends Text {
-        public TextButton(String text, Font font, Color normCol, Color otherCol, Runnable action) {
-            super(text);
-            this.setFont(font);
-            this.setFill(normCol);
-            this.setOnMouseEntered(event -> this.setFill(otherCol));
-            this.setOnMouseExited(event -> this.setFill(normCol));
-            this.setOnMouseClicked(event -> action.run());
-        }
+    private void showTutorialPage() {
+        getContentRoot().getChildren().clear(); // For some reason, there exists nodes in the contentRoot node that
+        // stick out at the top of the screen.
 
-        public TextButton(String text, Font font, Color otherCol, Runnable action) {
-            this(text, font, Color.BLACK, otherCol, action);
-        }
+        final double margin = 48 * defactoRatio;
+
+        VBox page = new VBox();
+        page.setTranslateY(-9 * defactoRatio);
+        page.setPadding(new Insets(margin));
+        page.setPrefWidth(app.getWidth());
+        page.setSpacing(25 * defactoRatio);
+
+        //// Make header
+        Text header = new Text("Tutorial");
+        header.setFont(ASAP_SEMIBOLD_FACTORY.newFont(margin));
+
+        List<String> tutorialText = FXGL.getAssetLoader().loadText("tutorial.txt");
+
+        List<String> introText = FXGL.getAssetLoader().loadText("intro.txt");
+        List<String> objectiveText = FXGL.getAssetLoader().loadText("objective.txt");
+        List<String> controlsText = FXGL.getAssetLoader().loadText("controls.txt");
+        List<String> boostText = FXGL.getAssetLoader().loadText("boost.txt");
+
+        Image boostImage = FXGL.getAssetLoader().loadImage("types-of-boosts.png");
+
+        ScrollPane content = new ScrollPane();
+        content.setId("TransparentScrollPane");
+        content.setPrefSize(app.getWidth() - margin * 4, 2 * app.getHeight() / 3.0);
+        content.setMaxSize(app.getWidth() - margin * 4, 2 * app.getHeight() / 3.0);
+        content.setPadding(new Insets(0, 0, 0, margin));
+
+        VBox tutorialTextSpace = new VBox();
+
+        innerMethod addTextToScrollPane = (String name, List<String> strings) ->{
+            Text heading = new Text(name);
+            heading.setFont(new Font(30));
+            tutorialTextSpace.getChildren().addAll(heading);
+            for (String str : strings) {
+                Text strBox = new Text();
+                strBox.setText(str);
+                strBox.setFont(new Font(20));
+                strBox.wrappingWidthProperty().bind(content.widthProperty().add(-2 * margin));
+                tutorialTextSpace.getChildren().addAll(strBox);
+            }
+        };
+
+        addTextToScrollPane.run("Intro", introText);
+        addTextToScrollPane.run("Objective", objectiveText);
+        addTextToScrollPane.run("Controls", controlsText);
+        addTextToScrollPane.run("Boost", boostText);
+
+        tutorialTextSpace.getChildren().add(new ImageView(boostImage));
+        content.setContent(tutorialTextSpace);
+
+        BoxButtonSettings backButtonConfig = new BoxButtonSettings();
+        backButtonConfig.hMargin = 8 * defactoRatio;
+        backButtonConfig.vMargin = 8 * defactoRatio;
+        backButtonConfig.text = "Go Back";
+        backButtonConfig.action = this::returnToMainMenu;
+        backButtonConfig.setBackgroundAndTextColors(Color.BLACK);
+
+        BoxButton backButton = new BoxButton(backButtonConfig);
+
+        HBox backButtonWrap = new HBox(backButton);
+        backButtonWrap.setAlignment(Pos.BOTTOM_RIGHT);
+
+        page.getChildren().addAll(header, content, backButtonWrap);
+
+        switchMenuTo(page);
+    }
+
+
+    interface innerMethod {
+        void run(String str, List<String> strings);
     }
 
     private void showSettingsPage() {
+        getContentRoot().getChildren().clear(); // For some reason, there exists nodes in the contentRoot node that
+        // stick out at the top of the screen.
+
         final double margin = 48 * defactoRatio;
 
         VBox page = new VBox();
@@ -289,7 +357,7 @@ public class MainMenu extends FXGLMenu {
 
         page.getChildren().addAll(header, content, backButtonWrap);
 
-        switchMenuContentTo(page);
+        switchMenuTo(page);
     }
 
     private SettingField getAudioSlider(String label, Property<Number> prop) {
@@ -313,9 +381,9 @@ public class MainMenu extends FXGLMenu {
             try {
                 globalSettings.setWidthRes(chosenRes.width);
                 globalSettings.setHeightRes(chosenRes.height);
-                FXGL.getDisplay().showConfirmationBox("Success! Please restart the game to have this change take effect.", this::blackHole);
+                FXGL.getDisplay().showMessageBox("Success! Please restart the game to have this change take effect.");
             } catch (IOException e) {
-                FXGL.getDisplay().showConfirmationBox("Error! Could not write change to disk.", this::blackHole);
+                FXGL.getDisplay().showMessageBox("Error! Could not write change to disk.");
             }
         });
         return resChoices;
@@ -331,8 +399,8 @@ public class MainMenu extends FXGLMenu {
     }
 
     private void returnToMainMenu() {
-        getContentRoot().getChildren().clear();
         switchMenuTo(mainMenuLayout);
+        menuRoot.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
     }
 
     @Override
@@ -343,7 +411,6 @@ public class MainMenu extends FXGLMenu {
 
     @Override
     protected void switchMenuContentTo(Node content) {
-        menuRoot.getChildren().clear();
         getContentRoot().getChildren().clear();
         getContentRoot().getChildren().add(content);
     }
