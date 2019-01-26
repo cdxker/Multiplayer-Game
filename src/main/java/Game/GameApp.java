@@ -49,7 +49,6 @@ public class GameApp extends GameApplication {
         settings.setFullScreenAllowed(false);
     }
 
-
     @Override
     protected void initInput() {
         // TODO: extract this to a method
@@ -146,9 +145,9 @@ public class GameApp extends GameApplication {
         input.addAction(new UserAction("escape") {
             @Override
             protected void onAction() {
-                logger.info("exiting to menu");
+                logger.info("Exiting Game");
             }
-            
+
         }, KeyCode.ESCAPE);
     }
 
@@ -162,6 +161,7 @@ public class GameApp extends GameApplication {
     @Override
     protected void initPhysics() {
         getPhysicsWorld().setGravity(0, 0);
+
 
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player1, EntityType.Bullet) {
             @Override
@@ -283,9 +283,9 @@ public class GameApp extends GameApplication {
         winText.setTranslateY(getHeight() / 2.0);
 
         if (p1Wins){
-            FXGL.getDisplay().showMessageBox("Congrats! One of you is a winner!", this::exitToMainMenu);
+            FXGL.getDisplay().showMessageBox("Congrats Player 1! You are the winner!", this::exitToMainMenu);
         }else if(p2Wins){
-             FXGL.getDisplay().showMessageBox("Congrats! One of you is a winner!", this::exitToMainMenu);
+             FXGL.getDisplay().showMessageBox("Congrats Player 2! You are the winner!", this::exitToMainMenu);
         }
     }
 
@@ -299,7 +299,7 @@ public class GameApp extends GameApplication {
         return map;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         launch(args);
     }
 
@@ -326,11 +326,12 @@ public class GameApp extends GameApplication {
 
     @Override
     protected void initGame() {
+        System.out.println("Hello Initing");
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntityFactory(new TileFactory());
 
-        player1 = spawn("Player2", 64*3, 64*3);
-        player2 = spawn("Player1", 64*3, 64*4);
+        player1 = spawn("Player2", 0, 0);
+        player2 = spawn("Player1", 40, 40);
 
         try {
             double tileSize = 64;
@@ -343,4 +344,6 @@ public class GameApp extends GameApplication {
             e.printStackTrace();
         }
     }
+
+
 }
