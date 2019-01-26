@@ -6,6 +6,7 @@ import Game.UI.Elements.TextButton;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.SubState;
+import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.UserAction;
@@ -144,7 +145,6 @@ public class MainMenu extends FXGLMenu {
 
         GridPane.setHalignment(profileArea, HPos.RIGHT);
         mainMenuLayout.add(profileArea, 1, 0);
-
 
         //// Make the "What's New?" button on the bottom right of the main menu
         BoxButtonSettings whatsNewConfig = new BoxButtonSettings();

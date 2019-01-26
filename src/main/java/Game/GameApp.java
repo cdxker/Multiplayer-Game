@@ -6,6 +6,7 @@ import Game.components.*;
 import Game.components.powerups.PowerUpComponent;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.extra.entity.effect.EffectComponent;
@@ -45,6 +46,8 @@ public class GameApp extends GameApplication {
     double UIElementSize = 64;
 
     ArrayList<Node> gameDataElements = new ArrayList<>();
+
+    Music shoot, car_engine_loop;
 
     static {
         try {
@@ -103,6 +106,8 @@ public class GameApp extends GameApplication {
             protected void onAction() {
                 MovementComponent component = player1.getComponent(MovementComponent.class);
                 component.speedUp();
+                FXGL.getAudioPlayer().stopMusic(car_engine_loop);
+                FXGL.getAudioPlayer().playMusic(car_engine_loop);
             }
         }, KeyCode.W);
 
@@ -139,6 +144,8 @@ public class GameApp extends GameApplication {
             protected void onAction() {
                 MovementComponent component = player2.getComponent(MovementComponent.class);
                 component.speedUp();
+                FXGL.getAudioPlayer().stopMusic(car_engine_loop);
+                FXGL.getAudioPlayer().playMusic(car_engine_loop);
             }
         }, KeyCode.UP);
 
@@ -171,6 +178,8 @@ public class GameApp extends GameApplication {
             protected void onActionBegin() {
                 GunComponent component = player1.getComponent(GunComponent.class);
                 component.shootBullet();
+                getAudioPlayer().stopMusic(shoot);
+                getAudioPlayer().playMusic(shoot);
             }
         }, KeyCode.F);
 
@@ -179,6 +188,8 @@ public class GameApp extends GameApplication {
             protected void onActionBegin() {
                 GunComponent component = player2.getComponent(GunComponent.class);
                 component.shootBullet();
+                getAudioPlayer().stopMusic(shoot);
+                getAudioPlayer().playMusic(shoot);
             }
         }, KeyCode.M);
     }
@@ -186,7 +197,6 @@ public class GameApp extends GameApplication {
     @Override
     protected void initPhysics() {
         getPhysicsWorld().setGravity(0, 0);
-
 
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player1, EntityType.Bullet) {
             @Override
@@ -289,8 +299,14 @@ public class GameApp extends GameApplication {
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntityFactory(new TileFactory());
 
+        shoot = FXGL.getAssetLoader().loadMusic("shoot.mp3");
+        car_engine_loop = FXGL.getAssetLoader().loadMusic("car-engine-loop.mp3");
+
         player1 = spawn("Player1", new SpawnData(100,100).put("size",64));
         player2 = spawn("Player2", new SpawnData(100,200).put("size",64));
+
+        getAudioPlayer().playMusic("engine-start.mp3");
+        getAudioPlayer().loopBGM("game-bg.mp3");
 
         try {
             PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth()/2, getHeight()), player1);
@@ -359,20 +375,32 @@ public class GameApp extends GameApplication {
         HealthComponent health1 = player1.getComponent(HealthComponent.class);
         HealthComponent health2 = player2.getComponent(HealthComponent.class);
 
-        Text healthLabel1 = new Text("Player 1:\n" + (int)health1.getHealth() + "/" + (int)health1.getMaxHealth() + " HP");
+        Text healthLabel1 = new Text();
+        if(health1.getHealth() <= 0){
+            healthLabel1.setText("Player 1:\n" + (int)health1.getHealth() + "/" + (int)health1.getMaxHealth() + " HP\nDisabled\n");
+        } else {
+            healthLabel1.setText("Player 1:\n" + (int)health1.getHealth() + "/" + (int)health1.getMaxHealth() + " HP\n\n ");
+        }
+
         healthLabel1.setFont(new Font(20));
         healthLabel1.setFill(Color.WHITE);
 
-        Text healthLabel2 = new Text("Player 2:\n" + (int)health2.getHealth() + "/" + (int)health2.getMaxHealth() + " HP");
+        Text healthLabel2 = new Text();
+        if(health2.getHealth() <= 0){
+            healthLabel2.setText("Player 2:\n" + (int)health2.getHealth() + "/" + (int)health2.getMaxHealth() + " HP\nDisabled\n");
+        } else {
+            healthLabel2.setText("Player 2:\n" + (int)health2.getHealth() + "/" + (int)health2.getMaxHealth() + " HP\n\n ");
+        }
         healthLabel2.setFont(new Font(20));
         healthLabel2.setFill(Color.WHITE);
 
-        gameDataElements.add(healthLabel1);
-        gameDataElements.add(healthLabel2);
+        VBox playerHealth = new VBox();
+        playerHealth.getChildren().addAll(healthLabel1,healthLabel2);
+
+        gameDataElements.add(playerHealth);
 
         //// positioned in the middle of the gameplay screen
-        addUINode(healthLabel1,getWidth()/2-UIElementSize+14,UIElementSize+20);
-        addUINode(healthLabel2,getWidth()/2-UIElementSize+14,UIElementSize*2+20);
+        addUINode(playerHealth,getWidth()/2-UIElementSize+14,UIElementSize+20);
 
     }
 
