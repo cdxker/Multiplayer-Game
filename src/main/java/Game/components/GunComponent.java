@@ -17,8 +17,8 @@ public class GunComponent extends Component {
 
     @Override
     public void onAdded() {
-        Node gunTexture1 = texture("gun.png", getEntity().getWidth() * 18 /32, getEntity().getWidth()*10 / 16);
-        Node gunTexture2 = texture("gun.png", getEntity().getWidth() * 18 /32, getEntity().getWidth()*10 / 16);
+        Node gunTexture1 = texture("Gun.png", getEntity().getWidth() * 18 / 32, getEntity().getWidth() * 10 / 16);
+        Node gunTexture2 = texture("Gun.png", getEntity().getWidth() * 18 / 32, getEntity().getWidth() * 10 / 16);
 
         gunTexture1.setTranslateX(getEntity().getWidth()*16/32);
         gunTexture1.setTranslateY(getEntity().getHeight()*3/16);
