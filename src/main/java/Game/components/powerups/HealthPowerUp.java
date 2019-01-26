@@ -2,16 +2,17 @@ package Game.components.powerups;
 
 import Game.components.HealthComponent;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.extra.entity.effect.Effect;
 import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.logging.Logger;
 
 /**
  * POWER_UP that adds resources to a different component
  */
 public class HealthPowerUp extends Effect {
-
+    private static Logger logger = Logger.getLogger(HealthPowerUp.class.getName());
     private double amount;
 
     /**
@@ -25,6 +26,7 @@ public class HealthPowerUp extends Effect {
 
     @Override
     public void onStart(@NotNull Entity e) {
+         logger.info("Health Power Up applied");
         HealthComponent h = e.getComponent(HealthComponent.class);
         h.add(this.amount);
     }

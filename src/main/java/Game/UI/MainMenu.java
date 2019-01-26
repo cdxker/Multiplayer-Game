@@ -1,12 +1,13 @@
 package Game.UI;
 
+import Game.GameApp;
+import Game.Map.MapNotFoundException;
 import Game.UI.Elements.BoxButton;
 import Game.UI.Elements.BoxButtonSettings;
 import Game.UI.Elements.TextButton;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.SubState;
-import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.InputModifier;
 import com.almasb.fxgl.input.UserAction;
@@ -43,8 +44,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static Game.GameApp.globalSettings;
+import static Game.Map.MapReader.getMap;
+import static Game.Map.MapReader.getMapNames;
 
 /*
  * To-do list area...
@@ -54,6 +58,7 @@ import static Game.GameApp.globalSettings;
         mainLayout.setBackground(new Background(new BackgroundImage(backgroundImage, BackgroundRepeat.ROUND, BackgroundRepeat.ROUND, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)));
  */
 public class MainMenu extends FXGLMenu {
+    private static final Logger logger = Logger.getLogger(MainMenu.class.getName());
     public static final FontFactory OVERPASS_LIGHT_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-light.otf");
     public static final FontFactory OVERPASS_LIGHT_ITALIC_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-light-italic.otf");
     public static final FontFactory OVERPASS_REGULAR_FACTORY = FXGL.getAssetLoader().loadFont("overpass/overpass-regular.otf");
@@ -72,7 +77,7 @@ public class MainMenu extends FXGLMenu {
 
     public MainMenu(GameApplication app) {
         super(app, MenuType.MAIN_MENU);
-
+        logger.info("Creating Main Menu");
         //// Super class adds unwanted nodes to root, so these instructions rids of those unwanted nodes
         //// while maintaining menuRoot and contentRoot.
         getRoot().getChildren().clear();
@@ -114,12 +119,34 @@ public class MainMenu extends FXGLMenu {
         TextButton modifyCars = new TextButton("Modify Cars", overpassReg, orange, this::doNothing);
 
         Font overpassLight = OVERPASS_LIGHT_FACTORY.newFont(8 * fontRatio * defactoRatio);
+        ArrayList<String> mapNames = getMapNames();
+        ChoiceBox<String> chooseMap = new ChoiceBox<>(FXCollections.observableArrayList(getMapNames()));
+        chooseMap.getSelectionModel().select(0);
+        logger.info("Loading Maps");
+        chooseMap.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                logger.info("Map changing");
+                var m = getMap(mapNames.get(newValue.intValue()));
+                System.out.println("The map recieved is " + m);
+                GameApp.cvars.put("map", m);
+            } catch (MapNotFoundException e) {
+                logger.severe("Error to Load Map");
+                FXGL.getDisplay().showMessageBox("An error has occurred with your chosen map.");
+            }
+        });
+        logger.info("Map loading finished");
+        HBox playField = new HBox(play, chooseMap);
+        playField.setSpacing(10 * defactoRatio);
+        playField.setAlignment(Pos.CENTER_LEFT);
+
         Color blue = Color.rgb(41, 128, 187);
         TextButton settings = new TextButton("Settings", overpassLight, blue, this::showSettingsPage);
         TextButton changeProfile = new TextButton("Change profile", overpassLight, blue, this::fireLogout);
         TextButton tutorial = new TextButton("Tutorial", overpassLight, blue, this::showTutorialPage);
         TextButton exitGame = new TextButton("Exit Game", overpassLight, blue, this::fireExit);
-        textButtons.getChildren().addAll(play, modifyCars, settings, changeProfile, tutorial, exitGame);
+        textButtons.getChildren().addAll(playField, modifyCars, settings, changeProfile, tutorial, exitGame);
+        //textButtons.getChildren().addAll(playField, modifyCars, settings, changeProfile, exitGame);
+        logger.info("text buttons made");
 
         GridPane.setValignment(textButtons, VPos.BOTTOM);
         mainMenuLayout.add(textButtons, 0, 1);
@@ -135,13 +162,12 @@ public class MainMenu extends FXGLMenu {
         profileName.setTextAlignment(TextAlignment.RIGHT);
         profileName.setTranslateY(7 * defactoRatio);
         listener.profileNameProperty().addListener((o, oldValue, newValue) -> profileName.setText(newValue));
-
         Rectangle iconBox = new Rectangle(37 * defactoRatio, 37 * defactoRatio, null);
         iconBox.setStroke(Color.BLACK);
         Image profilePicture = FXGL.getAssetLoader().loadImage("Profile pictures/tire.png"); // TODO: Implement way for player to use different profile picture...
         iconBox.setFill(new ImagePattern(profilePicture));
-
-        profileArea.getChildren().addAll(profileName, iconBox);
+        logger.info("Profile picture made");
+        //profileArea.getChildren().addAll(profileName, iconBox);
 
         GridPane.setHalignment(profileArea, HPos.RIGHT);
         mainMenuLayout.add(profileArea, 1, 0);
@@ -161,6 +187,7 @@ public class MainMenu extends FXGLMenu {
         mainMenuLayout.add(whatsNewPane, 1, 1);
 
         menuRoot.getChildren().add(mainMenuLayout);
+        logger.info("Created Main Menu");
     }
 
     /**
@@ -549,7 +576,7 @@ public class MainMenu extends FXGLMenu {
             rect.setArcWidth(15.0D);
             rect.setArcHeight(15.0D);
             Text text = FXGL.getUIFactory().newText(FXGL.getLocalizedString("menu.pressAnyKey"), 24.0D);
-            StackPane pane = new StackPane(new Node[]{rect, text});
+            StackPane pane = new StackPane(rect, text);
             pane.setTranslateX((double) (FXGL.getAppWidth() / 2 - 125));
             pane.setTranslateY((double) (FXGL.getAppHeight() / 2 - 50));
             this.getChildren().add(pane);

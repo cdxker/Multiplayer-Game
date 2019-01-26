@@ -13,7 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-import static com.almasb.fxgl.app.DSLKt.*;
+import static com.almasb.fxgl.app.DSLKt.texture;
 
 public class TileFactory implements EntityFactory {
 
@@ -42,12 +42,14 @@ public class TileFactory implements EntityFactory {
     @Spawns("Finish Line")
     public Entity newFinsihLine(SpawnData data){
         double size = data.get("tileSize");
-        Node view1 = new Rectangle(size, size, Color.rgb(100, 100, 100));
-        Node view2 = new Rectangle(size, size, Color.rgb(100, 100, 100));
 
+        Node view1 = texture("finishLine.png", size, size);
+        Node view2 = texture("finishLine.png", size, size);
+        
         return Entities.builder()
                 .type(EntityType.FINISHLINE)
                 .from(data)
+                .with(new CollidableComponent(true))
                 .viewFromNodeWithBBox(view1)
                 .with(new ScreenComponent(view1))
                 .with(new ScreenComponent2(view2))

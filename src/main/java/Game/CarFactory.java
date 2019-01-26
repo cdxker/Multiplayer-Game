@@ -3,12 +3,9 @@ package Game;
 import Game.components.*;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
-import com.almasb.fxgl.entity.view.EntityView;
-import com.almasb.fxgl.extra.entity.components.KeepOnScreenComponent;
 import com.almasb.fxgl.extra.entity.effect.EffectComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
-import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.shape.Circle;
@@ -90,6 +87,7 @@ public class CarFactory implements EntityFactory {
                 .with(new ScreenComponent2(view2))
                 .with(new BulletComponent(player, velocity))
                 .with(physics)
+//                .with(new KeepOnScreenComponent(true, true))
                 .build();
     }
 }
