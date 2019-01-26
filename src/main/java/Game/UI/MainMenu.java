@@ -1,6 +1,5 @@
 package Game.UI;
 
-import Game.GameApp;
 import Game.Map.MapNotFoundException;
 import Game.UI.Elements.BoxButton;
 import Game.UI.Elements.BoxButtonSettings;
@@ -119,7 +118,7 @@ public class MainMenu extends FXGLMenu {
         chooseMap.getSelectionModel().select(0);
         chooseMap.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             try {
-                GameApp.cvars.put("map", getMap(mapNames.get(newValue.intValue())));
+                FXGL.getGameState().setValue("map", getMap(mapNames.get(newValue.intValue())));
             } catch (MapNotFoundException e) {
                 FXGL.getDisplay().showMessageBox("An error has occurred with your chosen map.");
             }
