@@ -1,12 +1,12 @@
 {
-  "name": "curvyalley",
+  "name": "CurvyAlley",
   "startPosP1": {
-    "x": 40,
-    "y": 40
+    "x": 128,
+    "y": 192
   },
   "startPosP2": {
-    "x": 0,
-    "y": 0
+    "x": 128,
+    "y": 192
   },
   "tiles":[{
 "uniqueId": "3508458",

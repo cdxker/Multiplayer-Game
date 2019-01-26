@@ -1,7 +1,6 @@
 package Game;
 
 import Game.Map.MapBuilder;
-import Game.Map.MapNotFoundException;
 import Game.Map.MapUtilities;
 import Game.Map.PlayerScreen;
 import Game.UI.SceneCreator;
@@ -25,8 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static Game.Map.MapReader.getMap;
-import static Game.Map.MapReader.getMapNames;
 import static com.almasb.fxgl.app.DSLKt.spawn;
 
 
@@ -281,19 +278,14 @@ public class GameApp extends GameApplication {
         double tileSize = 64;
         PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth() / 2, getHeight()), player1);
         PlayerScreen screen2 = new PlayerScreen(new Rectangle(getWidth() / 2, 0, getWidth() / 2, getHeight()), player2);
-        map = new MapBuilder((Game.Map.Map) cvars.get("map"), 64, screen1, screen2);
+        map = new MapBuilder((Game.Map.Map) getGameState().getObject("map"), 64, screen1, screen2);
 
         System.out.println(map);
     }
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        cvars = vars;
-        try {
-            cvars.put("map", getMap(getMapNames().get(0))); //TODO: Simplify this and add caching in MapReader class
-        } catch (MapNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        vars.putAll(cvars);
     }
 
     public void gameOver() {
