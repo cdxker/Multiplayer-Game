@@ -1,7 +1,7 @@
 Welcome to Bullet Hail, a two-player game combining elements of top-down racing and shoot-em-up genres.
 
 Objective:
- - One objective of the game is for the your vehicle to complete the race track before your opponent. The player who reaches the finishing line first obtains the Expeditious Victory. 
+ - One objective of the game is for your vehicle to complete the race track before your opponent. The player who reaches the finishing line first obtains the Expeditious Victory. 
  - Alternatively, you can choose to use the gun equipped on your vehicle to disable your opponent's vehicle. The player who disables the opponent more times obtains the Destructive Victory.
 
 Controls:
