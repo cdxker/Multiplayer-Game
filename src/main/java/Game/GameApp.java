@@ -18,7 +18,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static Game.Map.MapReader.getBuiltInMap;
@@ -43,6 +48,7 @@ public class GameApp extends GameApplication {
         settings.setSceneFactory(new SceneCreator());
         settings.setFullScreenAllowed(false);
     }
+
 
     @Override
     protected void initInput() {
@@ -136,12 +142,21 @@ public class GameApp extends GameApplication {
                 component.shootBullet();
             }
         }, KeyCode.M);
+
+        input.addAction(new UserAction("escape") {
+            @Override
+            protected void onAction() {
+                logger.info("exiting to menu");
+            }
+            
+        }, KeyCode.ESCAPE);
     }
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("player1Wins", false);
         vars.put("player2Wins", false);
+        vars.put("gameOver", false);
     }
 
     @Override
@@ -216,8 +231,8 @@ public class GameApp extends GameApplication {
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player1, EntityType.FINISHLINE) {
             @Override
             protected void onCollision(Entity a, Entity b) {
-                logger.info("Player 2 Wins!");
-                if (!getGameState().getBoolean("player2Wins")) {
+                if (!getGameState().getBoolean("player2Wins") || !getGameState().getBoolean("player1Wins")) {
+                    logger.info("Player 1 Wins!");
                     getGameState().setValue("player1Wins", true);
                     getGameState().setValue("player2Wins", false);
                 }
@@ -227,8 +242,8 @@ public class GameApp extends GameApplication {
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player2, EntityType.FINISHLINE) {
             @Override
             protected void onCollision(Entity a, Entity b) {
-                logger.info("Player 1 Wins!");
-                if (!getGameState().getBoolean("player1Wins")) {
+                if (!getGameState().getBoolean("player2Wins") || !getGameState().getBoolean("player1Wins")) {
+                    logger.info("Player 2 Wins!");
                     getGameState().setValue("player2Wins", true);
                     getGameState().setValue("player1Wins", false);
                 }
@@ -246,14 +261,20 @@ public class GameApp extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        boolean p1Wins = getGameState().getBoolean("player1Wins");
-        boolean p2Wins = getGameState().getBoolean("player2Wins");
+        if(!gameOver()) {
+            boolean p2Wins = getGameState().getBoolean("player2Wins");
+            boolean p1Wins = getGameState().getBoolean("player1Wins");
 
-        if(p1Wins || p2Wins){
-            endGame(p1Wins, p2Wins);
-        }else {
-            map.update();
+            if (p1Wins || p2Wins) {
+                endGame(p1Wins, p2Wins);
+            } else {
+                map.update();
+            }
         }
+    }
+
+    private boolean gameOver() {
+        return getGameState().getBoolean("gameOver");
     }
 
     private void endGame(boolean p1Wins, boolean p2Wins) {
@@ -262,22 +283,45 @@ public class GameApp extends GameApplication {
         winText.setTranslateY(getHeight() / 2.0);
 
         if (p1Wins){
-            winText.setTranslateX(getWidth() / 4.0);
-            loseText.setTranslateY(getWidth()*3 / 4.0);
-            getGameScene().addUINodes(winText, loseText);
+            FXGL.getDisplay().showMessageBox("Congrats! One of you is a winner!", this::exitToMainMenu);
         }else if(p2Wins){
-            loseText.setTranslateX(getWidth() / 4.0);
-            winText.setTranslateY(getWidth()*3 / 4.0);
-            getGameScene().addUINodes(loseText, winText);
+             FXGL.getDisplay().showMessageBox("Congrats! One of you is a winner!", this::exitToMainMenu);
         }
     }
+
+    private void exitToMainMenu() {
+        logger.info("Ending Game");
+        FXGL.exit();
+    }
+
 
     public MapBuilder getMap() {
         return map;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         launch(args);
+    }
+
+    public static void setupLogger(){
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
+        Date now = new Date();
+        String strDate = sdfDate.format(now);
+
+        FileHandler handler = null;
+        try {
+            handler = new FileHandler(String.format("logs\\BulletHail-%s", strDate.replaceAll(":", "-")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        handler.setLevel(Level.INFO);
+        logger.addHandler(handler);
+    }
+
+    @Override
+    protected void preInit() {
+        setupLogger();
+
     }
 
     @Override
@@ -299,13 +343,4 @@ public class GameApp extends GameApplication {
             e.printStackTrace();
         }
     }
-
-    public void gameOver() {
-        getDisplay().showConfirmationBox("Play again?", (yes) -> {
-            if (yes) startNewGame();
-            else exit();
-        });
-    }
-
-
 }

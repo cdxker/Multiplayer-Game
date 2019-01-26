@@ -71,7 +71,7 @@ public class PlayerScreen extends Pane {
         }
         //System.out.println(e.getPosition().multiply(1.0/64.0));
         Node view;
-        if(id == 0) {
+        if(id %2 == 0) {
             view = e.getComponent(ScreenComponent.class).getView();
         }else{
             view = e.getComponent(ScreenComponent2.class).getView();
