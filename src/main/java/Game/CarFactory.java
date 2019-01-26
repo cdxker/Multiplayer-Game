@@ -3,7 +3,6 @@ package Game;
 import Game.components.*;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
-import com.almasb.fxgl.entity.view.EntityView;
 import com.almasb.fxgl.extra.entity.components.KeepOnScreenComponent;
 import com.almasb.fxgl.extra.entity.effect.EffectComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -26,7 +25,7 @@ public class CarFactory implements EntityFactory {
                 .from(data)
                 .with(new CollidableComponent(true))
                 .with(physics)
-                .with(new HealthComponent(100))
+                .with(new MovementComponent(0.1,0.95,0.80,1,0.5))
                 .with(new EffectComponent());
 
     }
@@ -35,21 +34,19 @@ public class CarFactory implements EntityFactory {
     public Entity spawnPlayer1(SpawnData data) {
         Node view1 = texture("car.png", 64, 64/2);
         Node view2 = texture("car.png", 64, 64/2);
+
         return genericPlayer(data)
                 .type(EntityType.Player1)
                 .viewFromNodeWithBBox(view1)
                 .with(new ScreenComponent(view1))
                 .with(new ScreenComponent2(view2))
-                .with(new MovementComponent(0.05,0.95,0.80,2.5,0.5))
-                .with(new GunComponent("Bullet"))
+                .with(new HealthComponent(100))
+                .with(new GunComponent("Bullet", 50))
                 .build();
     }
 
     @Spawns("Player2")
     public Entity spawnPlayer2(SpawnData data) {
-        PhysicsComponent physics = new PhysicsComponent();
-        physics.setBodyType(BodyType.DYNAMIC);
-        physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(0, 0));
         Node view1 = texture("car.png", 64, 64/2);
         Node view2 = texture("car.png", 64, 64/2);
 
@@ -58,8 +55,8 @@ public class CarFactory implements EntityFactory {
                 .viewFromNodeWithBBox(view1)
                 .with(new ScreenComponent(view1))
                 .with(new ScreenComponent2(view2))
-                .with(new MovementComponent(0.05,0.95,0.80,2.5,0.5))
-                .with(new GunComponent("Bullet"))
+                .with(new HealthComponent(100))
+                .with(new GunComponent("Bullet", 50))
                 .build();
     }
 
@@ -98,12 +95,11 @@ public class CarFactory implements EntityFactory {
                 .from(data)
                 .viewFromNodeWithBBox(view1)
                 .with(new CollidableComponent(true))
-                .with(new DamageComponent(20))
+                .with(new DamageComponent(5))
                 .with(new ScreenComponent(view1))
                 .with(new ScreenComponent2(view2))
                 .with(new BulletComponent(player, velocity))
                 .with(physics)
-//                .with(new KeepOnScreenComponent(true, true))
                 .build();
     }
 }

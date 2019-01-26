@@ -1,7 +1,6 @@
 package Game;
 
 import Game.Map.MapBuilder;
-import Game.Map.MapUtilities;
 import Game.Map.PlayerScreen;
 import Game.UI.SceneCreator;
 import Game.components.*;
@@ -20,14 +19,19 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.almasb.fxgl.app.DSLKt.spawn;
 
-
-
 public class GameApp extends GameApplication {
+    private static Logger logger = Logger.getLogger(GameApp.class.getName());
     private Entity player1 = new Entity();
     private Entity player2 = new Entity();
     public static HashMap<String, Object> cvars = new HashMap<>();
@@ -169,6 +173,21 @@ public class GameApp extends GameApplication {
                 component.shootBullet();
             }
         }, KeyCode.M);
+
+        input.addAction(new UserAction("escape") {
+            @Override
+            protected void onAction() {
+                logger.info("Exiting Game");
+            }
+
+        }, KeyCode.ESCAPE);
+    }
+
+    @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("player1Wins", false);
+        vars.put("player2Wins", false);
+        vars.put("gameOver", false);
     }
 
     @Override
@@ -179,6 +198,7 @@ public class GameApp extends GameApplication {
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player1, EntityType.Bullet) {
             @Override
             protected void onCollision(Entity car, Entity bullet) {
+                logger.info("Player 1 Hit!");
                 BulletComponent bul = bullet.getComponent(BulletComponent.class);
                 if(bul.getParent().isType(EntityType.Player2)) {
                     HealthComponent carHealth = car.getComponent(HealthComponent.class);
@@ -195,7 +215,7 @@ public class GameApp extends GameApplication {
             protected void onCollision(Entity car, Entity tile) {
                 MovementComponent carMovement = car.getComponent(MovementComponent.class);
                 FrictionComponent friction = tile.getComponent(FrictionComponent.class);
-                carMovement.incrBaseAccelerationDrag(friction.getDrag());
+                carMovement.setAccelerationDrag(friction.getDrag());
             }
         });
 
@@ -227,7 +247,7 @@ public class GameApp extends GameApplication {
             protected void onCollision(Entity car, Entity tile) {
                 MovementComponent carMovement = car.getComponent(MovementComponent.class);
                 FrictionComponent friction = tile.getComponent(FrictionComponent.class);
-                carMovement.incrBaseAccelerationDrag(friction.getDrag());
+                carMovement.setAccelerationDrag(friction.getDrag());
             }
         });
 
@@ -237,6 +257,28 @@ public class GameApp extends GameApplication {
                 EffectComponent carEffects = car.getComponent(EffectComponent.class);
                 PowerUpComponent powerUp = powerUpEntity.getComponent(PowerUpComponent.class);
                 carEffects.startEffect(powerUp.getEffect());
+            }
+        });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player1, EntityType.FINISHLINE) {
+            @Override
+            protected void onCollision(Entity a, Entity b) {
+                if (!getGameState().getBoolean("player2Wins") || !getGameState().getBoolean("player1Wins")) {
+                    logger.info("Player 1 Wins!");
+                    getGameState().setValue("player1Wins", true);
+                    getGameState().setValue("player2Wins", false);
+                }
+            }
+        });
+
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player2, EntityType.FINISHLINE) {
+            @Override
+            protected void onCollision(Entity a, Entity b) {
+                if (!getGameState().getBoolean("player2Wins") || !getGameState().getBoolean("player1Wins")) {
+                    logger.info("Player 2 Wins!");
+                    getGameState().setValue("player2Wins", true);
+                    getGameState().setValue("player1Wins", false);
+                }
             }
         });
 
@@ -251,19 +293,67 @@ public class GameApp extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        map.update();
+        if(!gameOver()) {
+            boolean p2Wins = getGameState().getBoolean("player2Wins");
+            boolean p1Wins = getGameState().getBoolean("player1Wins");
+
+            if (p1Wins || p2Wins) {
+                endGame(p1Wins, p2Wins);
+            } else {
+                map.update();
+            }
+        }
+    }
+
+    private boolean gameOver() {
+        return getGameState().getBoolean("gameOver");
+    }
+
+    private void endGame(boolean p1Wins, boolean p2Wins) {
+        var winText = FXGL.getUIFactory().newText("You win");
+        var loseText = FXGL.getUIFactory().newText("You Lose");
+        winText.setTranslateY(getHeight() / 2.0);
+
+        if (p1Wins){
+            FXGL.getDisplay().showMessageBox("Congrats Player 1! You are the winner!", this::exitToMainMenu);
+        }else if(p2Wins){
+             FXGL.getDisplay().showMessageBox("Congrats Player 2! You are the winner!", this::exitToMainMenu);
+        }
+    }
+
+    private void exitToMainMenu() {
+        logger.info("Ending Game");
+        FXGL.exit();
+    }
+
+
+    public MapBuilder getMap() {
+        return map;
     }
 
     public static void main(String[] args) {
+        launch(args);
+    }
+
+    public static void setupLogger(){
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
+        Date now = new Date();
+        String strDate = sdfDate.format(now);
+
+        FileHandler handler = null;
         try {
-            MapUtilities.createCustomMapsDir();
+            handler = new FileHandler(String.format("logs\\BulletHail-%s", strDate.replaceAll(":", "-")));
         } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
         }
+        handler.setLevel(Level.INFO);
+        logger.addHandler(handler);
+    }
 
-        System.out.println("Done!");
-        launch(args);
+    @Override
+    protected void preInit() {
+        setupLogger();
+
     }
 
     @Override
@@ -271,23 +361,16 @@ public class GameApp extends GameApplication {
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntityFactory(new TileFactory());
 
-        player1 = spawn("Player1", 40, 40);
-        player2 = spawn("Player2", 0, 0);
+        var m = (Game.Map.Map)cvars.get("map");
+        player1 = spawn("Player1", m.getStartPosP1());
+        player2 = spawn("Player2", m.getStartPosP2());
+
 
         double tileSize = 64;
-        PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth() / 2, getHeight()), player1);
-        PlayerScreen screen2 = new PlayerScreen(new Rectangle(getWidth() / 2, 0, getWidth() / 2, getHeight()), player2);
-        map = new MapBuilder((Game.Map.Map)cvars.get("map"), 64, screen1, screen2);
-
         System.out.println(map);
-    }
-
-
-    public void gameOver() {
-        getDisplay().showConfirmationBox("Play again?", (yes) -> {
-            if (yes) startNewGame();
-            else exit();
-        });
+        PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth()/2.0, getHeight()), player1);
+        PlayerScreen screen2 = new PlayerScreen(new Rectangle(getWidth()/2, 0, getWidth()/2.0, getHeight()), player2);
+        map = new MapBuilder(m, tileSize, screen1, screen2);
     }
 
 

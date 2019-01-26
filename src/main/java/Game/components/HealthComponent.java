@@ -1,10 +1,11 @@
 package Game.components;
 
 
-import Game.GameApp;
-import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
+import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  * This component contains an entities health
@@ -14,6 +15,10 @@ public class HealthComponent extends Component {
     private final double maxHealth;
     private double health;
 
+    Rectangle hbar1;
+    Rectangle hbar2;
+    Rectangle fillBar2;
+    Rectangle fillBar1;
     /**
      * Sets the maximum health to the entities starting health value
      *
@@ -35,8 +40,35 @@ public class HealthComponent extends Component {
     private void killEntity() {
         Entity entity = getEntity();
         entity.removeFromWorld();
-        // TODO : add dying animation
-        FXGL.<GameApp>getAppCast().gameOver();
+    }
+
+    @Override
+    public void onAdded() {
+        Point2D pos = getEntity().getPosition();
+        Point2D size = new Point2D(getEntity().getWidth(), getEntity().getHeight());
+
+        hbar1 = new Rectangle(0, -5, size.getX(), size.getY()/ 5); hbar1.setStroke(Color.BLACK);
+        hbar2 = new Rectangle(0, -5, size.getX(), size.getY()/ 5); hbar2.setStroke(Color.BLACK);
+        hbar1.setFill(Color.TRANSPARENT);
+        hbar2.setFill(Color.TRANSPARENT);
+
+        fillBar2 = new Rectangle(0, -5, size.getX()* health/maxHealth, size.getY()/ 5);
+        fillBar1 = new Rectangle(0, -5, size.getX()* health/maxHealth, size.getY()/ 5);
+
+        fillBar1.setFill(Color.rgb(0, 255, 0));
+        fillBar2.setFill(Color.rgb(0, 255, 0));
+
+        entity.getComponent(ScreenComponent.class).getView().addNode(hbar1);
+        entity.getComponent(ScreenComponent.class).getView().addNode(fillBar1);
+
+        entity.getComponent(ScreenComponent2.class).getView().addNode(hbar2);
+        entity.getComponent(ScreenComponent2.class).getView().addNode(fillBar2);
+
+    }
+
+    private void updateHealth(){
+        fillBar1.setWidth(health * getEntity().getWidth() /maxHealth);
+        fillBar2.setWidth(health * getEntity().getWidth() /maxHealth);
     }
 
     public double getHealth() {
@@ -50,13 +82,15 @@ public class HealthComponent extends Component {
      */
     public void add(double amount) {
         health += amount;
-        if (maxHealth > health){
+        if (health > maxHealth){
             health = maxHealth;
         }
+        System.out.println(amount);
         if (health <= 0) {
             health = 0;
             killEntity();
         }
+        updateHealth();
     }
 
     public double getMaxHealth() {
