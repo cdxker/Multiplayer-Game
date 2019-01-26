@@ -285,17 +285,17 @@ public class GameApp extends GameApplication {
         getGameWorld().addEntityFactory(new CarFactory());
         getGameWorld().addEntityFactory(new TileFactory());
 
-        player1 = spawn("Player2", 0, 0);
-        player2 = spawn("Player1", 40, 40);
+        player1 = spawn("Player2", 64*3, 64*3);
+        player2 = spawn("Player1", 64*3, 64*4);
 
         try {
             double tileSize = 64;
             System.out.println(map);
             PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth()/2.0, getHeight()), player1);
             PlayerScreen screen2 = new PlayerScreen(new Rectangle(getWidth()/2, 0, getWidth()/2.0, getHeight()), player2);
-            map = new MapBuilder(getBuiltInMap("theChallenge"), tileSize, screen1, screen2);
+            map = new MapBuilder(getBuiltInMap("curvyalley"), tileSize, screen1, screen2);
         } catch (MapNotFoundException e) {
-            System.out.println("Fail");
+            logger.severe("Map Loading failed in main game\n" + e.getStackTrace().toString());
             e.printStackTrace();
         }
     }
