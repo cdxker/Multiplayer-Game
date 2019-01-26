@@ -17,6 +17,7 @@ import static com.almasb.fxgl.app.DSLKt.texture;
 
 public class CarFactory implements EntityFactory {
 
+    //// Spawn player entity with data that is identical for players 1 and 2
     private Entities.EntityBuilder genericPlayer(SpawnData data){
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
@@ -31,6 +32,7 @@ public class CarFactory implements EntityFactory {
 
     }
 
+    //// differentiate player 1 with a different image and different data
     @Spawns("Player1")
     public Entity spawnPlayer1(SpawnData data) {
         int size = data.get("size");
@@ -46,11 +48,12 @@ public class CarFactory implements EntityFactory {
                 .build();
     }
 
+    //// differentiate player 2 with a different image and different data
     @Spawns("Player2")
     public Entity spawnPlayer2(SpawnData data) {
         int size = data.get("size");
-        Node view1 = texture("player1.png", size, size/2);
-        Node view2 = texture("player1.png", size, size/2);
+        Node view1 = texture("player2.png", size, size/2);
+        Node view2 = texture("player2.png", size, size/2);
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
         physics.setOnPhysicsInitialized(() -> physics.setLinearVelocity(0, 0));
@@ -65,6 +68,7 @@ public class CarFactory implements EntityFactory {
                 .build();
     }
 
+    //// Spawn bullet as an entity with movement and collision
     @Spawns("Bullet")
     public Entity newBullet(SpawnData data) {
         PhysicsComponent physics = new PhysicsComponent();
@@ -86,7 +90,6 @@ public class CarFactory implements EntityFactory {
                 .with(new ScreenComponent2(view2))
                 .with(new BulletComponent(player, velocity))
                 .with(physics)
-//                .with(new KeepOnScreenComponent(true, true))
                 .build();
     }
 }

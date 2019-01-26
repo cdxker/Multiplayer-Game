@@ -17,7 +17,8 @@ import static com.almasb.fxgl.app.DSLKt.*;
 
 public class TileFactory implements EntityFactory {
 
-    // Special Tiles
+    //// Wall tiles are limiting tiles that collide with and prevent other entities
+    //// such as players and bullets to pass through
     @Spawns("Wall")
     public Entity newWallTile(SpawnData data){
         double size = data.get("tileSize");

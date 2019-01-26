@@ -20,6 +20,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -206,7 +207,7 @@ public class GameApp extends GameApplication {
             protected void onCollision(Entity car, Entity tile) {
                 MovementComponent carMovement = car.getComponent(MovementComponent.class);
                 FrictionComponent friction = tile.getComponent(FrictionComponent.class);
-                carMovement.incrAccelerationDrag(friction.getDrag());
+                carMovement.increaseAccelerationDrag(friction.getDrag());
             }
         });
 
@@ -238,7 +239,7 @@ public class GameApp extends GameApplication {
             protected void onCollision(Entity car, Entity tile) {
                 MovementComponent carMovement = car.getComponent(MovementComponent.class);
                 FrictionComponent friction = tile.getComponent(FrictionComponent.class);
-                carMovement.incrAccelerationDrag(friction.getDrag());
+                carMovement.increaseAccelerationDrag(friction.getDrag());
             }
         });
 
@@ -320,25 +321,40 @@ public class GameApp extends GameApplication {
         updateInputTutorial();
     }
 
-    private void updateInputTutorial(){
+    //// Get the input binding for specified action by player
+    private String getInputKey(String actionName){
+        return getInput().triggerProperty(getInput().getActionByName(actionName)).getValue().toString();
+    }
 
-        String input1 = getInput().triggerProperty(getInput().getActionByName("Fire Bullet 1")).getValue().toString();
-        Text player1Input = new Text("Press " + input1 + " to fire a bullet");
-        player1Input.setFont(new Font(30));
+    //// On-screen instruction to help player know which buttons to use
+    private void updateInputTutorial(){
+        String up1 = getInputKey("Speed Up 1");
+        String down1 = getInputKey("Slow Down 1");
+        String left1 = getInputKey("Steer Left 1");
+        String right1 = getInputKey("Steer Right 1");
+        String shoot1 = getInputKey("Fire Bullet 1");
+        Text player1Input = new Text("Gun: " + shoot1 + "\n" + "Movement: " + up1 + " " + down1 + " " + left1 + " " + right1);
+        player1Input.setFont(new Font(20));
         player1Input.setFill(Color.WHITE);
 
-        String input2 = getInput().triggerProperty(getInput().getActionByName("Fire Bullet 2")).getValue().toString();
-        Text player2Input = new Text("Press " + input2 + " to fire a bullet");
-        player2Input.setFont(new Font(30));
+        String up2 = getInputKey("Speed Up 2");
+        String down2 = getInputKey("Slow Down 2");
+        String left2 = getInputKey("Steer Left 2");
+        String right2 = getInputKey("Steer Right 2");
+        String shoot2 = getInputKey("Fire Bullet 2");
+        Text player2Input = new Text("Gun: " + shoot2 + "\n" + "Movement: " + up2 + " " + down2 + " " + left2 + " " + right2);
+        player2Input.setFont(new Font(20));
         player2Input.setFill(Color.WHITE);
 
         gameDataElements.add(player1Input);
         gameDataElements.add(player2Input);
 
-        addUINode(player1Input,UIElementSize, UIElementSize-10);
-        addUINode(player2Input,getWidth()/2+UIElementSize,UIElementSize-10);
+        //// Positioned at the bottom of each player'screen
+        addUINode(player1Input,UIElementSize, getHeight()-UIElementSize+20);
+        addUINode(player2Input,getWidth()/2 + UIElementSize, getHeight()-UIElementSize+20);
     }
 
+    //// Display both player's health as a number out of maximum health
     private void updatePlayer(){
         HealthComponent health1 = player1.getComponent(HealthComponent.class);
         HealthComponent health2 = player2.getComponent(HealthComponent.class);
@@ -354,15 +370,21 @@ public class GameApp extends GameApplication {
         gameDataElements.add(healthLabel1);
         gameDataElements.add(healthLabel2);
 
+        //// positioned in the middle of the gameplay screen
         addUINode(healthLabel1,getWidth()/2-UIElementSize+14,UIElementSize+20);
         addUINode(healthLabel2,getWidth()/2-UIElementSize+14,UIElementSize*2+20);
 
     }
 
+    //// Surround the gameplay screen to divide the two player screens
     private void updateBorder(){
+
+        //// Border around the screen
         Rectangle outBorder = new Rectangle(getWidth()-UIElementSize, getHeight()-UIElementSize, Color.TRANSPARENT);
         outBorder.setStroke(Color.BLACK);
         outBorder.setStrokeWidth(UIElementSize);
+
+        //// Border between player screens
         Rectangle midBorder = new Rectangle(UIElementSize*2, getHeight(), Color.BLACK);
 
         Rectangle player1Border = new Rectangle(getWidth()/2-2*UIElementSize, getHeight()-2*UIElementSize, Color.TRANSPARENT);
@@ -384,15 +406,22 @@ public class GameApp extends GameApplication {
         addUINode(player2Border, getWidth()/2+UIElementSize,UIElementSize);
     }
 
+    //// Display a minimap of the map currently played with differentiated tiles and
+    //// player position
     private void updateMinimap(){
+
+        //// get the dimensions of the map currently being played
         int miniX = (int)map.getGridSize().getX();
         int miniY = (int)map.getGridSize().getY();
 
+        //// write each tile on the current map as a single pixel on the minimap
         WritableImage minimap = new WritableImage(miniX + 2, miniY + 2);
         PixelWriter px = minimap.getPixelWriter();
         for(int x = 0; x < miniX; x++) {
             for (int y = 0; y < miniY; y++) {
                 Tile tile = map.getTile(x, y);
+
+                //// differentiate different tile types
                 switch(tile.getType()) {
                     case "Wall":
                         px.setColor(x + 1, y + 1, Color.WHITE);
@@ -417,8 +446,11 @@ public class GameApp extends GameApplication {
             }
         }
 
+        //// draw player positions on the minimap
         Point2D p1 = player1.getPosition();
         Point2D p2 = player2.getPosition();
+
+        //// each player is represented with a 3x3 square instead of a single pixel
         for(int i = -1; i < 2; i++) {
             for(int j = -1; j < 2; j++) {
                 int x1 = i + (int) (p1.getX() / UIElementSize);
@@ -443,22 +475,24 @@ public class GameApp extends GameApplication {
             px.setColor(miniX+1, i, Color.WHITE);
         }
 
+        //// scale the map up so its features are more recognizable
         double minimapSize = 100;
         ImageView minimapView = new ImageView();
         minimapView.setImage(minimap);
         minimapView.setFitHeight(minimapSize);
         minimapView.setFitWidth(minimapSize);
 
-        gameDataElements.add(minimapView);
-
-        addUINode(minimapView, getWidth()/2-minimapSize/2,getHeight()-minimapSize-UIElementSize);
-
         Text minimapLabel = new Text("Minimap");
         minimapLabel.setFont(new Font(20));
         minimapLabel.setFill(Color.WHITE);
 
-        gameDataElements.add(minimapLabel);
+        //// Combine minimap image and minimap label into one VBox
+        VBox minimapBox = new VBox();
+        minimapBox.getChildren().addAll(minimapLabel, minimapView);
 
-        addUINode(minimapLabel,getWidth()/2-minimapSize/2,getHeight()-minimapSize-UIElementSize-20);
+        gameDataElements.add(minimapBox);
+
+        //// positioned at the middle bottom of the screen
+        addUINode(minimapBox,getWidth()/2-minimapSize/2,getHeight()-minimapSize-UIElementSize-20);
     }
 }
