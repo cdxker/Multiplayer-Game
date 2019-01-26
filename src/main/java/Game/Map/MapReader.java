@@ -25,7 +25,7 @@ import static Game.Utilities.FileUtilities.getFilesFromDir;
  * that back into an actual object in memory.
  */
 public class MapReader {
-    public static final Logger logger = Logger.getLogger(MapReader.class.getName());
+    private static final Logger logger = Logger.getLogger(MapReader.class.getName());
 
 
     public static Map createMapFromJson(String jsonStr) throws JsonSyntaxException {
@@ -59,11 +59,13 @@ public class MapReader {
         try {
             return getCustomMap(mapName);
         } catch (MapNotFoundException e) {
+            logger.warning("Map not found");
             return getBuiltInMap(mapName);
         }
     }
 
     public static Map getCustomMap(String mapName) throws MapNotFoundException {
+        logger.info("Parsing out Map");
         HashSet<Map> maps = getCustomMaps();
         for (Map map : maps) {
             if (map.getName().equals(mapName)) {
@@ -76,6 +78,7 @@ public class MapReader {
     public static Map getBuiltInMap(String mapName) throws MapNotFoundException, JsonSyntaxException {
         String filename = mapName + ".json";
         if (!FXGL.getAssetLoader().loadFileNames(getBuiltInMapsFullDir()).contains(filename)) {
+            logger.warning("Map not found");
             throw new MapNotFoundException("Requested map not found");
         }
         String strPath = getBuiltInMapsDir() + filename;
@@ -109,7 +112,7 @@ public class MapReader {
             List<File> files = getFilesFromDir(getCustomMapsDir(), ".json");
             return MapReader.getSerializedMaps(files);
         } catch (IOException e) {
-            //TODO: Log some stuff...
+            logger.warning("Could not find map");
             return new HashSet<>();
         }
     }
@@ -132,6 +135,7 @@ public class MapReader {
      *         JsonSyntaxException.
      */
     public static HashSet<Map> getSerializedMaps(List<File> files) {
+        logger.info("Receiving Serialized maps");
         HashSet<Map> maps = new HashSet<>();
         for (File file : files) {
             try {

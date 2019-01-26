@@ -10,6 +10,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.logging.Logger;
+
 import static com.almasb.fxgl.app.FXGL.*;
 
 
@@ -17,6 +19,7 @@ import static com.almasb.fxgl.app.FXGL.*;
  * Class that
  */
 public class PlayerScreen extends Pane {
+    private static Logger logger = Logger.getLogger(PlayerScreen.class.getName());
     private static int instances = 0;
     private Rectangle rect;
     private Entity target;
@@ -24,6 +27,7 @@ public class PlayerScreen extends Pane {
 
     public PlayerScreen(Rectangle rect, Entity target){
         super();
+        logger.info("Opening player screen");
         id = instances;
         instances ++;
         this.rect = rect; // rectangle should initially be placed where the entity begins.

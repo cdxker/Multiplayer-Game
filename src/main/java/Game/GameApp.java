@@ -19,6 +19,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.Map;
+import java.util.logging.Logger;
 
 import static Game.Map.MapReader.getBuiltInMap;
 import static com.almasb.fxgl.app.DSLKt.spawn;
@@ -26,7 +27,7 @@ import static com.almasb.fxgl.app.DSLKt.spawn;
 public class GameApp extends GameApplication {
 
     MapBuilder map;
-
+    private static Logger logger = Logger.getLogger(GameApp.class.getName());
     private Entity player1 = new Entity();
     private Entity player2 = new Entity();
 
@@ -147,10 +148,10 @@ public class GameApp extends GameApplication {
     protected void initPhysics() {
         getPhysicsWorld().setGravity(0, 0);
 
-
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player1, EntityType.Bullet) {
             @Override
             protected void onCollision(Entity car, Entity bullet) {
+                logger.info("Player 1 Hit!");
                 BulletComponent bul = bullet.getComponent(BulletComponent.class);
                 if(bul.getParent().isType(EntityType.Player2)) {
                     HealthComponent carHealth = car.getComponent(HealthComponent.class);
@@ -215,13 +216,7 @@ public class GameApp extends GameApplication {
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player1, EntityType.FINISHLINE) {
             @Override
             protected void onCollision(Entity a, Entity b) {
-                getGameState().setValue("player1Wins", true);
-            }
-        });
-
-        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player1, EntityType.FINISHLINE) {
-            @Override
-            protected void onCollision(Entity a, Entity b) {
+                logger.info("Player 2 Wins!");
                 if (!getGameState().getBoolean("player2Wins")) {
                     getGameState().setValue("player1Wins", true);
                     getGameState().setValue("player2Wins", false);
@@ -232,13 +227,14 @@ public class GameApp extends GameApplication {
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Player2, EntityType.FINISHLINE) {
             @Override
             protected void onCollision(Entity a, Entity b) {
-                System.out.println("win");
+                logger.info("Player 1 Wins!");
                 if (!getGameState().getBoolean("player1Wins")) {
                     getGameState().setValue("player2Wins", true);
                     getGameState().setValue("player1Wins", false);
                 }
             }
         });
+
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.Bullet, EntityType.Wall) {
             @Override
             protected void onCollision(Entity bullet, Entity tile) {
