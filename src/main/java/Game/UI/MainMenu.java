@@ -46,9 +46,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static Game.GameApp.cvars;
 import static Game.GameApp.globalSettings;
-import static Game.Map.MapReader.getMap;
-import static Game.Map.MapReader.getMapNames;
+import static Game.Map.MapReader.*;
 
 /*
  * To-do list area...
@@ -123,11 +123,16 @@ public class MainMenu extends FXGLMenu {
         ChoiceBox<String> chooseMap = new ChoiceBox<>(FXCollections.observableArrayList(getMapNames()));
         chooseMap.getSelectionModel().select(0);
         logger.info("Loading Maps");
+        try {
+            cvars.put("map", getBuiltInMap("CurvyAlley"));
+        } catch (MapNotFoundException e) {
+            e.printStackTrace();
+        }
         chooseMap.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             try {
                 logger.info("Map changing");
                 var m = getMap(mapNames.get(newValue.intValue()));
-                System.out.println("The map recieved is " + m);
+                System.out.println("The map recieved is " + m.getName());
                 GameApp.cvars.put("map", m);
             } catch (MapNotFoundException e) {
                 logger.severe("Error to Load Map");
@@ -167,7 +172,7 @@ public class MainMenu extends FXGLMenu {
         Image profilePicture = FXGL.getAssetLoader().loadImage("Profile pictures/tire.png"); // TODO: Implement way for player to use different profile picture...
         iconBox.setFill(new ImagePattern(profilePicture));
         logger.info("Profile picture made");
-        //profileArea.getChildren().addAll(profileName, iconBox);
+        profileArea.getChildren().addAll(profileName, iconBox);
 
         GridPane.setHalignment(profileArea, HPos.RIGHT);
         mainMenuLayout.add(profileArea, 1, 0);

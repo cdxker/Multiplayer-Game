@@ -10,6 +10,7 @@ import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.extra.entity.effect.EffectComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
@@ -46,11 +47,11 @@ public class GameApp extends GameApplication {
     private static Logger logger = Logger.getLogger(GameApp.class.getName());
     private Entity player1 = new Entity();
     private Entity player2 = new Entity();
-    public static HashMap<String, Game.Map.Map> cvars = new HashMap<>();
+    public static HashMap<String, Object> cvars = new HashMap<>();
 
     public static GlobalSettings globalSettings;
     MapBuilder mapBuilder;
-    Game.Map.Map map;
+    private Game.Map.Map map;
     double tileSize = 64;
     double UIElementSize = 64;
 
@@ -402,10 +403,10 @@ public class GameApp extends GameApplication {
         getAudioPlayer().playMusic("engine-start.mp3");
         getAudioPlayer().loopBGM("game-bg.mp3");
         System.out.println(cvars);
-        map = (Game.Map.Map)cvars.get("map");
+        map = (Game.Map.Map) GameApp.cvars.get("map");
         System.out.println(map);
-        player1 = spawn("Player1", map.getStartPosP1());
-        player2 = spawn("Player2", map.getStartPosP2());
+        player1 = spawn("Player1", new SpawnData(map.getStartPosP1()).put("tileSize", tileSize));
+        player2 = spawn("Player2", new SpawnData(map.getStartPosP2()).put("tileSize", tileSize));
 
         PlayerScreen screen1 = new PlayerScreen(new Rectangle(0, 0, getWidth()/2, getHeight()), player1);
         PlayerScreen screen2 = new PlayerScreen(new Rectangle(getWidth()/2, 0, getWidth()/2, getHeight()), player2);

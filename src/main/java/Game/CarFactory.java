@@ -32,7 +32,7 @@ public class CarFactory implements EntityFactory {
     //// differentiate player 1 with a different image and different data
     @Spawns("Player1")
     public Entity spawnPlayer1(SpawnData data) {
-        int size = data.get("size");
+        double size = data.get("tileSize");
         Node view1 = texture("player1.png", size, size/2);
         Node view2 = texture("player1.png", size, size/2);
         return genericPlayer(data)
@@ -48,7 +48,7 @@ public class CarFactory implements EntityFactory {
     //// differentiate player 2 with a different image and different data
     @Spawns("Player2")
     public Entity spawnPlayer2(SpawnData data) {
-        int size = data.get("size");
+        double size = data.get("tileSize");
         Node view1 = texture("player2.png", size, size/2);
         Node view2 = texture("player2.png", size, size/2);
         PhysicsComponent physics = new PhysicsComponent();

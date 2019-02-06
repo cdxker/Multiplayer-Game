@@ -129,7 +129,7 @@ public class Map {
             }
         }
         for(Tile t: tiles){
-            int x = (int)(t.getPos().getX()-2);
+            int x = (int)(t.getPos().getX());
             int y = (int)(t.getPos().getY());
             tileGrid.get(x).set(y, t);
         }
