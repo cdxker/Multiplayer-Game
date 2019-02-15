@@ -3,12 +3,9 @@ package Game;
 import Game.components.*;
 import com.almasb.fxgl.entity.*;
 import com.almasb.fxgl.entity.components.CollidableComponent;
-import com.almasb.fxgl.entity.view.EntityView;
-import com.almasb.fxgl.extra.entity.components.KeepOnScreenComponent;
 import com.almasb.fxgl.extra.entity.effect.EffectComponent;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
-import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.shape.Circle;
@@ -35,7 +32,7 @@ public class CarFactory implements EntityFactory {
     //// differentiate player 1 with a different image and different data
     @Spawns("Player1")
     public Entity spawnPlayer1(SpawnData data) {
-        int size = data.get("size");
+        double size = data.get("tileSize");
         Node view1 = texture("player1.png", size, size/2);
         Node view2 = texture("player1.png", size, size/2);
         return genericPlayer(data)
@@ -51,7 +48,7 @@ public class CarFactory implements EntityFactory {
     //// differentiate player 2 with a different image and different data
     @Spawns("Player2")
     public Entity spawnPlayer2(SpawnData data) {
-        int size = data.get("size");
+        double size = data.get("tileSize");
         Node view1 = texture("player2.png", size, size/2);
         Node view2 = texture("player2.png", size, size/2);
         PhysicsComponent physics = new PhysicsComponent();
@@ -90,6 +87,7 @@ public class CarFactory implements EntityFactory {
                 .with(new ScreenComponent2(view2))
                 .with(new BulletComponent(player, velocity))
                 .with(physics)
+//                .with(new KeepOnScreenComponent(true, true))
                 .build();
     }
 }

@@ -19,7 +19,7 @@ public class ColorButton{
     fill(this.c);
     rect(x, y, w, h);
     fill(0);
-    text(this.text, x, y);
+    text(this.text, x, y+h/2);
   }
   
   boolean mouseOn(){

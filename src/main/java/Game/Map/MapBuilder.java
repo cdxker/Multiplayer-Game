@@ -6,13 +6,14 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.GameWorld;
 import com.almasb.fxgl.entity.SpawnData;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.almasb.fxgl.app.DSLKt.spawn;
-import static com.almasb.fxgl.app.FXGL.*;
+import static com.almasb.fxgl.app.FXGL.getGameScene;
 import static com.almasb.fxgl.app.FXGL.getGameWorld;
 
 
@@ -24,7 +25,7 @@ public class MapBuilder {
 
     private ArrayList<PlayerScreen> screens;
     private double tileSize = 64;
-    private GameWorld game = getGameWorld();
+    private static GameWorld game = getGameWorld();
     private Map map;
 
     public MapBuilder(Map map, double tileSize, PlayerScreen... screens) {
@@ -43,9 +44,9 @@ public class MapBuilder {
      * Clears the map of all tiles that are currently placed
      */
     public static void clearMap() {
-        getGameWorld().getEntitiesByType(EntityType.Tile).forEach(Entity::removeFromWorld);
-        getGameWorld().getEntitiesByType(EntityType.Wall).forEach(Entity::removeFromWorld);
-        getGameWorld().getEntitiesByType(EntityType.PowerUp).forEach(Entity::removeFromWorld);
+        game.getEntitiesByType(EntityType.Wall).forEach(Entity::removeFromWorld);
+        game.getEntitiesByType(EntityType.PowerUp).forEach(Entity::removeFromWorld);
+        game.getEntitiesByType(EntityType.Tile).forEach(Entity::removeFromWorld);
     }
 
     public void update() {
@@ -55,12 +56,16 @@ public class MapBuilder {
             for(PlayerScreen screen : screens){
                 if (screen.contains(tile)) {
                     spawn(t.getType(), new SpawnData(tile).put("tileSize", tileSize).put("Time", Duration.seconds(3)).put("Strength", 5.0));
-                    // Is there a way to reduce this?
                 }
             }
         }
         screens.forEach(PlayerScreen::onUpdate);
     }
+
+    public void display(int screenNumber, Node... items){
+        screens.get(screenNumber).addAll(items);
+    }
+
     public double getTileSize() {
         return tileSize;
     }
@@ -72,5 +77,6 @@ public class MapBuilder {
     public void setMap(Map map) {
         this.map = map;
     }
+
 
 }

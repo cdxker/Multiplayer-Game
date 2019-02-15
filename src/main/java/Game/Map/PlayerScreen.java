@@ -4,14 +4,13 @@ import Game.EntityType;
 import Game.components.ScreenComponent;
 import Game.components.ScreenComponent2;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.view.EntityView;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-import java.awt.*;
+import java.util.logging.Logger;
 
 import static com.almasb.fxgl.app.FXGL.*;
 
@@ -20,6 +19,7 @@ import static com.almasb.fxgl.app.FXGL.*;
  * Class that
  */
 public class PlayerScreen extends Pane {
+    private static Logger logger = Logger.getLogger(PlayerScreen.class.getName());
     private static int instances = 0;
     private Rectangle rect;
     private Entity target;
@@ -27,6 +27,7 @@ public class PlayerScreen extends Pane {
 
     public PlayerScreen(Rectangle rect, Entity target){
         super();
+        logger.info("Opening player screen");
         id = instances;
         instances ++;
         this.rect = rect; // rectangle should initially be placed where the entity begins.
@@ -55,11 +56,9 @@ public class PlayerScreen extends Pane {
         getChildren().add(0, bg);
 
         // Draws entities on game world
-        getGameWorld().getEntitiesByType(EntityType.Tile, EntityType.Wall, EntityType.PowerUp).forEach(this::add);
+        getGameWorld().getEntitiesByType(EntityType.Tile, EntityType.Wall, EntityType.PowerUp, EntityType.FINISHLINE).forEach(this::add);
         getGameWorld().getEntitiesByType(EntityType.Player1, EntityType.Player2,EntityType.Bullet).forEach(this::add);
 
-        //setTranslateY(-target.getPosition().getY() + rect.getHeight() / 2); // Changing the value makes the rendering different
-        //setTranslateX(-target.getPosition().getX() + rect.getWidth() / 2);  // Changing the value makes the rendering different
         rect.setX(target.getPosition().getX() - rect.getWidth() / 2);
         rect.setY(target.getPosition().getY() - rect.getHeight() / 2);
     }
@@ -69,16 +68,27 @@ public class PlayerScreen extends Pane {
             return;
         }
         Node view;
-        if(id == 0) {
+        if(id % 2 == 0) {
             view = e.getComponent(ScreenComponent.class).getView();
         }else{
             view = e.getComponent(ScreenComponent2.class).getView();
         }
-//        System.out.print(e.getView().getTranslateX() + " ");
         view.translateXProperty().bind(e.xProperty().subtract(rect.getX()));
         view.translateYProperty().bind(e.yProperty().subtract(rect.getY()));
-//        System.out.println(e.getView().getTranslateX());
         getChildren().add(view);
+    }
+
+    public void add(Node view){
+        view.setTranslateX(view.getTranslateX() - rect.getX());
+        view.setTranslateX(view.getTranslateX() - rect.getY());
+        getChildren().add(view);
+    }
+
+
+    public void addAll(Node... views){
+        for (Node view: views) {
+            add(view);
+        }
     }
 
 
